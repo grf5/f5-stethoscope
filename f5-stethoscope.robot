@@ -31,8 +31,8 @@ Verify SSH Connectivity
     [Tags]    critical
     Set Log Level    trace
     TRY
-        SSHLibrary.Open Connection    ${host} 
-        SSHLibrary.Log In    ${user}    ${pass}
+        ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${host} 
+        ${SSHLoginOutput}    SSHLibrary.Log In    ${user}    ${pass}
         ${InitialSshOutput}    SSHLibrary.Read
         Run BASH Echo Test
     EXCEPT    Error connecting to SSH 
