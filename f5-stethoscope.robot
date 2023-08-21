@@ -31,10 +31,10 @@ Verify SSH Connectivity
     [Tags]    critical
     Set Log Level    trace
     TRY
-        Wait until Keyword Succeeds    3x    5 seconds    Open Connection    ${host} 
+        Wait until Keyword Succeeds    5x    2 seconds    Open Connection    ${host} 
         Log In    ${user}    ${pass}
         Run BASH Echo Test
-    EXCEPT    message
+    EXCEPT    Error connecting to SSH 
         Close All Connections
         Fatal Error
     END
