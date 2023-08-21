@@ -3,7 +3,7 @@ Documentation        F5 stethoscope is a Robot Framework script that checks the 
 ...                  of BIG-IP devices.
 ...    
 Library    String
-Library    SSHLibrary
+Library    SSHLibrary    timeout=5 seconds    loglevel=trace
 Library    RequestsLibrary
 
 *** Variables ***
