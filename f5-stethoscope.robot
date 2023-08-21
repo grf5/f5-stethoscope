@@ -48,7 +48,7 @@ Test IPv4 iControlREST API Connectivity
 *** Keywords ***
 Run BASH Echo Test
     [Documentation]    Issues a BASH command and looks for the proper response inside of an existing SSH session
-    Execute Command    bash
+    ${BASH_SHELL_EXECUTION_RESPONSE}   Execute Command    bash
     ${BASH_ECHO_RESPONSE}    Execute Command    echo 'BASH TEST'
     Should Be Equal    ${BASH_ECHO_RESPONSE}    BASH TEST
     [Return]    ${BASH_ECHO_RESPONSE}
