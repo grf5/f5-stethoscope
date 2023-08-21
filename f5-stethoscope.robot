@@ -31,11 +31,11 @@ Verify SSH Connectivity
     [Tags]    critical
     Set Log Level    trace
     TRY
-        Open Connection    ${host} 
-        Log In    ${user}    ${pass}
+        SSHLibrary.Open Connection    ${host} 
+        SSHLibrary.Log In    ${user}    ${pass}
         Run BASH Echo Test
     EXCEPT    Error connecting to SSH 
-        Close All Connections
+        SSHLibrary.Close All Connections
         Fatal Error
     END
         Close All Connections
