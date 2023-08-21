@@ -17,6 +17,7 @@ ${pass}
 Check for Required Variables
     [Documentation]    Ensures that the required variables are present
     [Tags]    critical
+    Set Log Level    trace
     TRY
         Should Not Be Empty    ${host}
         Should Not Be Empty    ${user}
@@ -27,15 +28,21 @@ Check for Required Variables
 
 Verify SSH Connectivity
     [Documentation]    Logs into the BIG-IP via SSH, executes a BASH command and validates the expected response
-    set log level    trace
-    Wait until Keyword Succeeds    3x    5 seconds    Open Connection    ${host}
-    Log In    ${user}    ${pass}
-    Run BASH Echo Test
-    Close All Connections
+    [Tags]    critical
+    Set Log Level    trace
+    TRY
+        Wait until Keyword Succeeds    3x    5 seconds    Open Connection    ${host} 
+        Log In    ${user}    ${pass}
+        Run BASH Echo Test
+    EXCEPT    message
+        Close All Connections
+        Fatal Error
+    END
+        Close All Connections
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
-    set log level    trace
+    Set Log Level    trace
     Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 *** Keywords ***
