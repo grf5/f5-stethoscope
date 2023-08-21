@@ -31,7 +31,7 @@ Verify SSH Connectivity
     [Tags]    critical
     Set Log Level    trace
     TRY
-        Wait until Keyword Succeeds    5x    2 seconds    Open Connection    ${host} 
+        Open Connection    ${host} 
         Log In    ${user}    ${pass}
         Run BASH Echo Test
     EXCEPT    Error connecting to SSH 
