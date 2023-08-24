@@ -2,10 +2,12 @@
 Documentation        F5 stethoscope is a Robot Framework script that checks the generic health
 ...                  of BIG-IP devices.
 ...    
-Library    String
-Library    SSHLibrary    timeout=5 seconds    loglevel=trace
-Library    RequestsLibrary
-Library    Collections
+Library            String
+Library            SSHLibrary    timeout=5 seconds    loglevel=trace
+Library            RequestsLibrary
+Library            Collections
+Suite Setup        Set Log Level    trace
+Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
 *** Variables ***
 # To specify the BIG-IP host from the cli, use the following syntax:
@@ -18,7 +20,6 @@ ${pass}    default
 Check for Required Variables
     [Documentation]    Ensures that the required variables are present
     [Tags]    critical
-    Set Log Level    trace
     TRY
         Should Not Be Empty    ${host}
         Should Not Be Empty    ${user}
@@ -27,17 +28,19 @@ Check for Required Variables
         Fatal Error
     END
 
+
 Verify SSH Connectivity
     [Documentation]    Logs into the BIG-IP via SSH, executes a BASH command and validates the expected response
-    [Tags]    critical
-    Set Log Level    trace
     TRY
         ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${host} 
         ${SSHLoginOutput}    SSHLibrary.Log In    ${user}    ${pass}
-    EXCEPT    Error connecting to SSH 
+    EXCEPT
         Log    Could not connect to SSH.
         SSHLibrary.Close All Connections
         ${ssh_reachable}    ${False}
+    ELSE
+        Log    Successfully connected to SSH
+        Set Global Variable    ${ssh_reachable}    ${True}
     END
         Close All Connections
     # Checking to see that prompt includes (tmos)# for tmsh or the default bash prompt
@@ -45,135 +48,127 @@ Verify SSH Connectivity
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
-    Set Log Level    trace
     TRY
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
-    EXCEPT    message
+    EXCEPT
         Log    Could not connect to iControl REST.
-        ${api_reachable}    ${False}
+        Set Global Variable    ${api_reachable}    ${False}
+    ELSE
+        Log    Successfully connected to iControl REST API
+        Set Global Variable    ${api_reachable}    ${True}
+    END
+
+Verify Connectivty Availability
+    [Documentation]    Ensure that SSH or REST is available
+    IF    ${api_reachable} == ${True}
+        Log    API Connectivity is available.
+    ELSE IF    ${ssh_reachable} == ${True}
+        Log    SSH Connectivity is available
+    ELSE
+        Fatal Error    No connectivity to device via SSH or iControl REST API
     END
 
 Retrieve Hostname
     [Documentation]
-    Set Log Level    trace
-    ${retrieved_hostname}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_hostname}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_hostname}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
     [Documentation]
-    Set Log Level    trace
+
+Retrieve BIG-IP TMOS Version
+    [Documentation]    Retrieves the current TMOS version of the device 
 
 Retrieve NTP Configuration
     [Documentation]
-    Set Log Level    trace
 
 Verify NTP Status
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Current CPU Utilization
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Current Memory Utilization
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Disk Space Utilization
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Provisioned Software Modules
     [Documentation]
-    Set Log Level    trace
 
 List All System Database Variables
     [Documentation]
-    Set Log Level    trace
 
 Retrieve High Availability Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve SSL Certificate Metadata
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Interface Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Interface Statistics
     [Documentation]
-    Set Log Level    trace
 
 Retrieve VLAN Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve VLAN Statistics
     [Documentation]
-    Set Log Level    trace
 
 Retrive Route Domain Information
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Authentication Partition Information
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Trunk Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Trunk Statistics
     [Documentation]
-    Set Log Level    trace
 
 Retrive Self-IP Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Self-IP Statistics
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Static Route Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Dynamic Route Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Virtual Server Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Virtual Server Statistics
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Pool Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrive Pool Statistics
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Policy Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve Monitor Configuration
     [Documentation]
-    Set Log Level    trace
 
 Retrieve SNAT Configuration
     [Documentation]
-    Set Log Level    trace
 
+Retrieve Full Text Configuration
+    [Documentation]    Retrieves the full BIG-IP configuration via list output
+
+Create Comparable Output Block
+    [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
+    
 
 *** Keywords ***
 BIG-IP iControl BasicAuth GET    
@@ -212,3 +207,11 @@ Retrieve BIG-IP Hostname via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
     [Return]    ${configured_hostname}
+
+Retrieve BIG-IP Hostname via SSH
+    [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${hostname}    SSHLibrary.Execute Command    tmsh show sys global-settings hostname    
+    [Return]    ${hostname}
