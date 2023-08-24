@@ -3,7 +3,7 @@ Documentation        F5 stethoscope is a Robot Framework script that checks the 
 ...                  of BIG-IP devices.
 ...    
 Library            String
-Library            SSHLibrary    timeout=5 seconds    loglevel=trace
+Library            SSHLibrary    timeout=10 seconds    loglevel=trace
 Library            RequestsLibrary
 Library            Collections
 Suite Setup        Set Log Level    trace
@@ -242,7 +242,7 @@ Retrieve Full Text Configuration
 Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
     Log    ***API Retrieval***\nHostname: ${retrieved_hostname_api}\nTMOS Version: ${retrieved_version_api}\nLicense: ${retrieved_license_api}\n
-    Log    ***SSH Retrieval***\nHostname: ${retrieved_hostname_ssh}\nTMOS Version: ${retrieved_version_ssh}\nLicense: ${retreived_license_ssh}\n
+    Log    ***SSH Retrieval***\nHostname: ${retrieved_hostname_ssh}\nTMOS Version: ${retrieved_version_ssh}\nLicense: ${retrieved_license_ssh}\n
 
 *** Keywords ***
 BIG-IP iControl BasicAuth GET    
