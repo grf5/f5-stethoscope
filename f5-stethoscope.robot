@@ -70,108 +70,173 @@ Verify Connectivty Availability
 
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
-    ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
-    ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
-    ${retrieved_version}    Retrieve BIG-IP Version via iControl REST    $bigip_host    $bigip_username    $bigip_password
+    Set Global Variable    ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
     
 Retrieve NTP Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_ntp_config_api}
+    Set Global Variable    ${retrieved_ntp_config_ssh}
 
 Verify NTP Status
     [Documentation]
+    Set Global Variable    ${retrieved_ntp_status_api}
+    Set Global Variable    ${retrieved_ntp_status_ssh}
 
 Retrieve Current CPU Utilization
     [Documentation]
+    Set Global Variable    ${retrieved_cpu_stats_api}
+    Set Global Variable    ${retrieved_cpu_stats_ssh}
 
 Retrieve Current Memory Utilization
     [Documentation]
+    Set Global Variable    ${retrieved_mem_stats_api}
+    Set Global Variable    ${retrieved_mem_stats_ssh}
 
 Retrieve Disk Space Utilization
     [Documentation]
+    Set Global Variable    ${retrieved_disk_stats_api}
+    Set Global Variable    ${retrieved_disk_stats_ssh}
 
 Retrieve Provisioned Software Modules
     [Documentation]
+    Set Global Variable    ${retrieved_provisioning_api}
+    Set Global Variable    ${retrieved_provisioning_ssh}
 
 List All System Database Variables
     [Documentation]
+    Set Global Variable    ${retrieved_db_vars_api}
+    Set Global Variable    ${retrieved_db_vars_ssh}
 
 Retrieve High Availability Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_ha_config_api}
+    Set Global Variable    ${retrieved_ha_config_ssh}
 
 Retrieve SSL Certificate Metadata
     [Documentation]
+    Set Global Variable    ${retrieved_ssl_certs_api}
+    Set Global Variable    ${retrieved_ssl_certs_ssh}
 
 Retrieve Interface Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_int_config_api}
+    Set Global Variable    ${retrieved_int_config_ssh}
 
 Retrieve Interface Statistics
     [Documentation]
+    Set Global Variable    ${retrieved_int_stats_api}
+    Set Global Variable    ${retrieved_int_stats_ssh}
 
 Retrieve VLAN Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_vlan_config_api}
+    Set Global Variable    ${retrieved_vlan_config_ssh}
 
 Retrieve VLAN Statistics
     [Documentation]
+    Set Global Variable    ${retrieved_vlan_stats_api}
+    Set Global Variable    ${retrieved_vlan_stats_ssh}
 
 Retrive Route Domain Information
     [Documentation]
+    Set Global Variable    ${retrieved_route_domain_config_api}
+    Set Global Variable    ${retrieved_route_domain_config_ssh}
 
 Retrieve Authentication Partition Information
     [Documentation]
+    Set Global Variable    ${retrieved_part_config_api}
+    Set Global Variable    ${retrieved_part_config_ssh}
 
 Retrieve Trunk Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_trunk_config_api}
+    Set Global Variable    ${retrieved_trunk_config_ssh}
 
 Retrieve Trunk Statistics
     [Documentation]
+    Set Global Variable    ${retrieved_trunk_stats_api}
+    Set Global Variable    ${retrieved_trunk_stats_ssh}
 
 Retrive Self-IP Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_selfip_config_api}
+    Set Global Variable    ${retrieved_selfip_config_ssh}
 
 Retrieve Self-IP Statistics
     [Documentation]
+    Set Global Variable    ${retrieved_selfip_stats_api}
+    Set Global Variable    ${retrieved_selfip_stats_ssh}
 
 Retrieve Static Route Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_static_routing_config_api}
+    Set Global Variable    ${retrieved_static_routing_config_ssh}
 
 Retrieve Dynamic Route Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_dynamic_routing_config_api}
+    Set Global Variable    ${retrieved_dynamic_routing_config_ssh}
+
+Retrieve Dynamic Route Status
+    [Documentation]
+    Set Global Variable    ${retrieved_dynamic_routing_status_api}
+    Set Global Variable    ${retrieved_dynamic_routing_status_ssh}
 
 Retrieve Virtual Server Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_virtual_config_api}
+    Set Global Variable    ${retrieved_virtual_config_ssh}
 
 Retrieve Virtual Server Statistics
     [Documentation]
-
+    Set Global Variable    ${retrieved_virtual_stats_api}
+    Set Global Variable    ${retrieved_virtual_stats_ssh}
+    
 Retrieve Pool Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_pool_config_api}
+    Set Global Variable    ${retrieved_pool_config_ssh}
 
 Retrive Pool Statistics
     [Documentation]
+    Set Global Variable    ${retrieved_pool_stats_api}
+    Set Global Variable    ${retrieved_pool_stats_ssh}
 
 Retrieve Policy Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_policy_config_api}
+    Set Global Variable    ${retrieved_policy_config_ssh}
 
 Retrieve Monitor Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_monitor_config_api}
+    Set Global Variable    ${retrieved_monitor_config_ssh}
 
 Retrieve SNAT Configuration
     [Documentation]
+    Set Global Variable    ${retrieved_snat_config_api}
+    Set Global Variable    ${retrieved_snat_config_ssh}
 
 Retrieve Full Text Configuration
     [Documentation]    Retrieves the full BIG-IP configuration via list output
+    Set Global Variable    ${retrieved__api}
+    Set Global Variable    ${retrieved__ssh}
 
 Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
-    
+    Log    API Hostname: ${retrieved_hostname_api}
+    ...    TMOS Version: ${retrieved_version_api}
 
 *** Keywords ***
 BIG-IP iControl BasicAuth GET    
@@ -185,13 +250,22 @@ BIG-IP iControl BasicAuth GET
     [Return]    ${api_response}
 
 Retrieve BIG-IP Version via iControl REST
-    [Documentation]    Shows the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
+    [Documentation]    Retrieves the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/version
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
+
+Retrieve BIG-IP Version via SSH
+    [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${version}    SSHLibrary.Execute Command    tmsh show sys version
+    [Teardown]    SSHLibrary.Close Connection
+    [Return]    ${version}
 
 Retrieve BIG-IP License Information via iControl REST
     [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
