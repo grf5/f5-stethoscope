@@ -213,5 +213,5 @@ Retrieve BIG-IP Hostname via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    tmsh show sys global-settings hostname    
+    ${hostname}    SSHLibrary.Execute Command    tmsh list sys global-settings hostname    
     [Return]    ${hostname}
