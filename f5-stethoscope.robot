@@ -76,7 +76,8 @@ Retrieve Hostname
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
     ${retrieved_license}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-
+    Log    ${retrieved_license}
+    
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     ${retrieved_version}    Retrieve BIG-IP Version via iControl REST    $bigip_host    $bigip_username    $bigip_password
@@ -190,7 +191,7 @@ Retrieve BIG-IP Version via iControl REST
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
     [Teardown]    Run Keywords   Delete All Sessions
-    [Return]    ${api_response}
+    [Return]    ${api_response.json()}
 
 Retrieve BIG-IP License Information via iControl REST
     [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
@@ -199,7 +200,7 @@ Retrieve BIG-IP License Information via iControl REST
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
     [Teardown]    Run Keywords   Delete All Sessions
-    [Return]    ${api_response}
+    [Return]    ${api_response.json()}
 
 Retrieve CPU Statistics via iControl REST
     [Documentation]    Retrieves CPU utilization statistics on the BIG-IP (https://support.f5.com/csp/article/K15468)
@@ -209,7 +210,7 @@ Retrieve CPU Statistics via iControl REST
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
     [Teardown]    Run Keywords   Delete All Sessions
-    [Return]    ${api_response}
+    [Return]    ${api_response.json()}
 
 Retrieve BIG-IP Hostname via iControl REST
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
