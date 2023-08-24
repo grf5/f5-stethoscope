@@ -40,13 +40,13 @@ Verify SSH Connectivity
     EXCEPT
         Log    Could not connect to SSH
         SSHLibrary.Close All Connections
-        Append to API Output    api_connectivity    ${False}
-        Append to Text Output    "API Connecitivity: Failed\n"
+        Append to API Output    ssh_connectivity    ${False}
+        Append to Text Output    SSH Connecitivity: Failed
         Set Global Variable    ${ssh_reachable}    ${False}
     ELSE
         Log    Successfully connected to SSH
-        Append to API Output    api_connectivity    ${True}
-        Append to Text Output    "API Connecitivity: Succeeded\n"
+        Append to API Output    ssh_connectivity    ${True}
+        Append to Text Output    SSH Connecitivity: Succeeded
         Set Global Variable    ${ssh_reachable}    ${True}
     END
         Close All Connections
@@ -60,17 +60,20 @@ Test IPv4 iControlREST API Connectivity
     EXCEPT
         Log    Could not connect to iControl REST
         Append to API Output    api_connectivity    ${True}
+        Append to Text Output    API Connecitivity: Succeeded
         Set Global Variable    ${api_reachable}    ${True}
 
     ELSE
         Log    Successfully connected to iControl REST API
         Append to API Output    api_connectivity    ${False}
+        Append to Text Output    API Connecitivity: Failed
         Set Global Variable    ${api_reachable}    ${True}
     END
 
 Verify Connectivty Availability
     [Documentation]    Ensure that SSH or REST is available
     IF    ${api_reachable} == ${False} and ${ssh_reachable} == ${False}
+        Append to Text Output    Fatal error: No SSH or API Connectivity succeeded
         Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${host} with user '${user}'
     END
 
@@ -82,35 +85,33 @@ Retrieve Hostname
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Append to Text Output    Hostname: ${retrieved_hostname_ssh}\n
+        Append to Text Output    Hostname: ${retrieved_hostname_ssh}
     END
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
-    Set Global Variable    ${retrieved_license_api}
     IF    ${api_reachable} == ${True}
         ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Set Global Variable    ${retrieved_license_ssh}
+        Append to API Output    license    ${retrieved_license_api}
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Append to Text Output    License: ${retrieved_license_ssh}
     END
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
-    Set Global Variable    ${retrieved_version_api}
-    Set Global Variable    ${retrieved_version_ssh}
     IF    ${api_reachable} == ${True}
         ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Append to API Output    version    ${retrieved_version_api}
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Append to Text Output    BIG-IP Version: ${retrieved_version_ssh}
     END
 
 Retrieve NTP Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_ntp_config_api}
-    Set Global Variable    ${retrieved_ntp_config_ssh}
     IF    ${api_reachable} == ${True}
         Log    Placeholder
     END
@@ -441,6 +442,14 @@ Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
     IF    ${api_reachable} == ${True}
         Log Dictionary   ${api_info_block}
+    END
+
+Record Text Output from Tests
+    [Documentation]    Displays the contents of the plain text file output
+    TRY
+        Get File    ${text_output_file_name}
+    EXCEPT    message
+        Log    Could not retrieve text file output        
     END
 
 *** Keywords ***
