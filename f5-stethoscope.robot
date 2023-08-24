@@ -6,6 +6,7 @@ Library            String
 Library            SSHLibrary    timeout=10 seconds    loglevel=trace
 Library            RequestsLibrary
 Library            Collections
+Library            OperatingSystem
 Suite Setup        Set Log Level    trace
 Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
@@ -15,8 +16,8 @@ Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsL
 ${host}    192.168.1.245
 ${user}    admin
 ${pass}    default
+${text_output_file_name}    device_info.txt
 &{api_info_block}
-${ssh_info_block}
 
 *** Test Cases ***
 Check for Required Variables
@@ -436,13 +437,10 @@ Retrieve Full Text Configuration
         Log    Placeholder
     END
 
-Create Comparable Output Block
+Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
     IF    ${api_reachable} == ${True}
         Log Dictionary   ${api_info_block}
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    ${ssh_info_block}
     END
 
 *** Keywords ***
@@ -455,7 +453,7 @@ Append to API Output
 Append to Text Output
     [Documentation]    Builds the plain text output for SSH information
     [Arguments]    ${text}
-    ${ssh_info_block}    Catenate    ${ssh_info_block}    ${text}
+    Append to File    ${text_output_file_name}    ${text}
     [Return]
 
 BIG-IP iControl BasicAuth GET    
