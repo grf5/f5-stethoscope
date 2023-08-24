@@ -241,9 +241,7 @@ Retrieve Full Text Configuration
 
 Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
-    Log    API Hostname: ${retrieved_hostname_api}
-    ...    TMOS Version: ${retrieved_version_api}
-    ...    License: ${retrieved_license_api}
+    Log    API Hostname: ${retrieved_hostname_api}\nTMOS Version: ${retrieved_version_api}\nLicense: ${retrieved_license_api}
 
 *** Keywords ***
 BIG-IP iControl BasicAuth GET    
