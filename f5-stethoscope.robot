@@ -54,12 +54,12 @@ Test IPv4 iControlREST API Connectivity
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
     EXCEPT
         Log    Could not connect to iControl REST
-        Append to API Output    {"api_connectivity":${True})
+        Append to API Output    api_connectivity    ${True}
         Set Global Variable    ${api_reachable}    ${True}
 
     ELSE
         Log    Successfully connected to iControl REST API
-        Append to API Output    {"api_connectivity":${False})
+        Append to API Output    api_connectivity    ${False}
         Set Global Variable    ${api_reachable}    ${True}
     END
 
@@ -73,11 +73,11 @@ Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     IF    ${api_reachable} == ${True}
         ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Append to API Output    $variable_name    $json
+        Append to API Output    hostname    ${retrieved_hostname_api}
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Set Global Variable    ${retrieved_hostname_ssh}
+        Append to Text Output    Hostname: ${retrieved_hostname_ssh}\n
     END
 
 Retrieve License Information
@@ -444,8 +444,8 @@ Create Comparable Output Block
 *** Keywords ***
 Append to API Output
     [Documentation]    Builds the JSON output block for API information
-    [Arguments]    ${json}
-    Set To Dictionary    &{api_info_block}    json.loads(${json})
+    [Arguments]    ${key}    ${value}
+    Set To Dictionary    &{api_info_block}    ${key}    ${value}
     [Return]
 
 Append to Text Output
