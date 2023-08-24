@@ -10,9 +10,9 @@ Library    Collections
 *** Variables ***
 # To specify the BIG-IP host from the cli, use the following syntax:
 # robot f5-stethoscope.robot --host 192.168.1.1 --user admin --pass g00dgrAvy_1984$
-${host}
-${user}
-${pass}
+${host}    192.168.1.245
+${user}    admin
+${pass}    default
 
 *** Test Cases ***
 Check for Required Variables
@@ -35,16 +35,145 @@ Verify SSH Connectivity
         ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${host} 
         ${SSHLoginOutput}    SSHLibrary.Log In    ${user}    ${pass}
     EXCEPT    Error connecting to SSH 
+        Log    Could not connect to SSH.
         SSHLibrary.Close All Connections
-        Fatal Error
+        ${ssh_reachable}    ${False}
     END
         Close All Connections
+    # Checking to see that prompt includes (tmos)# for tmsh or the default bash prompt
     Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     Set Log Level    trace
-    Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    TRY
+        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
+    EXCEPT    message
+        Log    Could not connect to iControl REST.
+        ${api_reachable}    ${False}
+    END
+
+Retrieve Hostname
+    [Documentation]
+    Set Log Level    trace
+    ${retrieved_hostname}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+
+Retrieve License Information
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve NTP Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Verify NTP Status
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Current CPU Utilization
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Current Memory Utilization
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Disk Space Utilization
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Provisioned Software Modules
+    [Documentation]
+    Set Log Level    trace
+
+List All System Database Variables
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve High Availability Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve SSL Certificate Metadata
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Interface Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Interface Statistics
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve VLAN Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve VLAN Statistics
+    [Documentation]
+    Set Log Level    trace
+
+Retrive Route Domain Information
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Authentication Partition Information
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Trunk Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Trunk Statistics
+    [Documentation]
+    Set Log Level    trace
+
+Retrive Self-IP Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Self-IP Statistics
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Static Route Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Dynamic Route Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Virtual Server Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Virtual Server Statistics
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Pool Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrive Pool Statistics
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Policy Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve Monitor Configuration
+    [Documentation]
+    Set Log Level    trace
+
+Retrieve SNAT Configuration
+    [Documentation]
+    Set Log Level    trace
+
 
 *** Keywords ***
 Retrieve BIG-IP Version via iControl REST
@@ -65,11 +194,20 @@ BIG-IP iControl BasicAuth GET
     [Teardown]    Delete All Sessions
     [Return]    ${api_response}
 
-Retrieve BIG-IP Version
+Retrieve BIG-IP Version via iControl REST
     [Documentation]    Shows the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/version
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    200
+    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response}
 
+Retrieve CPU Statistics via iControl REST
+    [Documentation]    Retrieves CPU utilization statistics on the BIG-IP (https://support.f5.com/csp/article/K15468)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/cpu
+    set test variable    ${api_uri}
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    should be equal as strings    ${api_response.status_code}    200
+    [Return]    ${api_response}
