@@ -60,189 +60,381 @@ Test IPv4 iControlREST API Connectivity
 
 Verify Connectivty Availability
     [Documentation]    Ensure that SSH or REST is available
-    IF    ${api_reachable} == ${True}
-        Log    API Connectivity is available.
-    ELSE IF    ${ssh_reachable} == ${True}
-        Log    SSH Connectivity is available
-    ELSE
+    IF    ${api_reachable} == ${False} and ${ssh_reachable} == ${False}
         Fatal Error    No connectivity to device via SSH or iControl REST API
     END
 
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     Set Global Variable    ${retrieved_hostname_api}    ${EMPTY}
-    ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
     Set Global Variable    ${retrieved_hostname_ssh}    ${EMPTY}
-    ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    IF    ${api_reachable} == ${True}
+        ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    END
+    IF   ${ssh_reachable} == ${True}
+        ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    END
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
-    Set Global Variable    ${retrieved_license_api}    ${EMPTY}
-    ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
     Set Global Variable    ${retrieved_license_ssh}    ${EMPTY}
-    ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_license_api}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    END
+    IF   ${ssh_reachable} == ${True}
+        ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    END
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     Set Global Variable    ${retrieved_version_api}    ${EMPTY}
-    ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
     Set Global Variable    ${retrieved_version_ssh}    ${EMPTY}
-    ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    IF    ${api_reachable} == ${True}
+        ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    END
+    IF   ${ssh_reachable} == ${True}
+        ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    END
 
 Retrieve NTP Configuration
     [Documentation]
     Set Global Variable    ${retrieved_ntp_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_ntp_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Verify NTP Status
     [Documentation]
     Set Global Variable    ${retrieved_ntp_status_api}    ${EMPTY}
     Set Global Variable    ${retrieved_ntp_status_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Current CPU Utilization
     [Documentation]
     Set Global Variable    ${retrieved_cpu_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_cpu_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Current Memory Utilization
     [Documentation]
     Set Global Variable    ${retrieved_mem_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_mem_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Disk Space Utilization
     [Documentation]
     Set Global Variable    ${retrieved_disk_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_disk_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Provisioned Software Modules
     [Documentation]
     Set Global Variable    ${retrieved_provisioning_api}    ${EMPTY}
     Set Global Variable    ${retrieved_provisioning_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 List All System Database Variables
     [Documentation]
     Set Global Variable    ${retrieved_db_vars_api}    ${EMPTY}
     Set Global Variable    ${retrieved_db_vars_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve High Availability Configuration
     [Documentation]
     Set Global Variable    ${retrieved_ha_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_ha_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve SSL Certificate Metadata
     [Documentation]
     Set Global Variable    ${retrieved_ssl_certs_api}    ${EMPTY}
     Set Global Variable    ${retrieved_ssl_certs_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Interface Configuration
     [Documentation]
     Set Global Variable    ${retrieved_int_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_int_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Interface Statistics
     [Documentation]
     Set Global Variable    ${retrieved_int_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_int_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve VLAN Configuration
     [Documentation]
     Set Global Variable    ${retrieved_vlan_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_vlan_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve VLAN Statistics
     [Documentation]
     Set Global Variable    ${retrieved_vlan_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_vlan_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrive Route Domain Information
     [Documentation]
     Set Global Variable    ${retrieved_route_domain_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_route_domain_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Authentication Partition Information
     [Documentation]
     Set Global Variable    ${retrieved_part_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_part_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Trunk Configuration
     [Documentation]
     Set Global Variable    ${retrieved_trunk_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_trunk_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Trunk Statistics
     [Documentation]
     Set Global Variable    ${retrieved_trunk_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_trunk_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrive Self-IP Configuration
     [Documentation]
     Set Global Variable    ${retrieved_selfip_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_selfip_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Self-IP Statistics
     [Documentation]
     Set Global Variable    ${retrieved_selfip_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_selfip_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Static Route Configuration
     [Documentation]
     Set Global Variable    ${retrieved_static_routing_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_static_routing_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Dynamic Route Configuration
     [Documentation]
     Set Global Variable    ${retrieved_dynamic_routing_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_dynamic_routing_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Dynamic Route Status
     [Documentation]
     Set Global Variable    ${retrieved_dynamic_routing_status_api}    ${EMPTY}
     Set Global Variable    ${retrieved_dynamic_routing_status_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Virtual Server Configuration
     [Documentation]
     Set Global Variable    ${retrieved_virtual_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_virtual_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Virtual Server Statistics
     [Documentation]
     Set Global Variable    ${retrieved_virtual_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_virtual_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
     
 Retrieve Pool Configuration
     [Documentation]
     Set Global Variable    ${retrieved_pool_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_pool_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrive Pool Statistics
     [Documentation]
     Set Global Variable    ${retrieved_pool_stats_api}    ${EMPTY}
     Set Global Variable    ${retrieved_pool_stats_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Policy Configuration
     [Documentation]
     Set Global Variable    ${retrieved_policy_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_policy_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Monitor Configuration
     [Documentation]
     Set Global Variable    ${retrieved_monitor_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_monitor_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve SNAT Configuration
     [Documentation]
     Set Global Variable    ${retrieved_snat_config_api}    ${EMPTY}
     Set Global Variable    ${retrieved_snat_config_ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Retrieve Full Text Configuration
     [Documentation]    Retrieves the full BIG-IP configuration via list output
     Set Global Variable    ${retrieved__api}    ${EMPTY}
     Set Global Variable    ${retrieved__ssh}    ${EMPTY}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
+    END
 
 Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
-    Log    ***API Retrieval***\nHostname: ${retrieved_hostname_api}\nTMOS Version: ${retrieved_version_api}\nLicense: ${retrieved_license_api}\n
-    Log    ***SSH Retrieval***\nHostname: ${retrieved_hostname_ssh}\nTMOS Version: ${retrieved_version_ssh}\nLicense: ${retrieved_license_ssh}\n
+    IF    ${api_reachable} == ${True}
+        Log    ***API Retrieval***\nHostname: ${retrieved_hostname_api}\nTMOS Version: ${retrieved_version_api}\nLicense: ${retrieved_license_api}\n
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    ***SSH Retrieval***\nHostname: ${retrieved_hostname_ssh}\nTMOS Version: ${retrieved_version_ssh}\nLicense: ${retrieved_license_ssh}\n
+    END
 
 *** Keywords ***
 BIG-IP iControl BasicAuth GET    
