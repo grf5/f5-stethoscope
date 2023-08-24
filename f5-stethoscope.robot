@@ -190,6 +190,15 @@ Retrieve BIG-IP Version via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response}
 
+Retrieve BIG-IP License Information via iControl REST
+    [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
+    [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/license
+    ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    should be equal as strings    ${api_response.status_code}    ${200}
+    [Teardown]    Run Keywords   Delete All Sessions
+    [Return]    ${api_response}
+
 Retrieve CPU Statistics via iControl REST
     [Documentation]    Retrieves CPU utilization statistics on the BIG-IP (https://support.f5.com/csp/article/K15468)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
@@ -197,6 +206,7 @@ Retrieve CPU Statistics via iControl REST
     set test variable    ${api_uri}
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
+    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response}
 
 Retrieve BIG-IP Hostname via iControl REST
@@ -206,6 +216,7 @@ Retrieve BIG-IP Hostname via iControl REST
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
+    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${configured_hostname}
 
 Retrieve BIG-IP Hostname via SSH
@@ -214,4 +225,5 @@ Retrieve BIG-IP Hostname via SSH
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${hostname}    SSHLibrary.Execute Command    tmsh list sys global-settings hostname    
+    [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
