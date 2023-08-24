@@ -191,7 +191,7 @@ Retrieve BIG-IP Version via iControl REST
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/version
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    should be equal as strings    ${api_response.status_code}    200
+    should be equal as strings    ${api_response.status_code}    ${200}
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response}
 
@@ -201,7 +201,7 @@ Retrieve CPU Statistics via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/cpu
     set test variable    ${api_uri}
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    should be equal as strings    ${api_response.status_code}    200
+    should be equal as strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
 Retrieve BIG-IP Hostname via iControl REST
@@ -209,6 +209,6 @@ Retrieve BIG-IP Hostname via iControl REST
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/global-settings
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    Should Be Equal As Strings    ${api_response.status_code}    200
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
     ${configured_hostname}    get from dictionary    ${api_response.json}    hostname
     [Return]    ${configured_hostname}
