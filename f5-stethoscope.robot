@@ -66,13 +66,13 @@ Verify Connectivty Availability
 
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
-    Set Global Variable    ${retrieved_hostname_api}    ${EMPTY}
-    Set Global Variable    ${retrieved_hostname_ssh}    ${EMPTY}
     IF    ${api_reachable} == ${True}
         ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Set Global Variable    ${retrieved_hostname_api}
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Set Global Variable    ${retrieved_hostname_ssh}
     END
 
 Retrieve License Information
