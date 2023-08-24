@@ -77,167 +77,167 @@ Retrieve Hostname
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
-    Set Global Variable    ${retrieved_license_api}
+    Set Global Variable    ${retrieved_license_api}    ${EMPTY}
     ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Set Global Variable    ${retrieved_license_ssh}
+    Set Global Variable    ${retrieved_license_ssh}    ${EMPTY}
     ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
-    Set Global Variable    ${retrieved_version_api}
+    Set Global Variable    ${retrieved_version_api}    ${EMPTY}
     ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Set Global Variable    ${retrieved_version_ssh}
+    Set Global Variable    ${retrieved_version_ssh}    ${EMPTY}
     ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve NTP Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_ntp_config_api}
-    Set Global Variable    ${retrieved_ntp_config_ssh}
+    Set Global Variable    ${retrieved_ntp_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_ntp_config_ssh}    ${EMPTY}
 
 Verify NTP Status
     [Documentation]
-    Set Global Variable    ${retrieved_ntp_status_api}
-    Set Global Variable    ${retrieved_ntp_status_ssh}
+    Set Global Variable    ${retrieved_ntp_status_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_ntp_status_ssh}    ${EMPTY}
 
 Retrieve Current CPU Utilization
     [Documentation]
-    Set Global Variable    ${retrieved_cpu_stats_api}
-    Set Global Variable    ${retrieved_cpu_stats_ssh}
+    Set Global Variable    ${retrieved_cpu_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_cpu_stats_ssh}    ${EMPTY}
 
 Retrieve Current Memory Utilization
     [Documentation]
-    Set Global Variable    ${retrieved_mem_stats_api}
-    Set Global Variable    ${retrieved_mem_stats_ssh}
+    Set Global Variable    ${retrieved_mem_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_mem_stats_ssh}    ${EMPTY}
 
 Retrieve Disk Space Utilization
     [Documentation]
-    Set Global Variable    ${retrieved_disk_stats_api}
-    Set Global Variable    ${retrieved_disk_stats_ssh}
+    Set Global Variable    ${retrieved_disk_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_disk_stats_ssh}    ${EMPTY}
 
 Retrieve Provisioned Software Modules
     [Documentation]
-    Set Global Variable    ${retrieved_provisioning_api}
-    Set Global Variable    ${retrieved_provisioning_ssh}
+    Set Global Variable    ${retrieved_provisioning_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_provisioning_ssh}    ${EMPTY}
 
 List All System Database Variables
     [Documentation]
-    Set Global Variable    ${retrieved_db_vars_api}
-    Set Global Variable    ${retrieved_db_vars_ssh}
+    Set Global Variable    ${retrieved_db_vars_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_db_vars_ssh}    ${EMPTY}
 
 Retrieve High Availability Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_ha_config_api}
-    Set Global Variable    ${retrieved_ha_config_ssh}
+    Set Global Variable    ${retrieved_ha_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_ha_config_ssh}    ${EMPTY}
 
 Retrieve SSL Certificate Metadata
     [Documentation]
-    Set Global Variable    ${retrieved_ssl_certs_api}
-    Set Global Variable    ${retrieved_ssl_certs_ssh}
+    Set Global Variable    ${retrieved_ssl_certs_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_ssl_certs_ssh}    ${EMPTY}
 
 Retrieve Interface Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_int_config_api}
-    Set Global Variable    ${retrieved_int_config_ssh}
+    Set Global Variable    ${retrieved_int_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_int_config_ssh}    ${EMPTY}
 
 Retrieve Interface Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_int_stats_api}
-    Set Global Variable    ${retrieved_int_stats_ssh}
+    Set Global Variable    ${retrieved_int_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_int_stats_ssh}    ${EMPTY}
 
 Retrieve VLAN Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_vlan_config_api}
-    Set Global Variable    ${retrieved_vlan_config_ssh}
+    Set Global Variable    ${retrieved_vlan_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_vlan_config_ssh}    ${EMPTY}
 
 Retrieve VLAN Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_vlan_stats_api}
-    Set Global Variable    ${retrieved_vlan_stats_ssh}
+    Set Global Variable    ${retrieved_vlan_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_vlan_stats_ssh}    ${EMPTY}
 
 Retrive Route Domain Information
     [Documentation]
-    Set Global Variable    ${retrieved_route_domain_config_api}
-    Set Global Variable    ${retrieved_route_domain_config_ssh}
+    Set Global Variable    ${retrieved_route_domain_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_route_domain_config_ssh}    ${EMPTY}
 
 Retrieve Authentication Partition Information
     [Documentation]
-    Set Global Variable    ${retrieved_part_config_api}
-    Set Global Variable    ${retrieved_part_config_ssh}
+    Set Global Variable    ${retrieved_part_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_part_config_ssh}    ${EMPTY}
 
 Retrieve Trunk Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_trunk_config_api}
-    Set Global Variable    ${retrieved_trunk_config_ssh}
+    Set Global Variable    ${retrieved_trunk_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_trunk_config_ssh}    ${EMPTY}
 
 Retrieve Trunk Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_trunk_stats_api}
-    Set Global Variable    ${retrieved_trunk_stats_ssh}
+    Set Global Variable    ${retrieved_trunk_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_trunk_stats_ssh}    ${EMPTY}
 
 Retrive Self-IP Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_selfip_config_api}
-    Set Global Variable    ${retrieved_selfip_config_ssh}
+    Set Global Variable    ${retrieved_selfip_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_selfip_config_ssh}    ${EMPTY}
 
 Retrieve Self-IP Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_selfip_stats_api}
-    Set Global Variable    ${retrieved_selfip_stats_ssh}
+    Set Global Variable    ${retrieved_selfip_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_selfip_stats_ssh}    ${EMPTY}
 
 Retrieve Static Route Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_static_routing_config_api}
-    Set Global Variable    ${retrieved_static_routing_config_ssh}
+    Set Global Variable    ${retrieved_static_routing_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_static_routing_config_ssh}    ${EMPTY}
 
 Retrieve Dynamic Route Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_dynamic_routing_config_api}
-    Set Global Variable    ${retrieved_dynamic_routing_config_ssh}
+    Set Global Variable    ${retrieved_dynamic_routing_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_dynamic_routing_config_ssh}    ${EMPTY}
 
 Retrieve Dynamic Route Status
     [Documentation]
-    Set Global Variable    ${retrieved_dynamic_routing_status_api}
-    Set Global Variable    ${retrieved_dynamic_routing_status_ssh}
+    Set Global Variable    ${retrieved_dynamic_routing_status_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_dynamic_routing_status_ssh}    ${EMPTY}
 
 Retrieve Virtual Server Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_virtual_config_api}
-    Set Global Variable    ${retrieved_virtual_config_ssh}
+    Set Global Variable    ${retrieved_virtual_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_virtual_config_ssh}    ${EMPTY}
 
 Retrieve Virtual Server Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_virtual_stats_api}
-    Set Global Variable    ${retrieved_virtual_stats_ssh}
+    Set Global Variable    ${retrieved_virtual_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_virtual_stats_ssh}    ${EMPTY}
     
 Retrieve Pool Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_pool_config_api}
-    Set Global Variable    ${retrieved_pool_config_ssh}
+    Set Global Variable    ${retrieved_pool_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_pool_config_ssh}    ${EMPTY}
 
 Retrive Pool Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_pool_stats_api}
-    Set Global Variable    ${retrieved_pool_stats_ssh}
+    Set Global Variable    ${retrieved_pool_stats_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_pool_stats_ssh}    ${EMPTY}
 
 Retrieve Policy Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_policy_config_api}
-    Set Global Variable    ${retrieved_policy_config_ssh}
+    Set Global Variable    ${retrieved_policy_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_policy_config_ssh}    ${EMPTY}
 
 Retrieve Monitor Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_monitor_config_api}
-    Set Global Variable    ${retrieved_monitor_config_ssh}
+    Set Global Variable    ${retrieved_monitor_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_monitor_config_ssh}    ${EMPTY}
 
 Retrieve SNAT Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_snat_config_api}
-    Set Global Variable    ${retrieved_snat_config_ssh}
+    Set Global Variable    ${retrieved_snat_config_api}    ${EMPTY}
+    Set Global Variable    ${retrieved_snat_config_ssh}    ${EMPTY}
 
 Retrieve Full Text Configuration
     [Documentation]    Retrieves the full BIG-IP configuration via list output
-    Set Global Variable    ${retrieved__api}
-    Set Global Variable    ${retrieved__ssh}
+    Set Global Variable    ${retrieved__api}    ${EMPTY}
+    Set Global Variable    ${retrieved__ssh}    ${EMPTY}
 
 Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
