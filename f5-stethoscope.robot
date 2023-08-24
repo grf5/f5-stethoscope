@@ -15,8 +15,8 @@ Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsL
 ${host}    192.168.1.245
 ${user}    admin
 ${pass}    default
-${api_info_block}
-${ssh_info_block}
+&{api_info_block}
+&{ssh_info_block}
 
 *** Test Cases ***
 Check for Required Variables
@@ -445,7 +445,7 @@ Create Comparable Output Block
 Append to API Output
     [Documentation]    Builds the JSON output block for API information
     [Arguments]    ${json}
-    Set To Dictionary    ${api_info_block}    json.loads(${json})
+    Set To Dictionary    &{api_info_block}    json.loads(${json})
     [Return]
 
 Append to Text Output
