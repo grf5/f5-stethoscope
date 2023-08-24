@@ -16,7 +16,7 @@ ${host}    192.168.1.245
 ${user}    admin
 ${pass}    default
 &{api_info_block}
-&{ssh_info_block}
+${ssh_info_block}
 
 *** Test Cases ***
 Check for Required Variables
