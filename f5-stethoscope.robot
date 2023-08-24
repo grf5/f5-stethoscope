@@ -445,7 +445,7 @@ Create Comparable Output Block
 Append to API Output
     [Documentation]    Builds the JSON output block for API information
     [Arguments]    ${key}    ${value}
-    Set To Dictionary    &{api_info_block}    ${key}    ${value}
+    Set To Dictionary    ${api_info_block}    ${key}    ${value}
     [Return]
 
 Append to Text Output
