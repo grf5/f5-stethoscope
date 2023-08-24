@@ -210,6 +210,5 @@ Retrieve BIG-IP Hostname via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/global-settings
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    200
-    ${api_response_dict}    to json    ${api_response.text}
-    ${configured_hostname}    get from dictionary    ${api_response_dict}    hostname
+    ${configured_hostname}    get from dictionary    ${api_response.json}    hostname
     [Return]    ${configured_hostname}
