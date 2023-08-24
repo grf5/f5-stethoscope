@@ -39,9 +39,13 @@ Verify SSH Connectivity
     EXCEPT
         Log    Could not connect to SSH
         SSHLibrary.Close All Connections
-        ${ssh_reachable}    ${False}
+        Append to API Output    api_connectivity    ${False}
+        Append to Text Output    "API Connecitivity: Failed\n"
+        Set Global Variable    ${ssh_reachable}    ${False}
     ELSE
         Log    Successfully connected to SSH
+        Append to API Output    api_connectivity    ${True}
+        Append to Text Output    "API Connecitivity: Succeeded\n"
         Set Global Variable    ${ssh_reachable}    ${True}
     END
         Close All Connections
