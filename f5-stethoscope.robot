@@ -56,7 +56,7 @@ Test IPv4 iControlREST API Connectivity
 Retrieve Hostname
     [Documentation]
     Set Log Level    trace
-    ${retrieved_hostname}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    ${retrieved_hostname}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
     [Documentation]
@@ -176,14 +176,6 @@ Retrieve SNAT Configuration
 
 
 *** Keywords ***
-Retrieve BIG-IP Version via iControl REST
-    [Documentation]    Shows the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
-    [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/sys/version
-    ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    should be equal as strings    ${api_response.status_code}    200
-    [Return]    ${api_response}
-
 BIG-IP iControl BasicAuth GET    
     [Documentation]    Performs an iControl REST API GET call using basic auth (See pages 25-38 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}
@@ -211,3 +203,13 @@ Retrieve CPU Statistics via iControl REST
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    200
     [Return]    ${api_response}
+
+Retrieve BIG-IP Hostname via iControl REST
+    [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/global-settings
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${HTTP_RESPONSE_OK}
+    ${api_response_dict}    to json    ${api_response.text}
+    ${configured_hostname}    get from dictionary    ${api_response_dict}    hostname
+    [Return]    ${configured_hostname}
