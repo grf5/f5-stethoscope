@@ -435,7 +435,7 @@ Retrieve Full Text Configuration
 Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
     IF    ${api_reachable} == ${True}
-        Log Dictionary   &{api_info_block}
+        Log Dictionary   ${api_info_block}
     END
     IF   ${ssh_reachable} == ${True}
         Log    ${ssh_info_block}
