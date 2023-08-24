@@ -3,4 +3,4 @@
 # Disable self-signed certificate warning for BIG-IP
 export PYTHONWARNINGS='ignore:Unverified HTTPS request'
 
-robot --variable "host:10.1.1.4" --variable "user:admin" --variable "pass:f5c0nfig123!" f5-stethoscope.robot
+robot --variable "host:10.1.1.4" --variable "user:admin" --variable "pass:f5c0nfig123!" --output-dir /tmp/output f5-stethoscope.robot
