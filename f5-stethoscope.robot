@@ -455,7 +455,7 @@ Append to API Output
 Append to Text Output
     [Documentation]    Builds the plain text output for SSH information
     [Arguments]    ${text}
-    Catenate    ${ssh_info_block}    ${text}
+    ${ssh_info_block}    Catenate    ${ssh_info_block}    ${text}
     [Return]
 
 BIG-IP iControl BasicAuth GET    
