@@ -39,6 +39,7 @@ Verify SSH Connectivity
         Fatal Error
     END
         Close All Connections
+    Should Contain Any    ${SSHLoginOutput}    (tmos)#    
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
