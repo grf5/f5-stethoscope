@@ -69,15 +69,17 @@ Verify Connectivty Availability
     END
 
 Retrieve Hostname
-    [Documentation]
-        ${retrieved_hostname}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        ${retrieved_hostname}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    [Documentation]    Retrieves the configured hostname on the BIG-IP
+    ${retrieved_hostname}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    ${retrieved_hostname}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
-    [Documentation]
+    [Documentation]    Retrieves the license information from the BIG-IP
+    ${retrieved_license}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
+    ${retrieved_version}    Retrieve BIG-IP Version via iControl REST    $bigip_host    $bigip_username    $bigip_password
 
 Retrieve NTP Configuration
     [Documentation]
