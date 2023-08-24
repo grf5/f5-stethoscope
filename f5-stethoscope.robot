@@ -5,6 +5,7 @@ Documentation        F5 stethoscope is a Robot Framework script that checks the 
 Library    String
 Library    SSHLibrary    timeout=5 seconds    loglevel=trace
 Library    RequestsLibrary
+Library    Collections
 
 *** Variables ***
 # To specify the BIG-IP host from the cli, use the following syntax:
@@ -33,8 +34,6 @@ Verify SSH Connectivity
     TRY
         ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${host} 
         ${SSHLoginOutput}    SSHLibrary.Log In    ${user}    ${pass}
-        ${InitialSshOutput}    SSHLibrary.Read
-        Run BASH Echo Test
     EXCEPT    Error connecting to SSH 
         SSHLibrary.Close All Connections
         Fatal Error
@@ -47,13 +46,6 @@ Test IPv4 iControlREST API Connectivity
     Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 *** Keywords ***
-Run BASH Echo Test
-    [Documentation]    Issues a BASH command and looks for the proper response inside of an existing SSH session
-    ${BASH_READING}    SSHLibrary.Read
-    ${BASH_ECHO_RESPONSE}    Execute Command    echo 'BASH TEST'
-    Should Be Equal    ${BASH_ECHO_RESPONSE}    BASH TEST
-    [Return]    ${BASH_ECHO_RESPONSE}
-
 Retrieve BIG-IP Version via iControl REST
     [Documentation]    Shows the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
