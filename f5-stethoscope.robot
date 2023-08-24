@@ -70,19 +70,25 @@ Verify Connectivty Availability
 
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
-    Set Global Variable    ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Set Global Variable    ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_hostname_api}
+    ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_hostname_ssh}
+    ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
-    Set Global Variable    ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Set Global Variable    ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_license_api}
+    ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_license_ssh}
+    ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
-    Set Global Variable    ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Set Global Variable    ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    
+    Set Global Variable    ${retrieved_version_api}
+    ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    Set Global Variable    ${retrieved_version_ssh}
+    ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+
 Retrieve NTP Configuration
     [Documentation]
     Set Global Variable    ${retrieved_ntp_config_api}
