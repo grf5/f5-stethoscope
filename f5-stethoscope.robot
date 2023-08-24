@@ -70,18 +70,18 @@ Verify Connectivty Availability
 
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
-    ${retrieved_hostname}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    ${retrieved_hostname}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
-    ${retrieved_license}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Log    ${retrieved_license}
-    
+    ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+    ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     ${retrieved_version}    Retrieve BIG-IP Version via iControl REST    $bigip_host    $bigip_username    $bigip_password
-
+    
 Retrieve NTP Configuration
     [Documentation]
 
@@ -201,6 +201,15 @@ Retrieve BIG-IP License Information via iControl REST
     should be equal as strings    ${api_response.status_code}    ${200}
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
+
+Retrieve BIG-IP License Information via SSH
+    [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${license}    SSHLibrary.Execute Command    tmsh show sys license
+    [Teardown]    SSHLibrary.Close Connection
+    [Return]    ${license}
 
 Retrieve CPU Statistics via iControl REST
     [Documentation]    Retrieves CPU utilization statistics on the BIG-IP (https://support.f5.com/csp/article/K15468)
