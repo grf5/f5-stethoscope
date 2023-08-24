@@ -70,9 +70,9 @@ Verify Connectivty Availability
 
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
-    Set Global Variable    ${retrieved_hostname_api}
+    Set Global Variable    ${retrieved_hostname_api}    ${EMPTY}
     ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-    Set Global Variable    ${retrieved_hostname_ssh}
+    Set Global Variable    ${retrieved_hostname_ssh}    ${EMPTY}
     ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
 
 Retrieve License Information
@@ -243,6 +243,7 @@ Create Comparable Output Block
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
     Log    API Hostname: ${retrieved_hostname_api}
     ...    TMOS Version: ${retrieved_version_api}
+    ...    License: ${retrieved_license_api}
 
 *** Keywords ***
 BIG-IP iControl BasicAuth GET    
