@@ -54,12 +54,12 @@ Test IPv4 iControlREST API Connectivity
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
     EXCEPT
         Log    Could not connect to iControl REST
-        Append to API Output    json={"api_connectivity":${True})
+        Append to API Output    {"api_connectivity":${True})
         Set Global Variable    ${api_reachable}    ${True}
 
     ELSE
         Log    Successfully connected to iControl REST API
-        Append to API Output    json={"api_connectivity":${False})
+        Append to API Output    {"api_connectivity":${False})
         Set Global Variable    ${api_reachable}    ${True}
     END
 
