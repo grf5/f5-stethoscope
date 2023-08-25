@@ -588,7 +588,7 @@ BIG-IP iControl BasicAuth POST
     log    HTTP Response Code: ${api_response}
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP NTP Configuration via iControl REST
+Retrieve BIG-IP NTP Status via iControl REST
     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/ntp
@@ -596,7 +596,7 @@ Retrieve BIG-IP NTP Configuration via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP NTP Configuration via TMSH
+Retrieve BIG-IP NTP Status via TMSH
     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
