@@ -586,7 +586,7 @@ BIG-IP iControl BasicAuth POST
     &{api_headers}    Create Dictionary    Content-type=application/json
     ${api_response}    POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
     log    HTTP Response Code: ${api_response}
-    [Return]    ${api_response.json()}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP NTP Status via iControl REST
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
