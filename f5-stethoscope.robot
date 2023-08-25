@@ -154,7 +154,7 @@ Retrieve BIG-IP CPU Statistics
         Append to API Output    cpu_stats    ${cpu_stats}
     END
     IF   ${ssh_reachable} == ${True}
-        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via TMSH    $bigip_host    $bigip_username    $bigip_password
+        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via TMSH    bigip_host    $bigip_username    $bigip_password
     END
 
 Retrieve BIG-IP Current Memory Utilization
@@ -447,12 +447,12 @@ Retrieve BIG-IP Full Text Configuration
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     IF    ${api_reachable} == ${True}
-        ${full_text_configuration}    Run BASH Command on BIG-IP    $bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}    list / one-line all-properties recursive
+        ${full_text_configuration}    Run BASH Command on BIG-IP    bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}    list / one-line all-properties recursive
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
     IF   ${ssh_reachable} == ${True}
-        ${full_text_configuration}    Run BASH Command on BIG-IP    $bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}    list / one-line all-properties recursive
+        ${full_text_configuration}    Run BASH Command on BIG-IP    bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}    list / one-line all-properties recursive
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
