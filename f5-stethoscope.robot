@@ -148,14 +148,13 @@ Retrieve and Verify BIG-IP NTP Status
     END
 
 Retrieve BIG-IP Current CPU Utilization
-    [Documentation]
-    Set Global Variable    ${retrieved_cpu_stats_api}
-    Set Global Variable    ${retrieved_cpu_stats_tmsh}
+    [Documentation]    Retrieves the CPU utilization from the BIG-IP
     IF    ${api_reachable} == ${True}
-        Log    Placeholder
+        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}
+        Append to API Output    cpu_stats    ${cpu_stats}
     END
     IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
+        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via TMSH    $bigip_host    $bigip_username    $bigip_password
     END
 
 Retrieve BIG-IP Current Memory Utilization
@@ -446,13 +445,16 @@ Retrieve BIG-IP SNAT Configuration
 
 Retrieve BIG-IP Full Text Configuration
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
-    Set Global Variable    ${retrieved__api}
-    Set Global Variable    ${retrieved__tmsh}
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     IF    ${api_reachable} == ${True}
-        Log    Placeholder
+        ${full_text_configuration}    Run BASH Command on BIG-IP    $bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}    list / one-line all-properties recursive
+        Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
+        Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
     IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
+        ${full_text_configuration}    Run BASH Command on BIG-IP    $bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}    list / one-line all-properties recursive
+        Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
+        Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
 
 Log API Responses in JSON
@@ -485,7 +487,7 @@ Append to Text Output
 BIG-IP iControl BasicAuth GET    
     [Documentation]    Performs an iControl REST API GET call using basic auth (See pages 25-38 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}
-    [Teardown]    Delete All Sessions
+    [Teardown]    RequestsLibrary.Delete All Sessions
     ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
     RequestsLibrary.Create Session    bigip-icontrol-get-basicauth    https://${bigip_host}    auth=${api_auth}
     &{api_headers}    Create Dictionary    Content-type=application/json
@@ -582,12 +584,11 @@ Run BASH Command on BIG-IP
 BIG-IP iControl BasicAuth POST    
     [Documentation]    Performs an iControl REST API POST call using basic auth (See pages 39-44 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}    ${api_payload}
-    [Teardown]    Delete All Sessions
+    [Teardown]    RequestsLibrary.Delete All Sessions
     ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
     RequestsLibrary.Create Session    bigip-icontrol-post-basicauth    https://${bigip_host}		auth=${api_auth}
     &{api_headers}    Create Dictionary    Content-type=application/json
-    ${api_response}    POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
-    log    HTTP Response Code: ${api_response}
+    ${api_response}    RequestsLibrary.POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
     [Return]    ${api_response}
 
 Retrieve BIG-IP NTP Status via iControl REST
@@ -634,3 +635,20 @@ Verify BIG-IP NTP Server Associations
     should not be equal as strings    ${ntp_server_reference}    .STEP.
     should not be equal as strings    ${ntp_server_reference}    .LOCL.
     [Return]
+
+Retrieve BIG-IP CPU Statistics via iControl REST
+    [Documentation]    Retrieves the CPU statistics from the BIG-IP using iControl REST (https://my.f5.com/manage/s/article/K15468)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/cpu/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP CPU Statistics via TMSH
+    [Documentation]    Retrieves the CPU statistics from the BIG-IP using iControl REST (https://my.f5.com/manage/s/article/K15468)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu raw field-fmt'
+    [Return]    ${hostname}
