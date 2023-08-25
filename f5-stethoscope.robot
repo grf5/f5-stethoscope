@@ -147,7 +147,7 @@ Retrieve and Verify BIG-IP NTP Status
         Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
     END
 
-Retrieve BIG-IP Current CPU Utilization
+Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP
     IF    ${api_reachable} == ${True}
         ${cpu_stats}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${host}    $bigip_username=${user}    $bigip_password=${pass}
@@ -527,15 +527,6 @@ Retrieve BIG-IP License Information via TMSH
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${license}    SSHLibrary.Execute Command    bash -c 'tmsh show sys license'
     [Return]    ${license}
-
-Retrieve BIG-IP CPU Statistics via iControl REST
-    [Documentation]    Retrieves CPU utilization statistics on the BIG-IP (https://support.f5.com/csp/article/K15468)
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/sys/cpu
-    set test variable    ${api_uri}
-    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response.json()}
 
 Retrieve BIG-IP Hostname via iControl REST
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
