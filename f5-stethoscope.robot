@@ -1,7 +1,9 @@
 *** Settings ***
-Documentation        F5 stethoscope is a Robot Framework script that checks the generic health
-...                  of BIG-IP devices.
-...    
+Documentation      F5 stethoscope is a Robot Framework script that checks the generic health
+...                of BIG-IP devices.
+...                    
+...                By default, stethoscope uses the iControl REST API to retrieve information.
+...                If the API is not available, it will fallback to SSH.
 Library            String
 Library            SSHLibrary    timeout=10 seconds    loglevel=trace
 Library            RequestsLibrary
@@ -36,7 +38,7 @@ Record Timestamp
     Create File    ${OUTPUT_DIR}/${text_output_file_name}    First test started at ${timestamp}\n
     
 Check for Required Variables
-    [Documentation]    Ensures that the required variables are present and contain data
+    [Documentation]    Ensures that all required variables are present and contain data
     [Tags]    critical
     TRY
         Should Not Be Empty    ${bigip_host}
@@ -48,12 +50,16 @@ Check for Required Variables
 
 Verify SSH Connectivity
     [Documentation]    Logs into the BIG-IP via SSH, executes a BASH command and validates the expected response
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections
     TRY
-        ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${bigip_host} 
+        # Use the SSH Library to connect to the host
+        SSHLibrary.Open Connection    ${bigip_host}
+        # Log in and note the returned prompt 
         ${SSHLoginOutput}    SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
+        # Verify that the prompt includes (tmos)# for tmsh or the default bash prompt
+        Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
     EXCEPT
         Log    Could not connect to SSH
-        SSHLibrary.Close All Connections
         Append to API Output    ssh_connectivity    ${False}
         Append to Text Output    SSH Connecitivity: Failed
         Set Global Variable    ${ssh_reachable}    ${False}
@@ -63,10 +69,18 @@ Verify SSH Connectivity
         Append to Text Output    SSH Connecitivity: Succeeded
         Set Global Variable    ${ssh_reachable}    ${True}
     END
-        Close All Connections
-    # Checking to see that prompt includes (tmos)# for tmsh or the default bash prompt
-    Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
 
+Verify Remote Host is a BIG-IP via SSH
+    [Documentation]    This test will run a command via SSH to verify that the remote host is
+    ...                a BIG-IP device.
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections
+    Skip If    ${ssh_reachable} = ${False}    SSH is not reachable.
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
+    ${retrieved_show_sys_hardware_tmsh}    SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
+    Should Contain    ${retrieved_show_sys_hardware_tmsh}    BIG-IP
+    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
+    
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     TRY
@@ -96,11 +110,9 @@ Verify Connectivity Availability
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP
     IF    ${api_reachable} == ${True}
-        Log To Console    Using API
         ${retrieved_cpu_stats_api}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         ${retrieved_cpu_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=bash -c 'tmsh show sys cpu all'
     ELSE IF   ${ssh_reachable} == ${True}        
-        Log To Console    Using SSH
         ${retrieved_cpu_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/cpu/stats'
         ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
