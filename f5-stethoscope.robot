@@ -451,7 +451,7 @@ Log API Responses in JSON
 Record Text Output from Tests
     [Documentation]    Displays the contents of the plain text file output
     TRY
-        Get File    ${OUTPUT_DIR}/${text_output_file_name}
+        OperatingSystem.Get File    ${OUTPUT_DIR}/${text_output_file_name}
     EXCEPT    message
         Log    Could not retrieve text file output        
     END
