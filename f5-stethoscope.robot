@@ -447,7 +447,7 @@ Log API Responses in JSON
 Record Text Output from Tests
     [Documentation]    Displays the contents of the plain text file output
     TRY
-        Get File    ${text_output_file_name}
+        Get File    ${OUTPUT_DIR}/${text_output_file_name}
     EXCEPT    message
         Log    Could not retrieve text file output        
     END
@@ -462,7 +462,7 @@ Append to API Output
 Append to Text Output
     [Documentation]    Builds the plain text output for SSH information
     [Arguments]    ${text}
-    Append to File    ${text_output_file_name}    ${text}
+    Append to File    ${OUTPUT_DIR}/${text_output_file_name}    ${text}
     [Return]
 
 BIG-IP iControl BasicAuth GET    
