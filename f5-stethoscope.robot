@@ -67,14 +67,14 @@ Test IPv4 iControlREST API Connectivity
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
     EXCEPT
         Log    Could not connect to iControl REST
-        Append to API Output    api_connectivity    ${True}
-        Append to Text Output    API Connecitivity: Succeeded
-        Set Global Variable    ${api_reachable}    ${True}
+        Append to API Output    api_connectivity    ${False}
+        Append to Text Output    API Connecitivity: Failed
+        Set Global Variable    ${api_reachable}    ${False}
 
     ELSE
         Log    Successfully connected to iControl REST API
-        Append to API Output    api_connectivity    ${False}
-        Append to Text Output    API Connecitivity: Failed
+        Append to API Output    api_connectivity    ${True}
+        Append to Text Output    API Connecitivity: Succeeded
         Set Global Variable    ${api_reachable}    ${True}
     END
 
