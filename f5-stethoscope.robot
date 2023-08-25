@@ -52,10 +52,6 @@ Verify SSH Connectivity
         Close All Connections
     # Checking to see that prompt includes (tmos)# for tmsh or the default bash prompt
     Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
-    IF    ${ssh_reachable}
-        ${detected_shell}    Detect BIG-IP Shell    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Set Global Variable    ${detected_shell}
-    END
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -493,7 +489,7 @@ Retrieve BIG-IP Version via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${version}    SSHLibrary.Execute Command    tmsh show sys version
+    ${version}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version all-properties'
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${version}
 
@@ -511,7 +507,7 @@ Retrieve BIG-IP License Information via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${license}    SSHLibrary.Execute Command    tmsh show sys license
+    ${license}    SSHLibrary.Execute Command    bash -c 'tmsh show sys license'
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${license}
 
@@ -540,7 +536,7 @@ Retrieve BIG-IP Hostname via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    tmsh list sys global-settings hostname    
+    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname all-properties'
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
 
@@ -559,24 +555,6 @@ Retrieve NTP Configuration via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    tmsh list sys global-settings hostname    
+    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
-
-Detect BIG-IP Shell
-    [Documentation]    Detects if the user's shell is bash or tmsh
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    [Teardown]    SSHLibrary.Close Connection
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${SSHCommandResult}    SSHLibrary.Execute Command    echo 'test'
-    IF    ${SSHCommandResult} == 'test'
-        ${detected_shell}    bash
-    ELSE IF    ${SSHCommandResult} == 'Syntax Error: unexpected argument "echo"'
-        ${detected_shell}    tmsh
-    ELSE
-        Log    FATAL ERROR: Could not detect shell!
-        Log To Console    FATAL ERROR: Could not detect shell!
-        Fatal Error
-    END
-    [Return]    ${detected_shell}
