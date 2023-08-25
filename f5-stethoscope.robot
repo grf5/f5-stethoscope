@@ -47,7 +47,7 @@ Check for Required Variables
     END
 
 Verify SSH Connectivity
-    [Documentation]    Logs into the BIG-IP via TMSH, executes a BASH command and validates the expected response
+    [Documentation]    Logs into the BIG-IP via SSH, executes a BASH command and validates the expected response
     TRY
         ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${bigip_host} 
         ${SSHLoginOutput}    SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
@@ -96,13 +96,17 @@ Verify Connectivity Availability
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP
     IF    ${api_reachable} == ${True}
+        Log To Console    Using API
         ${retrieved_cpu_stats_api}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        Append to API Output    cpu_stats    ${retrieved_cpu_stats_api}
+        ${retrieved_cpu_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    $command=bash -c 'tmsh show sys cpu all'
+    ELSE IF   ${ssh_reachable} == ${True}        
+        Log To Console    Using SSH
+        ${retrieved_cpu_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/cpu/stats'
+        ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
-    IF   ${ssh_reachable} == ${True}
-        ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        Append to API Output    cpu_stats    ${retrieved_cpu_stats_tmsh}
-    END
+    Append to API Output    retrieved_cpu_stats_api    {$retrieved_cpu_stats_api}
+    Append to API Output    retrieved_cpu_stats_tmsh    {$retrieved_cpu_stats_tmsh}
+    Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh}
 
 Retrieve BIG-IP Current Memory Utilization
     [Documentation]
@@ -122,7 +126,7 @@ Retrieve BIG-IP Hostname
         Append to API Output    hostname    ${retrieved_hostname_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_hostname_tmsh}    Retrieve BIG-IP Hostname via TMSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_hostname_tmsh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         Append to Text Output    Hostname: ${retrieved_hostname_tmsh}
     END
 
@@ -133,7 +137,7 @@ Retrieve BIG-IP License Information
         Append to API Output    license    ${retrieved_license_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_license_tmsh}    Retrieve BIG-IP License Information via TMSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_license_tmsh}    Retrieve BIG-IP License Information via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         Append to Text Output    License: ${retrieved_license_tmsh}
     END
 
@@ -144,7 +148,7 @@ Retrieve BIG-IP TMOS Version
         Append to API Output    version    ${retrieved_version_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_version_tmsh}    Retrieve BIG-IP TMOS Version via TMSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_version_tmsh}    Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         Append to Text Output    BIG-IP Version: ${retrieved_version_tmsh}
     END
 
@@ -156,7 +160,7 @@ Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
         Dictionary Should Contain Key    ${retrieved_ntp_config_api}    servers
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Configuration via TMSH        bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         Append to Text Output    NTP Configuration: ${retrieved_ntp_config_tmsh}
         Should Not Contain    ${retrieved_ntp_config_tmsh}    servers none
     END
@@ -169,7 +173,7 @@ Retrieve and Verify BIG-IP NTP Status
         Append to API Output    ntp-status    ${retrieved_ntp_status_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via TMSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
         Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
     END
@@ -458,7 +462,9 @@ Retrieve BIG-IP Full Text Configuration
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
     IF   ${ssh_reachable} == ${True}
-        ${full_text_configuration}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=list / one-line all-properties recursive
+        SSHLibrary.Open Connection    ${bigip_host}
+        SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+        ${full_text_configuration}    Execute Command    list / one-line all-properties recursive
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
@@ -508,7 +514,7 @@ Retrieve BIG-IP TMOS Version via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP TMOS Version via TMSH
+Retrieve BIG-IP TMOS Version via SSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
@@ -525,7 +531,7 @@ Retrieve BIG-IP License Information via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP License Information via TMSH
+Retrieve BIG-IP License Information via SSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
@@ -543,7 +549,7 @@ Retrieve BIG-IP Hostname via iControl REST
     ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
     [Return]    ${configured_hostname}
 
-Retrieve BIG-IP Hostname via TMSH
+Retrieve BIG-IP Hostname via SSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
@@ -560,7 +566,7 @@ Retrieve BIG-IP NTP Configuration via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP NTP Configuration via TMSH
+Retrieve BIG-IP NTP Configuration via SSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
@@ -598,7 +604,7 @@ Retrieve BIG-IP NTP Status via iControl REST
     ${ntpq_output}    Get From Dictionary    ${api_response.json()}    commandResult
     [Return]    ${ntpq_output}
 
-Retrieve BIG-IP NTP Status via TMSH
+Retrieve BIG-IP NTP Status via SSH
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
@@ -641,11 +647,3 @@ Retrieve BIG-IP CPU Statistics via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP CPU Statistics via TMSH
-    [Documentation]    Retrieves the CPU statistics from the BIG-IP using iControl REST (https://my.f5.com/manage/s/article/K15468)
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    [Teardown]    SSHLibrary.Close Connection
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu raw field-fmt'
-    [Return]    ${hostname}
