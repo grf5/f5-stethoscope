@@ -78,8 +78,7 @@ Verify Remote Host is a BIG-IP via SSH
     SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}    SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
     Should Contain    ${retrieved_show_sys_hardware_tmsh}    BIG-IP
-    
-    
+
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     TRY
@@ -95,6 +94,14 @@ Test IPv4 iControlREST API Connectivity
         Append to Text Output    API Connecitivity: Succeeded
         Set Global Variable    ${api_reachable}    ${True}
     END
+
+Verify Remote Host is a BIG-IP via iControl REST
+    [Documentation]    This test will query the iControl REST API to ensure the remote endpoint is
+    ...                a BIG-IP device.
+    [Teardown]    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
+    Skip If    ${api_reachable} == ${False}    API is not reachable.
+    ${retrieved_sys_hardware_api}    Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+    Should contain    ${retrieved_sys_hardware_api.text}    BIG-IP
 
 Verify Connectivity Availability
     [Documentation]    Ensure that either SSH or REST is available

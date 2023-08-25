@@ -184,3 +184,12 @@ Curl iControl REST via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${uri}
     ${command}    Set Variable    curl -sku ${bigip_username}:${bigip_password} https://127.0.0.1/${uri}
     ${retrieved_api_response}    Run BASH Command on BIG-IP    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${command}
+    [Return]    ${retrieved_api_response}
+
+Retrieve BIG-IP Hardware Information
+    [Documentation]    Retrieves the BIG-IP hardware information, applicable to virtual editions as well (https://my.f5.com/manage/s/article/K13144)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/hardware
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
