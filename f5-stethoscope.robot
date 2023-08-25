@@ -136,8 +136,8 @@ Retrieve BIG-IP Current Memory Utilization
         ${retrieved_mem_stats_tmsh}    Retrieve BIG-IP Memory Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_mem_stats_api.json()}
-    Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_mem_stats_tmsh}
-    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh}
+    Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_mem_stats_tmsh.json()}
+    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh.text}
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
