@@ -7,6 +7,7 @@ Library            SSHLibrary    timeout=10 seconds    loglevel=trace
 Library            RequestsLibrary
 Library            Collections
 Library            OperatingSystem
+Library            DateTime
 Suite Setup        Set Log Level    trace
 Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
@@ -20,6 +21,13 @@ ${text_output_file_name}    device_info.txt
 &{api_info_block}
 
 *** Test Cases ***
+Record Timestamp
+    ${timestamp}    Get Current Date
+    Log    First test started at ${timestamp}
+    Log To Console    First test started at ${timestamp}
+    Append to API Output    first_test_start_time    ${timestamp}
+    Append to Text Output    First test started at ${timestamp}
+    
 Check for Required Variables
     [Documentation]    Ensures that the required variables are present
     [Tags]    critical
