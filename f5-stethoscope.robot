@@ -52,6 +52,11 @@ Verify SSH Connectivity
         Close All Connections
     # Checking to see that prompt includes (tmos)# for tmsh or the default bash prompt
     Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
+    IF    "(tmos)#" in ${SSHLoginOutput}
+        Set Global Variable    ${detected_shell}    tmsh
+    ELSE IF    "] ~ #" in ${SSHLoginOutput}
+        Set Global Variable    ${detected_shell}    bash
+    END
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -533,6 +538,25 @@ Retrieve BIG-IP Hostname via iControl REST
 
 Retrieve BIG-IP Hostname via SSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${hostname}    SSHLibrary.Execute Command    tmsh list sys global-settings hostname    
+    [Teardown]    SSHLibrary.Close Connection
+    [Return]    ${hostname}
+
+Retrieve NTP Configuration via iControl REST
+    [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/global-settings
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
+    [Teardown]    Run Keywords   Delete All Sessions
+    [Return]    ${configured_hostname}
+
+Retrieve NTP Configuration via SSH
+    [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
