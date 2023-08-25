@@ -56,7 +56,7 @@ Verify SSH Connectivity
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     TRY
-        Wait until Keyword Succeeds    6x    5 seconds    Retrieve TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
+        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
     EXCEPT
         Log    Could not connect to iControl REST
         Append to API Output    api_connectivity    ${True}
@@ -74,6 +74,9 @@ Verify Connectivty Availability
     [Documentation]    Ensure that SSH or REST is available
     IF    ${api_reachable} == ${False} and ${ssh_reachable} == ${False}
         Append to Text Output    Fatal error: No SSH or API Connectivity succeeded
+        Append to API Output    fatal_error    No SSH or API Connectivity succeeded
+        Log    Fatal error: No SSH or API Connectivity succeeded
+        Log To Console    Fatal error: No SSH or API Connectivity succeeded
         Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${host} with user '${user}'
     END
 
@@ -113,11 +116,11 @@ Retrieve BIG-IP TMOS Version
 Retrieve BIG-IP NTP Configuration
     [Documentation]
     IF    ${api_reachable} == ${True}
-        ${retrieved_ntp_config_api}    Retreive BIG-IP NTP Configuration via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to API Output    ntp-config    ${retrieved_ntp_config_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_ntp_config_api}    Retreive BIG-IP NTP Configuration via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Configuration via TMSH        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to Text Output    NTP Configuration: ${retrieved_ntp_config_tmsh}
     END
 
@@ -470,11 +473,11 @@ Append to Text Output
 BIG-IP iControl BasicAuth GET    
     [Documentation]    Performs an iControl REST API GET call using basic auth (See pages 25-38 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}
+    [Teardown]    Delete All Sessions
     ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
     RequestsLibrary.Create Session    bigip-icontrol-get-basicauth    https://${bigip_host}    auth=${api_auth}
     &{api_headers}    Create Dictionary    Content-type=application/json
     ${api_response}    GET On Session    bigip-icontrol-get-basicauth   ${api_uri}    headers=${api_headers}
-    [Teardown]    Delete All Sessions
     [Return]    ${api_response}
 
 Retrieve BIG-IP TMOS Version via iControl REST
@@ -483,16 +486,15 @@ Retrieve BIG-IP TMOS Version via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/version
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
-    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP TMOS Version via TMSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${version}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version all-properties'
-    [Teardown]    SSHLibrary.Close Connection
     [Return]    ${version}
 
 Retrieve BIG-IP License Information via iControl REST
@@ -501,16 +503,15 @@ Retrieve BIG-IP License Information via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/license
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
-    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP License Information via TMSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${license}    SSHLibrary.Execute Command    bash -c 'tmsh show sys license'
-    [Teardown]    SSHLibrary.Close Connection
     [Return]    ${license}
 
 Retrieve BIG-IP CPU Statistics via iControl REST
@@ -520,7 +521,6 @@ Retrieve BIG-IP CPU Statistics via iControl REST
     set test variable    ${api_uri}
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     should be equal as strings    ${api_response.status_code}    ${200}
-    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP Hostname via iControl REST
@@ -530,16 +530,15 @@ Retrieve BIG-IP Hostname via iControl REST
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
-    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${configured_hostname}
 
 Retrieve BIG-IP Hostname via TMSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname all-properties'
-    [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
 
 Retrieve BIG-IP NTP Configuration via iControl REST
@@ -548,16 +547,33 @@ Retrieve BIG-IP NTP Configuration via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/ntp
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP NTP Configuration via TMSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
-    [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
 
+Run BASH Command on BIG-IP
+    [Documentation]    Executes bash command on the BIG-IP via iControl REST (https://my.f5.com/manage/s/article/K13225405)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${command}
+    ${api_payload}    create dictionary    command=run    utilCmdArgs=-c "${command}"
+    ${api_uri}    set variable    /mgmt/tm/util/bash
+    ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
+    Should Be Equal As Strings    ${api_response.status_code}    200
+    [Return]    ${api_response}
 
+BIG-IP iControl BasicAuth POST    
+    [Documentation]    Performs an iControl REST API POST call using basic auth (See pages 39-44 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}    ${api_payload}
+    [Teardown]    Delete All Sessions
+    ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
+    RequestsLibrary.Create Session    bigip-icontrol-post-basicauth    https://${bigip_host}		auth=${api_auth}
+    &{api_headers}    Create Dictionary    Content-type=application/json
+    ${api_response}    POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
+    log    HTTP Response Code: ${api_response}
+    [Return]    ${api_response.json()}
