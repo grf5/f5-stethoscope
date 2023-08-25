@@ -595,7 +595,7 @@ Retrieve BIG-IP NTP Status via iControl REST
     ${api_uri}    set variable    /mgmt/tm/util/bash
     ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response.json()}
+    [Return]    ${api_response.text}
 
 Retrieve BIG-IP NTP Status via TMSH
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
