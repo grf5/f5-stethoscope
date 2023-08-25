@@ -114,7 +114,7 @@ Verify Connectivity Availability
     END
 
 Retrieve BIG-IP CPU Statistics
-    [Documentation]    Retrieves the CPU utilization from the BIG-IP
+    [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
     IF    ${api_reachable} == ${True}
         ${retrieved_cpu_stats_api}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         ${retrieved_cpu_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=bash -c 'tmsh show sys cpu all'
@@ -122,20 +122,22 @@ Retrieve BIG-IP CPU Statistics
         ${retrieved_cpu_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/cpu/stats'
         ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
-    Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
+    Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api.json()}
     Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_cpu_stats_tmsh}
     Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh}
 
 Retrieve BIG-IP Current Memory Utilization
     [Documentation]
-    Set Global Variable    ${retrieved_mem_stats_api}
-    Set Global Variable    ${retrieved_mem_stats_tmsh}
     IF    ${api_reachable} == ${True}
-        Log    Placeholder
+        ${retrieved_mem_stats_api}    Retrieve BIG-IP Memory Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_mem_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=bash -c 'tmsh show sys mem all field-fmt'
+    ELSE IF   ${ssh_reachable} == ${True}        
+        ${retrieved_mem_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/mem/stats'
+        ${retrieved_mem_stats_tmsh}    Retrieve BIG-IP Memory Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Append to API Output    retrieved_cpu_stats_api    ${retrieved_mem_stats_api.json()}
+    Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_mem_stats_tmsh}
+    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh}
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
@@ -174,8 +176,8 @@ Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     IF    ${api_reachable} == ${True}
         ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        Append to API Output    ntp-config    ${retrieved_ntp_config_api}
-        Dictionary Should Contain Key    ${retrieved_ntp_config_api}    servers
+        Append to API Output    ntp-config    ${retrieved_ntp_config_api.json()}
+        Dictionary Should Contain Key    ${retrieved_ntp_config_api.json()}    servers
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}

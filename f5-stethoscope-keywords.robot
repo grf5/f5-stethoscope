@@ -35,7 +35,7 @@ Retrieve BIG-IP TMOS Version via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/version
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response.json()}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP TMOS Version via SSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
@@ -52,7 +52,7 @@ Retrieve BIG-IP License Information via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/license
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response.json()}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP License Information via SSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
@@ -87,7 +87,7 @@ Retrieve BIG-IP NTP Configuration via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/ntp
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response.json()}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP NTP Configuration via SSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
@@ -176,7 +176,7 @@ Retrieve BIG-IP CPU Statistics via SSH
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${cpu_stats}    SSHLibrary.Execute Command    bash -c 'ntpq -pn'
+    ${cpu_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu all field-fmt'
     [Return]    ${cpu_stats}
 
 Curl iControl REST via SSH
@@ -193,3 +193,20 @@ Retrieve BIG-IP Hardware Information
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
+
+Retrieve BIG-IP Memory Statistics via iControl REST
+    [Documentation]    Retrieves the CPU statistics from the BIG-IP using iControl REST (https://my.f5.com/manage/s/article/K15468)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/mem/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Memory Statistics via SSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${mem_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys mem all field-fmt'
+    [Return]    ${mem_stats}
