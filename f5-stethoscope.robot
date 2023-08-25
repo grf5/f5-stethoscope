@@ -614,8 +614,8 @@ Verify BIG-IP NTP Server Associations
     ${ntpq_output_clean}    Set Variable    ${ntpq_output[${ntpq_output_start}+4:]}
     ${ntpq_output_values_list}    Split String    ${ntpq_output_clean}
     ${ntpq_output_length}    get length    ${ntpq_output_values_list}
-    ${ntpq_output_server_count}    evaluate    ${ntpq_output_length} / 10 + 1
-    FOR    ${current_ntp_server}  IN RANGE    1   ${ntpq_output_server_count}
+    ${ntpq_output_server_count}    evaluate    ${ntpq_output_length} / 10
+    FOR    ${current_ntp_server}  IN RANGE    0   ${ntpq_output_server_count}
         ${ntp_server_ip}    remove from list    ${ntpq_output_values_list}  0
         ${ntp_server_reference}    remove from list    ${ntpq_output_values_list}  0
         ${ntp_server_stratum}    remove from list    ${ntpq_output_values_list}  0
