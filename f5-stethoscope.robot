@@ -626,10 +626,9 @@ Verify BIG-IP NTP Server Associations
         ${ntp_server_delay}    remove from list    ${ntpq_output_values_list}  0
         ${ntp_server_offset}    remove from list    ${ntpq_output_values_list}  0
         ${ntp_server_jitter}    remove from list    ${ntpq_output_values_list}  0
-        Append to Text Output    NTP server status: IP: ${ntp_server_ip} Reference IP: ${ntp_server_reference} Stratum: ${ntp_server_stratum} Type: ${ntp_server_type} Last Poll: ${ntp_server_when} Poll Interval: ${ntp_server_poll} Successes: ${ntp_server_reach} Delay: ${ntp_server_delay} Offset: ${ntp_server_offset} Jitter: ${ntp_server_jitter}
     END
     should not be equal as integers    ${ntp_server_reach}    0
     should not be equal as strings    ${ntp_server_when}    -
     should not be equal as strings    ${ntp_server_reference}    .STEP.
     should not be equal as strings    ${ntp_server_reference}    .LOCL.
-    [Return]    ${api_response}
+    [Return]
