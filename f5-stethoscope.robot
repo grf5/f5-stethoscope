@@ -26,7 +26,7 @@ Record Timestamp
     Log    First test started at ${timestamp}
     Log To Console    First test started at ${timestamp}
     Append to API Output    first_test_start_time    ${timestamp}
-    Create File    ${OUTPUT_DIR}/${text_output_file_name}    First test started at ${timestamp}
+    Create File    ${OUTPUT_DIR}/${text_output_file_name}    First test started at ${timestamp}\n
     
 Check for Required Variables
     [Documentation]    Ensures that the required variables are present
