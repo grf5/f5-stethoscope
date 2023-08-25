@@ -16,7 +16,7 @@ Library            OperatingSystem
 Library            DateTime
 # Load other robot files that hold settings, variables and keywords
 Resource           f5-stethoscope-keywords.robot
-Resource           f5-stethoscope.robot
+Resource           f5-stethoscope-variables.robot
 # This commands ensures that the proper log level is used for each test without having to specify
 # it repeatedly in each test. This Suite Setup keyword can be extended to issue multiple keywords
 # prior to starting a test suite.
