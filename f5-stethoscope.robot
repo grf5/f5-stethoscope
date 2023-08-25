@@ -126,10 +126,12 @@ Retrieve BIG-IP NTP Configuration
     IF    ${api_reachable} == ${True}
         ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to API Output    ntp-config    ${retrieved_ntp_config_api}
+        Dictionary Should Contain Key    ${retrieved_ntp_config_api}    servers
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Configuration via TMSH        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to Text Output    NTP Configuration: ${retrieved_ntp_config_tmsh}
+        Should Not Contain    ${retrieved_ntp_config_tmsh}    servers none
     END
 
 Retrieve and Verify BIG-IP NTP Status
@@ -615,6 +617,16 @@ Verify BIG-IP NTP Server Associations
     ${ntpq_output_values_list}    Split String    ${ntpq_output_clean}
     ${ntpq_output_length}    get length    ${ntpq_output_values_list}
     ${ntpq_output_server_count}    evaluate    ${ntpq_output_length} / 10
+    IF    ${ntpq_output_server_count} <= 0
+        Log To Console    WARNING: No NTP servers found in status output!
+        Log    WARNING: No NTP servers found in status output!
+        Append to API Output    ntp_error    No NTP servers found in status output!
+        Append to Text Output    WARNING: No NTP servers found in status output!
+        Fail
+    ELSE
+        Append to API Output    ntp_server_count    ${ntpq_output_server_count}
+        Append to Text Output    NTP Server Count: ${ntpq_output_server_count}
+    END
     FOR    ${current_ntp_server}  IN RANGE    0   ${ntpq_output_server_count}
         ${ntp_server_ip}    remove from list    ${ntpq_output_values_list}  0
         ${ntp_server_reference}    remove from list    ${ntpq_output_values_list}  0
