@@ -128,8 +128,8 @@ Retrieve BIG-IP CPU Statistics
         ${retrieved_cpu_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/cpu/stats'
         ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
-    Append to API Output    retrieved_cpu_stats_api    {$retrieved_cpu_stats_api}
-    Append to API Output    retrieved_cpu_stats_tmsh    {$retrieved_cpu_stats_tmsh}
+    Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
+    Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_cpu_stats_tmsh}
     Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh}
 
 Retrieve BIG-IP Current Memory Utilization
