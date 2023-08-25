@@ -141,7 +141,7 @@ Retrieve and Verify BIG-IP NTP Status
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via TMSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Verify BIG-IP NTP Server Associations    {$retrieved_ntp_status_tmsh}
+        Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
         Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
     END
 
