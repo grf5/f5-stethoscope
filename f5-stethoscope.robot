@@ -96,11 +96,11 @@ Verify Connectivity Availability
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP
     IF    ${api_reachable} == ${True}
-        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_cpu_stats_api}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         Append to API Output    cpu_stats    ${cpu_stats}
     END
     IF   ${ssh_reachable} == ${True}
-        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${bigip_host}    bigip_username    bigip_password=${bigip_password}
+        ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
 
 Retrieve BIG-IP Current Memory Utilization
