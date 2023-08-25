@@ -56,7 +56,7 @@ Verify SSH Connectivity
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     TRY
-        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
+        Wait until Keyword Succeeds    6x    5 seconds    Retrieve TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
     EXCEPT
         Log    Could not connect to iControl REST
         Append to API Output    api_connectivity    ${True}
@@ -80,40 +80,40 @@ Verify Connectivty Availability
 Retrieve Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     IF    ${api_reachable} == ${True}
-        ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_hostname_api}    Retrieve Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to API Output    hostname    ${retrieved_hostname_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_hostname_ssh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_hostname_ssh}    Retrieve Hostname via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to Text Output    Hostname: ${retrieved_hostname_ssh}
     END
 
 Retrieve License Information
     [Documentation]    Retrieves the license information from the BIG-IP
     IF    ${api_reachable} == ${True}
-        ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_license_api}    Retrieve License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to API Output    license    ${retrieved_license_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_license_ssh}    Retrieve BIG-IP License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_license_ssh}    Retrieve License Information via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to Text Output    License: ${retrieved_license_ssh}
     END
 
-Retrieve BIG-IP TMOS Version
+Retrieve TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     IF    ${api_reachable} == ${True}
-        ${retrieved_version_api}    Retrieve BIG-IP Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_version_api}    Retrieve TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to API Output    version    ${retrieved_version_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_version_ssh}    Retrieve BIG-IP Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        ${retrieved_version_ssh}    Retrieve TMOS Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to Text Output    BIG-IP Version: ${retrieved_version_ssh}
     END
 
 Retrieve NTP Configuration
     [Documentation]
     IF    ${api_reachable} == ${True}
-        Log    Placeholder
+        ${retrieved_ntp_config_api}    Retreive BIG-IP NT
     END
     IF   ${ssh_reachable} == ${True}
         Log    Placeholder
@@ -475,7 +475,7 @@ BIG-IP iControl BasicAuth GET
     [Teardown]    Delete All Sessions
     [Return]    ${api_response}
 
-Retrieve BIG-IP Version via iControl REST
+Retrieve TMOS Version via iControl REST
     [Documentation]    Retrieves the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/version
@@ -484,7 +484,7 @@ Retrieve BIG-IP Version via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP Version via SSH
+Retrieve TMOS Version via SSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
@@ -493,7 +493,7 @@ Retrieve BIG-IP Version via SSH
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${version}
 
-Retrieve BIG-IP License Information via iControl REST
+Retrieve License Information via iControl REST
     [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/license
@@ -502,7 +502,7 @@ Retrieve BIG-IP License Information via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP License Information via SSH
+Retrieve License Information via SSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
@@ -521,7 +521,7 @@ Retrieve CPU Statistics via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve BIG-IP Hostname via iControl REST
+Retrieve Hostname via iControl REST
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/global-settings
@@ -531,7 +531,7 @@ Retrieve BIG-IP Hostname via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${configured_hostname}
 
-Retrieve BIG-IP Hostname via SSH
+Retrieve Hostname via SSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
@@ -543,12 +543,11 @@ Retrieve BIG-IP Hostname via SSH
 Retrieve NTP Configuration via iControl REST
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/sys/global-settings
+    ${api_uri}    set variable    /mgmt/tm/sys/ntp
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
     [Teardown]    Run Keywords   Delete All Sessions
-    [Return]    ${configured_hostname}
+    [Return]    ${api_response.json()}
 
 Retrieve NTP Configuration via SSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
@@ -558,3 +557,5 @@ Retrieve NTP Configuration via SSH
     ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
+
+
