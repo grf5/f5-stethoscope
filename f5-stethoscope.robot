@@ -50,7 +50,7 @@ Verify SSH Connectivity
     [Documentation]    Logs into the BIG-IP via TMSH, executes a BASH command and validates the expected response
     TRY
         ${SSHOpenConnectionOutput}    SSHLibrary.Open Connection    ${host} 
-        ${SSHLoginOutput}    SSHLibrary.Log In    ${user}    ${pass}
+        ${SSHLoginOutput}    SSHLibrary.Log In    ${bigip_username}    ${pass}
     EXCEPT
         Log    Could not connect to SSH
         SSHLibrary.Close All Connections
@@ -70,7 +70,7 @@ Verify SSH Connectivity
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     TRY
-        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}        
+        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}    ${bigip_username}    ${bigip_password}
     EXCEPT
         Log    Could not connect to iControl REST
         Append to API Output    api_connectivity    ${False}
