@@ -74,7 +74,7 @@ Verify Remote Host is a BIG-IP via SSH
     [Documentation]    This test will run a command via SSH to verify that the remote host is
     ...                a BIG-IP device.
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections
-    Skip If    ${ssh_reachable} = ${False}    SSH is not reachable.
+    Skip If    ${ssh_reachable} == ${False}    SSH is not reachable.
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}    SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
