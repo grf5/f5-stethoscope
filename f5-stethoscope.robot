@@ -570,9 +570,9 @@ Detect BIG-IP Shell
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${SSHCommandResult}    SSHLibrary.Execute Command    echo 'test'
-    IF    ${SSHCommandResult} == test 
+    IF    ${SSHCommandResult} == 'test'
         ${detected_shell}    bash
-    ELSE IF    ${SSHCommandResult} == Syntax Error: unexpected argument "echo"
+    ELSE IF    ${SSHCommandResult} == 'Syntax Error: unexpected argument "echo"'
         ${detected_shell}    tmsh
     ELSE
         Log    FATAL ERROR: Could not detect shell!
