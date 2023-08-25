@@ -4,7 +4,7 @@ Library            String
 Library            RequestsLibrary
 Library            SSHLibrary
 Library            OperatingSystem
-Resource           f5-stethoscope.variables
+Resource           f5-stethoscope-variables.robot
 
 *** Keywords ***
 Append to API Output
