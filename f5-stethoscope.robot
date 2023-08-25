@@ -495,7 +495,7 @@ Retrieve BIG-IP TMOS Version via iControl REST
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/version
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    should be equal as strings    ${api_response.status_code}    ${200}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP TMOS Version via TMSH
@@ -512,7 +512,7 @@ Retrieve BIG-IP License Information via iControl REST
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/license
     ${api_response}    BIG-IP iControl BasicAuth GET   bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    should be equal as strings    ${api_response.status_code}    ${200}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP License Information via TMSH
@@ -530,7 +530,7 @@ Retrieve BIG-IP CPU Statistics via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/cpu
     set test variable    ${api_uri}
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    should be equal as strings    ${api_response.status_code}    ${200}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP Hostname via iControl REST
@@ -574,7 +574,7 @@ Run BASH Command on BIG-IP
     ${api_payload}    create dictionary    command=run    utilCmdArgs=-c "${command}"
     ${api_uri}    set variable    /mgmt/tm/util/bash
     ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
-    Should Be Equal As Strings    ${api_response.status_code}    200
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
 BIG-IP iControl BasicAuth POST    
@@ -594,7 +594,7 @@ Retrieve BIG-IP NTP Status via iControl REST
     ${api_payload}    Create Dictionary    command    run    utilCmdArgs    -c \'ntpq -pn\'
     ${api_uri}    set variable    /mgmt/tm/util/bash
     ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
-    Should Be Equal As Strings    ${api_response.status_code}    200
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response.json()}
 
 Retrieve BIG-IP NTP Status via TMSH
