@@ -77,7 +77,7 @@ Verify Connectivty Availability
         Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${host} with user '${user}'
     END
 
-Retrieve Hostname
+Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     IF    ${api_reachable} == ${True}
         ${retrieved_hostname_api}    Retrieve Hostname via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
@@ -88,7 +88,7 @@ Retrieve Hostname
         Append to Text Output    Hostname: ${retrieved_hostname_ssh}
     END
 
-Retrieve License Information
+Retrieve BIG-IP License Information
     [Documentation]    Retrieves the license information from the BIG-IP
     IF    ${api_reachable} == ${True}
         ${retrieved_license_api}    Retrieve License Information via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
@@ -99,7 +99,7 @@ Retrieve License Information
         Append to Text Output    License: ${retrieved_license_ssh}
     END
 
-Retrieve TMOS Version
+Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     IF    ${api_reachable} == ${True}
         ${retrieved_version_api}    Retrieve TMOS Version via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
@@ -107,10 +107,10 @@ Retrieve TMOS Version
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_version_ssh}    Retrieve TMOS Version via SSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Append to Text Output    BIG-IP Version: ${retrieved_version_ssh}
+        Append to Text Output    BIG-IP Version: ${Retrieve BIG-IPd_version_ssh}
     END
 
-Retrieve NTP Configuration
+Retrieve BIG-IP NTP Configuration
     [Documentation]
     IF    ${api_reachable} == ${True}
         ${retrieved_ntp_config_api}    Retreive BIG-IP NT
@@ -130,7 +130,7 @@ Verify NTP Status
         Log    Placeholder
     END
 
-Retrieve Current CPU Utilization
+Retrieve BIG-IP Current CPU Utilization
     [Documentation]
     Set Global Variable    ${retrieved_cpu_stats_api}
     Set Global Variable    ${retrieved_cpu_stats_ssh}
@@ -141,7 +141,7 @@ Retrieve Current CPU Utilization
         Log    Placeholder
     END
 
-Retrieve Current Memory Utilization
+Retrieve BIG-IP Current Memory Utilization
     [Documentation]
     Set Global Variable    ${retrieved_mem_stats_api}
     Set Global Variable    ${retrieved_mem_stats_ssh}
@@ -152,7 +152,7 @@ Retrieve Current Memory Utilization
         Log    Placeholder
     END
 
-Retrieve Disk Space Utilization
+Retrieve BIG-IP Disk Space Utilization
     [Documentation]
     Set Global Variable    ${retrieved_disk_stats_api}
     Set Global Variable    ${retrieved_disk_stats_ssh}
@@ -163,7 +163,7 @@ Retrieve Disk Space Utilization
         Log    Placeholder
     END
 
-Retrieve Provisioned Software Modules
+Retrieve BIG-IP Provisioned Software Modules
     [Documentation]
     Set Global Variable    ${retrieved_provisioning_api}
     Set Global Variable    ${retrieved_provisioning_ssh}
@@ -185,7 +185,7 @@ List All System Database Variables
         Log    Placeholder
     END
 
-Retrieve High Availability Configuration
+Retrieve BIG-IP High Availability Configuration
     [Documentation]
     Set Global Variable    ${retrieved_ha_config_api}
     Set Global Variable    ${retrieved_ha_config_ssh}
@@ -196,7 +196,7 @@ Retrieve High Availability Configuration
         Log    Placeholder
     END
 
-Retrieve SSL Certificate Metadata
+Retrieve BIG-IP SSL Certificate Metadata
     [Documentation]
     Set Global Variable    ${retrieved_ssl_certs_api}
     Set Global Variable    ${retrieved_ssl_certs_ssh}
@@ -207,7 +207,7 @@ Retrieve SSL Certificate Metadata
         Log    Placeholder
     END
 
-Retrieve Interface Configuration
+Retrieve BIG-IP Interface Configuration
     [Documentation]
     Set Global Variable    ${retrieved_int_config_api}
     Set Global Variable    ${retrieved_int_config_ssh}
@@ -218,7 +218,7 @@ Retrieve Interface Configuration
         Log    Placeholder
     END
 
-Retrieve Interface Statistics
+Retrieve BIG-IP Interface Statistics
     [Documentation]
     Set Global Variable    ${retrieved_int_stats_api}
     Set Global Variable    ${retrieved_int_stats_ssh}
@@ -229,7 +229,7 @@ Retrieve Interface Statistics
         Log    Placeholder
     END
 
-Retrieve VLAN Configuration
+Retrieve BIG-IP VLAN Configuration
     [Documentation]
     Set Global Variable    ${retrieved_vlan_config_api}
     Set Global Variable    ${retrieved_vlan_config_ssh}
@@ -240,7 +240,7 @@ Retrieve VLAN Configuration
         Log    Placeholder
     END
 
-Retrieve VLAN Statistics
+Retrieve BIG-IP VLAN Statistics
     [Documentation]
     Set Global Variable    ${retrieved_vlan_stats_api}
     Set Global Variable    ${retrieved_vlan_stats_ssh}
@@ -262,7 +262,7 @@ Retrive Route Domain Information
         Log    Placeholder
     END
 
-Retrieve Authentication Partition Information
+Retrieve BIG-IP Authentication Partition Information
     [Documentation]
     Set Global Variable    ${retrieved_part_config_api}
     Set Global Variable    ${retrieved_part_config_ssh}
@@ -273,7 +273,7 @@ Retrieve Authentication Partition Information
         Log    Placeholder
     END
 
-Retrieve Trunk Configuration
+Retrieve BIG-IP Trunk Configuration
     [Documentation]
     Set Global Variable    ${retrieved_trunk_config_api}
     Set Global Variable    ${retrieved_trunk_config_ssh}
@@ -284,7 +284,7 @@ Retrieve Trunk Configuration
         Log    Placeholder
     END
 
-Retrieve Trunk Statistics
+Retrieve BIG-IP Trunk Statistics
     [Documentation]
     Set Global Variable    ${retrieved_trunk_stats_api}
     Set Global Variable    ${retrieved_trunk_stats_ssh}
@@ -306,7 +306,7 @@ Retrive Self-IP Configuration
         Set Global Variable    ${retrieved_selfip_config_ssh}
     END
 
-Retrieve Self-IP Statistics
+Retrieve BIG-IP Self-IP Statistics
     [Documentation]
     IF    ${api_reachable} == ${True}
         Log    Placeholder
@@ -317,7 +317,7 @@ Retrieve Self-IP Statistics
         Set Global Variable    ${retrieved_selfip_stats_ssh}
     END
 
-Retrieve Static Route Configuration
+Retrieve BIG-IP Static Route Configuration
     [Documentation]
     Set Global Variable    ${retrieved_static_routing_config_api}
     Set Global Variable    ${retrieved_static_routing_config_ssh}
@@ -328,7 +328,7 @@ Retrieve Static Route Configuration
         Log    Placeholder
     END
 
-Retrieve Dynamic Route Configuration
+Retrieve BIG-IP Dynamic Route Configuration
     [Documentation]
     Set Global Variable    ${retrieved_dynamic_routing_config_api}
     Set Global Variable    ${retrieved_dynamic_routing_config_ssh}
@@ -339,7 +339,7 @@ Retrieve Dynamic Route Configuration
         Log    Placeholder
     END
 
-Retrieve Dynamic Route Status
+Retrieve BIG-IP Dynamic Route Status
     [Documentation]
     Set Global Variable    ${retrieved_dynamic_routing_status_api}
     Set Global Variable    ${retrieved_dynamic_routing_status_ssh}
@@ -350,7 +350,7 @@ Retrieve Dynamic Route Status
         Log    Placeholder
     END
 
-Retrieve Virtual Server Configuration
+Retrieve BIG-IP Virtual Server Configuration
     [Documentation]
     Set Global Variable    ${retrieved_virtual_config_api}
     Set Global Variable    ${retrieved_virtual_config_ssh}
@@ -361,7 +361,7 @@ Retrieve Virtual Server Configuration
         Log    Placeholder
     END
 
-Retrieve Virtual Server Statistics
+Retrieve BIG-IP Virtual Server Statistics
     [Documentation]
     Set Global Variable    ${retrieved_virtual_stats_api}
     Set Global Variable    ${retrieved_virtual_stats_ssh}
@@ -372,7 +372,7 @@ Retrieve Virtual Server Statistics
         Log    Placeholder
     END
     
-Retrieve Pool Configuration
+Retrieve BIG-IP Pool Configuration
     [Documentation]
     Set Global Variable    ${retrieved_pool_config_api}
     Set Global Variable    ${retrieved_pool_config_ssh}
@@ -394,7 +394,7 @@ Retrive Pool Statistics
         Log    Placeholder
     END
 
-Retrieve Policy Configuration
+Retrieve BIG-IP Policy Configuration
     [Documentation]
     Set Global Variable    ${retrieved_policy_config_api}
     Set Global Variable    ${retrieved_policy_config_ssh}
@@ -405,7 +405,7 @@ Retrieve Policy Configuration
         Log    Placeholder
     END
 
-Retrieve Monitor Configuration
+Retrieve BIG-IP Monitor Configuration
     [Documentation]
     Set Global Variable    ${retrieved_monitor_config_api}
     Set Global Variable    ${retrieved_monitor_config_ssh}
@@ -416,7 +416,7 @@ Retrieve Monitor Configuration
         Log    Placeholder
     END
 
-Retrieve SNAT Configuration
+Retrieve BIG-IP SNAT Configuration
     [Documentation]
     Set Global Variable    ${retrieved_snat_config_api}
     Set Global Variable    ${retrieved_snat_config_ssh}
@@ -427,8 +427,8 @@ Retrieve SNAT Configuration
         Log    Placeholder
     END
 
-Retrieve Full Text Configuration
-    [Documentation]    Retrieves the full BIG-IP configuration via list output
+Retrieve BIG-IP Full Text Configuration
+    [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     Set Global Variable    ${retrieved__api}
     Set Global Variable    ${retrieved__ssh}
     IF    ${api_reachable} == ${True}
@@ -475,7 +475,7 @@ BIG-IP iControl BasicAuth GET
     [Teardown]    Delete All Sessions
     [Return]    ${api_response}
 
-Retrieve TMOS Version via iControl REST
+Retrieve BIG-IP TMOS Version via iControl REST
     [Documentation]    Retrieves the current version of software running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/version
@@ -484,7 +484,7 @@ Retrieve TMOS Version via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve TMOS Version via SSH
+Retrieve BIG-IP TMOS Version via SSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
@@ -493,7 +493,7 @@ Retrieve TMOS Version via SSH
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${version}
 
-Retrieve License Information via iControl REST
+Retrieve BIG-IP License Information via iControl REST
     [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
     [Arguments]    ${bigip_host}   ${bigip_username}   ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/license
@@ -502,7 +502,7 @@ Retrieve License Information via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve License Information via SSH
+Retrieve BIG-IP License Information via SSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
@@ -511,7 +511,7 @@ Retrieve License Information via SSH
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${license}
 
-Retrieve CPU Statistics via iControl REST
+Retrieve BIG-IP CPU Statistics via iControl REST
     [Documentation]    Retrieves CPU utilization statistics on the BIG-IP (https://support.f5.com/csp/article/K15468)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/cpu
@@ -521,7 +521,7 @@ Retrieve CPU Statistics via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve Hostname via iControl REST
+Retrieve BIG-IP Hostname via iControl REST
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/global-settings
@@ -531,7 +531,7 @@ Retrieve Hostname via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${configured_hostname}
 
-Retrieve Hostname via SSH
+Retrieve BIG-IP Hostname via SSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
@@ -540,7 +540,7 @@ Retrieve Hostname via SSH
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
 
-Retrieve NTP Configuration via iControl REST
+Retrieve BIG-IP NTP Configuration via iControl REST
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/sys/ntp
@@ -549,7 +549,7 @@ Retrieve NTP Configuration via iControl REST
     [Teardown]    Run Keywords   Delete All Sessions
     [Return]    ${api_response.json()}
 
-Retrieve NTP Configuration via SSH
+Retrieve BIG-IP NTP Configuration via SSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
