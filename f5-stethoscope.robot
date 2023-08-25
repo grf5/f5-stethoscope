@@ -122,7 +122,7 @@ Retrieve BIG-IP TMOS Version
     END
 
 Retrieve BIG-IP NTP Configuration
-    [Documentation]
+    [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     IF    ${api_reachable} == ${True}
         ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Append to API Output    ntp-config    ${retrieved_ntp_config_api}
@@ -133,14 +133,14 @@ Retrieve BIG-IP NTP Configuration
     END
 
 Verify NTP Status
-    [Documentation]
-    Set Global Variable    ${retrieved_ntp_status_api}
-    Set Global Variable    ${retrieved_ntp_status_tmsh}
+    [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     IF    ${api_reachable} == ${True}
-        Log    Placeholder
+        ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Status via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Append to API Output    ntp-status    ${retrieved_ntp_config_api}
     END
     IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
+        ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Status via TMSH        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Append to Text Output    NTP Status: ${retrieved_ntp_config_tmsh}
     END
 
 Retrieve BIG-IP Current CPU Utilization
@@ -475,7 +475,7 @@ Append to API Output
 Append to Text Output
     [Documentation]    Builds the plain text output for SSH information
     [Arguments]    ${text}
-    Append to File    ${OUTPUT_DIR}/${text_output_file_name}    ${text}\n\n
+    Append to File    ${OUTPUT_DIR}/${text_output_file_name}    ${text}\n
     [Return]
 
 BIG-IP iControl BasicAuth GET    
