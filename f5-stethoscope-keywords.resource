@@ -1,3 +1,11 @@
+*** Settings ***
+Library            Collections
+Library            String
+Library            RequestsLibrary
+Library            SSHLibrary
+Library            OperatingSystem
+Resource           f5-stethoscope.variables
+
 *** Keywords ***
 Append to API Output
     [Documentation]    Builds the JSON output block for API information
