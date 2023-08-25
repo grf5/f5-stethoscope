@@ -52,10 +52,9 @@ Verify SSH Connectivity
         Close All Connections
     # Checking to see that prompt includes (tmos)# for tmsh or the default bash prompt
     Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
-    IF    "(tmos)#" in ${SSHLoginOutput}
-        Set Global Variable    ${detected_shell}    tmsh
-    ELSE IF    "] ~ #" in ${SSHLoginOutput}
-        Set Global Variable    ${detected_shell}    bash
+    IF    ${ssh_reachable}
+        ${detected_shell}    Detect BIG-IP Shell    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Set Global Variable    ${detected_shell}
     END
 
 Test IPv4 iControlREST API Connectivity
@@ -563,3 +562,21 @@ Retrieve NTP Configuration via SSH
     ${hostname}    SSHLibrary.Execute Command    tmsh list sys global-settings hostname    
     [Teardown]    SSHLibrary.Close Connection
     [Return]    ${hostname}
+
+Detect BIG-IP Shell
+    [Documentation]    Detects if the user's shell is bash or tmsh
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${SSHCommandResult}    SSHLibrary.Execute Command    echo 'test'
+    IF    ${SSHCommandResult} == test 
+        ${detected_shell}    bash
+    ELSE IF    ${SSHCommandResult} == Syntax Error: unexpected argument "echo"
+        ${detected_shell}    tmsh
+    ELSE
+        Log    FATAL ERROR: Could not detect shell!
+        Log To Console    FATAL ERROR: Could not detect shell!
+        Fatal Error
+    END
+    [Return]    ${detected_shell}
