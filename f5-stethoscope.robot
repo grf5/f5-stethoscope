@@ -132,15 +132,17 @@ Retrieve BIG-IP NTP Configuration
         Append to Text Output    NTP Configuration: ${retrieved_ntp_config_tmsh}
     END
 
-Verify NTP Status
+Retrieve and Verify BIG-IP NTP Status
     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     IF    ${api_reachable} == ${True}
-        ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Status via iControl REST        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Append to API Output    ntp-status    ${retrieved_ntp_config_api}
+        ${retrieved_ntp_status_api}    Retrieve BIG-IP NTP Status via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_api}
+        Append to API Output    ntp-status    ${retrieved_ntp_status_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Status via TMSH        bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Append to Text Output    NTP Status: ${retrieved_ntp_config_tmsh}
+        ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via TMSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Verify BIG-IP NTP Server Associations    {$ntpq_output}
+        Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
     END
 
 Retrieve BIG-IP Current CPU Utilization
@@ -502,7 +504,7 @@ Retrieve BIG-IP TMOS Version via TMSH
     [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${version}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version all-properties'
+    ${version}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version'
     [Return]    ${version}
 
 Retrieve BIG-IP License Information via iControl REST
@@ -585,3 +587,65 @@ BIG-IP iControl BasicAuth POST
     ${api_response}    POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
     log    HTTP Response Code: ${api_response}
     [Return]    ${api_response.json()}
+
+Retrieve BIG-IP NTP Configuration via iControl REST
+    [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/sys/ntp
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response.json()}
+
+Retrieve BIG-IP NTP Configuration via TMSH
+    [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close Connection
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
+    [Return]    ${hostname}
+
+Retrieve BIG-IP NTP Status via iControl REST
+    [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_payload}    Create Dictionary    command    run    utilCmdArgs    -c \'ntpq -pn\'
+    ${api_uri}    set variable    /mgmt/tm/util/bash
+    ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
+    Should Be Equal As Strings    ${api_response.status_code}    200
+    [Return]    ${api_response.json()}
+
+Retrieve BIG-IP NTP Status via TMSH
+    [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${ntpq_output}    SSHLibrary.Execute Command    bash -c 'ntpq -pn'
+    [Return]    ${ntpq_output}
+
+Verify BIG-IP NTP Server Associations
+    [Documentation]    Verifies that all configured NTP servers are synced (https://support.f5.com/csp/article/K13380)
+    [Arguments]    ${ntpq_output}
+    ${ntpq_output_start}    Set Variable    ${ntpq_output.find("===\n")}
+    ${ntpq_output_clean}    Set Variable    ${ntpq_output[${ntpq_output_start}+4:]}
+    ${ntpq_output_values_list}    Split String    ${ntpq_output_clean}
+    ${ntpq_output_length}    get length    ${ntpq_output_values_list}
+    ${ntpq_output_server_count}    evaluate    ${ntpq_output_length} / 10 + 1
+    FOR    ${current_ntp_server}  IN RANGE    1   ${ntpq_output_server_count}
+        ${ntp_server_ip}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_reference}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_stratum}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_type}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_when}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_poll}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_reach}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_delay}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_offset}    remove from list    ${ntpq_output_values_list}  0
+        ${ntp_server_jitter}    remove from list    ${ntpq_output_values_list}  0
+        Append to Text Output    NTP server status: IP: ${ntp_server_ip} Reference IP: ${ntp_server_reference} Stratum: ${ntp_server_stratum} Type: ${ntp_server_type} Last Poll: ${ntp_server_when} Poll Interval: ${ntp_server_poll} Successes: ${ntp_server_reach} Delay: ${ntp_server_delay} Offset: ${ntp_server_offset} Jitter: ${ntp_server_jitter}
+    END
+    should not be equal as integers    ${ntp_server_reach}    0
+    should not be equal as strings    ${ntp_server_when}    -
+    should not be equal as strings    ${ntp_server_reference}    .STEP.
+    should not be equal as strings    ${ntp_server_reference}    .LOCL.
+    [Return]    ${api_response}
