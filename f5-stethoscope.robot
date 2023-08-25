@@ -467,7 +467,7 @@ Append to API Output
 Append to Text Output
     [Documentation]    Builds the plain text output for SSH information
     [Arguments]    ${text}
-    Append to File    ${OUTPUT_DIR}/${text_output_file_name}    ${text}
+    Append to File    ${OUTPUT_DIR}/${text_output_file_name}    ${text}\n
     [Return]
 
 BIG-IP iControl BasicAuth GET    
