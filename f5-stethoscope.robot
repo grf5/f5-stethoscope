@@ -141,7 +141,7 @@ Retrieve and Verify BIG-IP NTP Status
     END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via TMSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Verify BIG-IP NTP Server Associations    {$ntpq_output}
+        Verify BIG-IP NTP Server Associations    {$retrieved_ntp_status_tmsh}
         Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
     END
 
@@ -595,7 +595,7 @@ Retrieve BIG-IP NTP Status via iControl REST
     ${api_uri}    set variable    /mgmt/tm/util/bash
     ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    ${ntpq_output}    Get From Dictionary    ${api_response.json}    commandResult
+    ${ntpq_output}    Get From Dictionary    ${api_response.json()}    commandResult
     [Return]    ${ntpq_output}
 
 Retrieve BIG-IP NTP Status via TMSH
