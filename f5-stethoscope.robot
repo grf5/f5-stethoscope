@@ -12,18 +12,23 @@ Suite Setup        Set Log Level    trace
 Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
 *** Variables ***
-# To specify the BIG-IP host from the cli, use the following syntax:
-# robot f5-stethoscope.robot --host 192.168.1.1 --user admin --pass g00dgrAvy_1984$
-${host}                        192.168.1.245
-${user}                        admin
-${pass}                        default
-${bigip_host}                  ${host}
-${bigip_username}              ${user}
-${bigip_password}              ${pass}
+# These are the credential variables with default values; you can modify them here or
+# override the values by running this script using the format below:
+#
+# robot f5-stethoscope.robot --bigip_host 192.168.1.1 --bigip_username admin --bigip_password g00dgrAvy_1984$
+#
+${bigip_host}                  192.168.1.245
+${bigip_username}              admin
+${bigip_password}              f5c0nfig123!
+# Each test will write out data in human readable, plain text output to the file specified here.
 ${text_output_file_name}       device_info.txt
+# Creating an empty dictionary that we will populate with data as the tests run
+&{api_info_block}            
 
 *** Test Cases ***
 Record Timestamp
+    [Documentation]    This script simply outputs a timestamp to the console, log file, 
+    ...    plain text output file and API output dictionary
     ${timestamp}    Get Current Date
     Log    First test started at ${timestamp}
     Log To Console    First test started at ${timestamp}
@@ -31,16 +36,15 @@ Record Timestamp
     Create File    ${OUTPUT_DIR}/${text_output_file_name}    First test started at ${timestamp}\n
     
 Check for Required Variables
-    [Documentation]    Ensures that the required variables are present
+    [Documentation]    Ensures that the required variables are present and contain data
     [Tags]    critical
     TRY
-        Should Not Be Empty    ${host}
-        Should Not Be Empty    ${user}
-        Should Not Be Empty    ${pass}
+        Should Not Be Empty    ${bigip_host}
+        Should Not Be Empty    ${bigip_username}
+        Should Not Be Empty    ${bigip_password}
     EXCEPT
         Fatal Error
     END
-
 
 Verify SSH Connectivity
     [Documentation]    Logs into the BIG-IP via TMSH, executes a BASH command and validates the expected response
@@ -72,7 +76,6 @@ Test IPv4 iControlREST API Connectivity
         Append to API Output    api_connectivity    ${False}
         Append to Text Output    API Connecitivity: Failed
         Set Global Variable    ${api_reachable}    ${False}
-
     ELSE
         Log    Successfully connected to iControl REST API
         Append to API Output    api_connectivity    ${True}
@@ -80,14 +83,35 @@ Test IPv4 iControlREST API Connectivity
         Set Global Variable    ${api_reachable}    ${True}
     END
 
-Verify Connectivty Availability
-    [Documentation]    Ensure that SSH or REST is available
+Verify Connectivity Availability
+    [Documentation]    Ensure that either SSH or REST is available
     IF    ${api_reachable} == ${False} and ${ssh_reachable} == ${False}
         Append to Text Output    Fatal error: No SSH or API Connectivity succeeded
         Append to API Output    fatal_error    No SSH or API Connectivity succeeded
         Log    Fatal error: No SSH or API Connectivity succeeded
         Log To Console    Fatal error: No SSH or API Connectivity succeeded
         Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${host} with user '${user}'
+    END
+
+Retrieve BIG-IP CPU Statistics
+    [Documentation]    Retrieves the CPU utilization from the BIG-IP
+    IF    ${api_reachable} == ${True}
+        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
+        Append to API Output    cpu_stats    ${cpu_stats}
+    END
+    IF   ${ssh_reachable} == ${True}
+        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${host}    bigip_username    bigip_password=${pass}
+    END
+
+Retrieve BIG-IP Current Memory Utilization
+    [Documentation]
+    Set Global Variable    ${retrieved_mem_stats_api}
+    Set Global Variable    ${retrieved_mem_stats_tmsh}
+    IF    ${api_reachable} == ${True}
+        Log    Placeholder
+    END
+    IF   ${ssh_reachable} == ${True}
+        Log    Placeholder
     END
 
 Retrieve BIG-IP Hostname
@@ -147,27 +171,6 @@ Retrieve and Verify BIG-IP NTP Status
         ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via TMSH    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
         Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
         Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
-    END
-
-Retrieve BIG-IP CPU Statistics
-    [Documentation]    Retrieves the CPU utilization from the BIG-IP
-    IF    ${api_reachable} == ${True}
-        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${host}    bigip_username=${user}    bigip_password=${pass}
-        Append to API Output    cpu_stats    ${cpu_stats}
-    END
-    IF   ${ssh_reachable} == ${True}
-        ${cpu_stats}    Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${host}    bigip_username    bigip_password=${pass}
-    END
-
-Retrieve BIG-IP Current Memory Utilization
-    [Documentation]
-    Set Global Variable    ${retrieved_mem_stats_api}
-    Set Global Variable    ${retrieved_mem_stats_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
     END
 
 Retrieve BIG-IP Disk Space Utilization
