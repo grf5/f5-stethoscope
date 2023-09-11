@@ -124,7 +124,8 @@ Retrieve BIG-IP CPU Statistics
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api.json()}
     Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_cpu_stats_tmsh.json()}
-    Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh.json(commandResult)}
+    ${retrieved_cpu_stats_tmsh.humanreadable}    Get from dictionary    ${retrieved_cpu_stats_tmsh.json()}    commandResult
+    Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh.humanreadable}
 
 Retrieve BIG-IP Current Memory Utilization
     [Documentation]
