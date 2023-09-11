@@ -171,14 +171,92 @@ Retrieve BIG-IP License Information
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** License: ${retrieved_license_tmsh}
 
 Retrieve BIG-IP TMOS Version
-    [Documentation]    Retrieves the current TMOS version of the device
+    [Documentation]    Retrieves the current TMOS version of the device and verifies lifecycle status. (https://my.f5.com/manage/s/article/K5903)
     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${bigip_version}    Set variable    ${retrieved_version_api.json()}[entries][https://localhost/mgmt/tm/sys/version/0][nestedStats][entries][Version][description]
     Append to API Output    version    ${retrieved_version_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    BIG-IP Version: ${retrieved_version_tmsh}
-    IF    "15." in "${bigip_version}"
-        Log to console    version 15 found
+    ${current_date}    Get current date    result_format=%Y/%m/%d
+    IF    "17.1." in "${bigip_version}" 
+        ${end_of_software_development}    Set variable    2027/03/31
+        ${end_of_technical_support}    Set variable    2027/03/31
+        ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
+        ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
+            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
+            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+        ELSE IF    ${remaining_days_software_development} <= 0
+            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        ELSE IF    ${remaining_days_technical_support} <= 0
+            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        END
+    ELSE IF    "16.1." in ${bigip_version}
+        ${end_of_software_development}    Set variable    2025/07/31
+        ${end_of_technical_support}    Set variable    2025/07/31
+        ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
+        ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
+            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
+            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+        ELSE IF    ${remaining_days_software_development} <= 0
+            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        ELSE IF    ${remaining_days_technical_support} <= 0
+            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        END
+    ELSE IF    "15.1." in ${bigip_version}
+        ${end_of_software_development}    Set variable    2024/12/31
+        ${end_of_technical_support}    Set variable    2024/12/31
+        ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
+        ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
+            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
+            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+        ELSE IF    ${remaining_days_software_development} <= 0
+            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        ELSE IF    ${remaining_days_technical_support} <= 0
+            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        END
+    ELSE IF    "13.1." in ${bigip_version} or "14.1." in ${bigip_version}
+        ${end_of_software_development}    Set variable    2023/12/31
+        ${end_of_technical_support}    Set variable    2023/12/31
+        ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
+        ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
+            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
+            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+        ELSE IF    ${remaining_days_software_development} <= 0
+            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        ELSE IF    ${remaining_days_technical_support} <= 0
+            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+        END    
+    ELSE
+        Log to console    TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.        
     END
 
 Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
