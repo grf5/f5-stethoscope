@@ -4,12 +4,14 @@
 #
 # robot f5-stethoscope.robot --bigip_host 192.168.1.1 --bigip_username admin --bigip_password g00dgrAvy_1984$
 #
-${bigip_host}                  192.168.1.245
-${bigip_username}              admin
-${bigip_password}              f5c0nfig123!
-# Each test will write out data in human readable, plain text output to the file specified here.
-${text_output_file_name}       device_info.txt
-# 
-${configuration_file_name}     device_configuration.txt
+${bigip_host}                      192.168.1.245
+${bigip_username}                  admin
+${bigip_password}                  f5c0nfig123!
+# Device and object status will be written to this file. Information in this file should be static
+# and can be diff'd prior to and after a maintenance event to view configuration or operation state
+# changes:
+${text_output_file_name}           device_info.txt
+# Device statistics will be written to this file:
+${statistics_output_file_name}     device_stats.txt
 # Creating an empty dictionary that we will populate with data as the tests run
 &{api_info_block}  

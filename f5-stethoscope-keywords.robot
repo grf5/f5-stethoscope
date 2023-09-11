@@ -13,11 +13,18 @@ Append to API Output
     Set To Dictionary    ${api_info_block}    ${key}    ${value}
     [Return]
 
-Append to Text Output
+Append to Status File
     [Documentation]    Builds the plain text output for SSH information
     [Arguments]    ${text}
     Append to File    ${OUTPUT_DIR}/${text_output_file_name}    ${text}\n
     [Return]
+
+Append to Statistics File
+    [Documentation]    Builds the plain text output for SSH information
+    [Arguments]    ${text}
+    Append to File    ${OUTPUT_DIR}/${statistics_output_file_name}    ${text}\n
+    [Return]
+
 
 BIG-IP iControl BasicAuth GET    
     [Documentation]    Performs an iControl REST API GET call using basic auth (See pages 25-38 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
