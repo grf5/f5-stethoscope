@@ -30,10 +30,10 @@ Record Timestamp
     [Documentation]    This script simply outputs a timestamp to the console, log file, 
     ...    plain text output file and API output dictionary
     ${timestamp}   Get Current Date
-    Log    First test started at ${timestamp}
-    Log To Console    First test started at ${timestamp}
-    Append to API Output    first_test_start_time    ${timestamp}
-    Create File    ${OUTPUT_DIR}/${text_output_file_name}   First test started at ${timestamp}\n
+    Log    Test started at ${timestamp}
+    Log To Console    Test started at ${timestamp}
+    Append to API Output    test_start_time    ${timestamp}
+    Create File    ${OUTPUT_DIR}/${text_output_file_name}   test started at ${timestamp}\n
     
 Check for Required Variables
     [Documentation]    Ensures that all required variables are present and contain data
@@ -489,6 +489,10 @@ Retrieve BIG-IP Full Text Configuration via SSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     Skip if    ${ssh_reachable} == ${False}
+    SSHLibrary.Open connection    ${bigip_host
+    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+    ${full_text_configuration}    SSHLibrary.Execute command    bash -c tmsh list / all-properties one-line recursive
+    Append to Text Output    Full Text Configuration:\n${full_text_configuration}
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
