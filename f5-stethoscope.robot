@@ -156,7 +156,7 @@ Retrieve BIG-IP License Information
     Should not contain    ${retrieved_license_tmsh}    Can't load license, may not be operational
     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate]
-    ${current_date}    Get current date    date_format=%Y/%m/%d
+    ${current_date}    Get current date    result_format=%Y/%m/%d
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
     log to console    ${days_until_service_check_date}
     Append to API Output    license    ${retrieved_license_api}
