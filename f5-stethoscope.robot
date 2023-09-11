@@ -132,7 +132,7 @@ Retrieve BIG-IP Current Memory Utilization
         ${retrieved_mem_stats_api}    Retrieve BIG-IP Memory Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
         ${retrieved_mem_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=bash -c 'tmsh show sys mem all field-fmt'
     ELSE IF   ${ssh_reachable} == ${True}        
-        ${retrieved_mem_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/mem/stats'
+        ${retrieved_mem_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/mem'
         ${retrieved_mem_stats_tmsh}    Retrieve BIG-IP Memory Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_mem_stats_api.json()}
