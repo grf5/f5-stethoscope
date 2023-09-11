@@ -137,7 +137,7 @@ Retrieve BIG-IP Current Memory Utilization
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_mem_stats_api.json()}
     Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_mem_stats_tmsh.json()}
-    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh.text}
+    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh.json().commandResult}
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
