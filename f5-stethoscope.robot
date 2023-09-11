@@ -113,12 +113,21 @@ Check BIG-IP for Excessive CPU/Memory Utilization
     ${other_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
-    Should not be true    ${utilization_avg} >= 90
-    Should not be true    ${tmm_mem_used_avg} >= 90
-    Should not be true    ${other_mem_used_avg} >= 90
-    Should not be true    ${swap_used_avg} > 0
     Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
     Append to Text Output    Memory Statistics:${system_performance_tmsh}
+    IF    ${utilization_avg} >= 90
+        Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
+    END
+    IF    ${tmm_mem_used_avg} >= 90
+        Fatal error    FATAL ERROR: Excessive TMM memory utilization: ${utilization_avg}%
+    END
+    IF    ${other_mem_used_avg} >= 90
+        Fatal error    FATAL ERROR: Excessive memory utilization: ${utilization_avg}%
+    END
+    IF    ${swap_used_avg} > 0
+        Log to Console    Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
+        Log    Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
+    END
 
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
@@ -270,17 +279,9 @@ Retrieve BIG-IP Full Text Configuration via SSH
     SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
-    Append to Text Output    Full Text Configuration:\n${full_text_configuration}
+    Create File    ${OUTPUT_DIR}/${configuration_file_name}   Full Text Configuration:\n${full_text_configuration}
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
     Log Dictionary   ${api_info_block}
-
-Record Text Output from Tests
-    [Documentation]    Displays the contents of the plain text file output
-    TRY
-        OperatingSystem.Get File    ${OUTPUT_DIR}/${text_output_file_name}
-    EXCEPT    message
-        Log    Could not retrieve text file output        
-    END
 

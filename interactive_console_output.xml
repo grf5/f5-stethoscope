@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1.1 (Python 3.11.4 on darwin)" generated="20230911 16:56:04.722" rpa="false" schemaversion="4">
+<suite id="s1" name="Robot Interactive Console" source="/Users/G.Robinson/.vscode/extensions/robocorp.robotframework-lsp-1.11.0/src/robotframework_ls/vendored/robotframework_interactive/robot_interactive_console.robot">
+<test id="s1-t1" name="Default Task/Test" line="5">
+<kw name="Interpreter Main Loop" library="MainLoop">
+<try>
+<branch type="TRY">
+<kw name="OperatingSystem.Get File">
+<arg>${OUTPUT_DIR}/${text_output_file_name}</arg>
+<msg timestamp="20230911 16:56:04.963" level="FAIL">No keyword with name 'OperatingSystem.Get File' found.</msg>
+<status status="FAIL" starttime="20230911 16:56:04.963" endtime="20230911 16:56:04.963"/>
+</kw>
+<status status="FAIL" starttime="20230911 16:56:04.962" endtime="20230911 16:56:04.963"/>
+</branch>
+<branch type="EXCEPT">
+<pattern>message</pattern>
+<kw name="Log" library="BuiltIn">
+<arg>Could not retrieve text file output</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="NOT RUN" starttime="20230911 16:56:04.963" endtime="20230911 16:56:04.963"/>
+</kw>
+<status status="NOT RUN" starttime="20230911 16:56:04.963" endtime="20230911 16:56:04.963"/>
+</branch>
+<status status="FAIL" starttime="20230911 16:56:04.962" endtime="20230911 16:56:04.963"/>
+</try>
+<status status="PASS" starttime="20230911 16:56:04.731" endtime="20230911 16:56:11.479"/>
+</kw>
+<status status="PASS" starttime="20230911 16:56:04.730" endtime="20230911 16:56:11.480"/>
+</test>
+<status status="PASS" starttime="20230911 16:56:04.723" endtime="20230911 16:56:11.481"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Robot Interactive Console">Robot Interactive Console</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
