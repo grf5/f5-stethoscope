@@ -78,6 +78,7 @@ Verify Remote Host is a BIG-IP via SSH
     SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
     Should Contain    ${retrieved_show_sys_hardware_tmsh}   BIG-IP
+    Append to Text Output    System Hardware:\n${retrieved_show_sys_hardware_tmsh}
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -102,6 +103,7 @@ Verify Remote Host is a BIG-IP via iControl REST
     Skip If    ${api_reachable} == ${False}   API is not reachable.
     ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
+    Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
 
 Verify Connectivity Availability
     [Documentation]    Ensure that either SSH or REST is available
@@ -110,8 +112,12 @@ Verify Connectivity Availability
         Append to API Output    error    No SSH or API Connectivity succeeded
         Log    Fatal error: No SSH or API Connectivity succeeded
         Log To Console    Fatal error: No SSH or API Connectivity succeeded
-        Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
+        Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${bigip_host} with user '${bigip_username}'        
     END
+    Append to API Output    api_reachable    ${api_reachable}
+    Append to API Output    ssh_reachable    ${ssh_reachable}
+    Append to Text Output    API Reachable: ${api_reachable}
+    Append to Text Output    SSH Reachable: ${ssh_reachable}
 
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
@@ -121,7 +127,7 @@ Retrieve BIG-IP CPU Statistics
         ${retrieved_cpu_stats_tmsh}   Get from dictionary   ${retrieved_cpu_stats_tmsh.json()}   commandResult
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_cpu_stats_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri='/mgmt/tm/sys/cpu/stats'
+        ${retrieved_cpu_stats_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri=/mgmt/tm/sys/cpu/stats
         ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api.json()}
