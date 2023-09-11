@@ -107,7 +107,7 @@ Verify Connectivity Availability
     [Documentation]    Ensure that either SSH or REST is available
     IF    ${api_reachable} == ${False} and ${ssh_reachable} == ${False}
         Append to Text Output    Fatal error: No SSH or API Connectivity succeeded
-        Append to API Output    status    failed    message    No SSH or API Connectivity succeeded
+        Append to API Output    error    No SSH or API Connectivity succeeded
         Log    Fatal error: No SSH or API Connectivity succeeded
         Log To Console    Fatal error: No SSH or API Connectivity succeeded
         Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
@@ -119,6 +119,7 @@ Retrieve BIG-IP CPU Statistics
         ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         ${retrieved_cpu_stats_tmsh}   Run BASH Command on BIG-IP   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=bash -c 'tmsh show sys cpu all'
         ${retrieved_cpu_stats_tmsh}   Get from dictionary   ${retrieved_cpu_stats_tmsh.json()}   commandResult
+    END
     IF   ${ssh_reachable} == ${True}
         ${retrieved_cpu_stats_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri='/mgmt/tm/sys/cpu/stats'
         ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
@@ -135,6 +136,7 @@ Retrieve BIG-IP Current Memory Utilization
         ${retrieved_mem_stats_tmsh}   Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=bash -c 'tmsh show sys mem all field-fmt'
         # The response from the tmsh via API command will be in JSON, we'll extract the actual output from the commandResult key and overwrite the variable with the formatted output
         ${retrieved_mem_stats_tmsh}   Get from dictionary    ${retrieved_mem_stats_tmsh.json()}    commandResult
+    END
     IF   ${ssh_reachable} == ${True}
         # Retrieve the desired data via API with localhost curl on BIG-IP; data returned in JSON format
         ${retrieved_mem_stats_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri='/mgmt/tm/sys/mem'
