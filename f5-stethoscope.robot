@@ -33,7 +33,7 @@ Record Timestamp
     Log    Test started at ${timestamp}
     Log To Console    Test started at ${timestamp}
     Append to API Output    test_start_time    ${timestamp}
-    Create File    ${OUTPUT_DIR}/${text_output_file_name}   Test started at ${timestamp}\n
+    Create File    ${OUTPUT_DIR}/${status_output_file_name}   Test started at ${timestamp}\n
     
 Check for Required Variables
     [Documentation]    Ensures that all required variables are present and contain data
@@ -65,7 +65,7 @@ Verify SSH Connectivity
     ELSE
         Log    Successfully connected to SSH
         Append to API Output    ssh_connectivity    ${True}
-        Append to Status File    SSH Connecitivity: Succeeded
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    SSH Connecitivity: Succeeded
     END
 
 Verify Remote Host is a BIG-IP via SSH
@@ -78,7 +78,7 @@ Verify Remote Host is a BIG-IP via SSH
     SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
     Should Contain    ${retrieved_show_sys_hardware_tmsh}   BIG-IP
-    Append to Status File    System Hardware:${retrieved_show_sys_hardware_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    System Hardware:${retrieved_show_sys_hardware_tmsh}
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -86,7 +86,7 @@ Test IPv4 iControlREST API Connectivity
     TRY
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}   ${bigip_username}   ${bigip_password}
     EXCEPT
-        Append to Status File    Fatal error: API connectivity failed
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Fatal error: API connectivity failed
         Append to API Output    error    API connectivity failed
         Log    Fatal error: API connectivity failed
         Log To Console    Fatal error: API connectivity failed
@@ -94,7 +94,7 @@ Test IPv4 iControlREST API Connectivity
     ELSE
         Log    Successfully connected to iControl REST API
         Append to API Output    api_connectivity    ${True}
-        Append to Status File    API Connecitivity: Succeeded
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    API Connecitivity: Succeeded
     END
 
 Verify Remote Host is a BIG-IP via iControl REST
@@ -107,7 +107,7 @@ Verify Remote Host is a BIG-IP via iControl REST
     Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
 
 Check BIG-IP for Excessive CPU/Memory Utilization    
-    [Documentation] Verifies that resource utilization on the BIG-IP isn't critical and stops all testing if robot tests could cause impact
+    [Documentation]    Verifies that resource utilization on the BIG-IP isn't critical and stops all testing if robot tests could cause impact
     [Tags]    critical    
     # Retrieve the desired data via API; returned in JSON format
     ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
@@ -140,36 +140,34 @@ Retrieve BIG-IP CPU Statistics
     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
-    Append to Statistics File    CPU Statistics:\n${retrieved_cpu_stats_tmsh}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    *** CPU Statistics:\n${retrieved_cpu_stats_tmsh}
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    hostname    ${retrieved_hostname_api}
-    Append to Status File    Hostname: ${retrieved_hostname_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** Hostname: ${retrieved_hostname_tmsh}
 
 Retrieve BIG-IP License Information
     [Documentation]    Retrieves the license information from the BIG-IP
     ${retrieved_license_api}   Retrieve BIG-IP License Information via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_license_tmsh}   Retrieve BIG-IP License Information via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    license    ${retrieved_license_api}
-    Append to Status File    License: ${retrieved_license_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** License: ${retrieved_license_tmsh}
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    version    ${retrieved_version_api}
-    Append to Status File    BIG-IP Version: ${retrieved_version_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    BIG-IP Version: ${retrieved_version_tmsh}
 
 Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     ${retrieved_ntp_config_api}   Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Dictionary Should Contain Key    ${retrieved_ntp_config_api.json()}   servers
-    Append to API Output    ntp-config    ${retrieved_ntp_config_api.json()}
     ${retrieved_ntp_config_tmsh}   Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to Status File    NTP Configuration: ${retrieved_ntp_config_tmsh}
     Should Not Contain    ${retrieved_ntp_config_tmsh}   servers none
 
 Retrieve and Verify BIG-IP NTP Status
@@ -177,7 +175,7 @@ Retrieve and Verify BIG-IP NTP Status
     ${retrieved_ntp_status_tmsh}   Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
     Append to API Output    ntp-status    ${retrieved_ntp_status_tmsh}
-    Append to Status File    NTP Status: ${retrieved_ntp_status_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** NTP Status: ${retrieved_ntp_status_tmsh}
 
 Retrieve BIG-IP Disk Space Utilization
     Set log level    trace
