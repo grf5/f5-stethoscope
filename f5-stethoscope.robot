@@ -174,10 +174,10 @@ Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device
     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${bigip_version}    Set variable    ${retrieved_version_api.json()}[entries][https://localhost/mgmt/tm/sys/version/0][nestedStats][entries][version][description]
     Append to API Output    version    ${retrieved_version_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    BIG-IP Version: ${retrieved_version_tmsh}
-    Log to console    ${retrieved_version_api.text}
-    Log to console    ${retrieved_version_tmsh}
+    Log to console    ${bigip_version}
 
 Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
