@@ -153,6 +153,12 @@ Retrieve BIG-IP License Information
     [Documentation]    Retrieves the license information from the BIG-IP
     ${retrieved_license_api}   Retrieve BIG-IP License Information via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_license_tmsh}   Retrieve BIG-IP License Information via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Should not contain    ${retrieved_license_tmsh}    Can't load license, may not be operational
+    Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
+    ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate]
+    ${current_date}    Get current date    date_format=%Y/%m/%d
+    ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
+    log to console    ${days_until_service_check_date}
     Append to API Output    license    ${retrieved_license_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** License: ${retrieved_license_tmsh}
 
