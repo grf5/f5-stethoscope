@@ -485,14 +485,15 @@ Retrieve BIG-IP Full Text Configuration
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     IF    ${api_reachable} == ${True}
-        ${full_text_configuration}   Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=list / one-line all-properties recursive
+        ${full_text_configuration}   Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=bash -c tmsh list / one-line all-properties recursive
+        ${full_text_configuration}    Get from dictionary    ${full_text_configuration}    commandResult
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
     IF   ${ssh_reachable} == ${True}
         SSHLibrary.Open Connection    ${bigip_host}
         SSHLibrary.Login    ${bigip_username}   ${bigip_password}
-        ${full_text_configuration}   Execute Command    list / one-line all-properties recursive
+        ${full_text_configuration}   Execute Command    bash -c tmsh list / one-line all-properties recursive
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
