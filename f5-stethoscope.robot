@@ -288,7 +288,7 @@ Retrieve BIG-IP Full Text Configuration via SSH
     SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
-    Create File    ${OUTPUT_DIR}/${configuration_file_name}   Full Text Configuration:\n${full_text_configuration}
+    Create File    ${OUTPUT_DIR}/${status_output_file_name}   Full Text Configuration:\n${full_text_configuration}
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
