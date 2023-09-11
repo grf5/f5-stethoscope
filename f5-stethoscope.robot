@@ -119,7 +119,7 @@ Check BIG-IP for Excessive CPU/Memory Utilization
     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
     Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
-    Append to Statistics File    System Performance All Statistics:${system_performance_tmsh}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    System Performance All Statistics:${system_performance_tmsh}
     IF    ${utilization_avg} >= 90
         Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
     END
