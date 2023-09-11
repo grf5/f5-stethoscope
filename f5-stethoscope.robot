@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation      F5 stethoscope is a Robot Framework script that checks the generic health
 ...                of BIG-IP devices.
-...                    
+...
 ...                By default, stethoscope uses the iControl REST API to retrieve information.
 ...                If the API is not available, it will fallback to SSH.
 # Load third-party libraries that extend the functionality of Robot Framework, enabling us to use
@@ -21,20 +21,20 @@ Resource           f5-stethoscope-variables.robot
 # it repeatedly in each test. This Suite Setup keyword can be extended to issue multiple keywords
 # prior to starting a test suite.
 Suite Setup        Set Log Level    trace
-# This set of commands runs at the end of each test suite, ensuring that SSH connections are 
-# closed and any API sessions are closed. 
+# This set of commands runs at the end of each test suite, ensuring that SSH connections are
+# closed and any API sessions are closed.
 Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
 *** Test Cases ***
 Record Timestamp
-    [Documentation]    This script simply outputs a timestamp to the console, log file, 
+    [Documentation]    This script simply outputs a timestamp to the console, log file,
     ...    plain text output file and API output dictionary
     ${timestamp}   Get Current Date
     Log    Test started at ${timestamp}
-    Log To Console    Test started at ${timestamp}
+    Log To Console    \nTest started at ${timestamp}
     Append to API Output    test_start_time    ${timestamp}
     Create File    ${OUTPUT_DIR}/${status_output_file_name}   Test started at ${timestamp}\n
-    
+
 Check for Required Variables
     [Documentation]    Ensures that all required variables are present and contain data
     [Tags]    critical
@@ -53,7 +53,7 @@ Verify SSH Connectivity
     TRY
         # Use the SSH Library to connect to the host
         SSHLibrary.Open Connection    ${bigip_host}
-        # Log in and note the returned prompt 
+        # Log in and note the returned prompt
         ${SSHLoginOutput}   SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
         # Verify that the prompt includes (tmos)# for tmsh or the default bash prompt
         Should Contain Any    ${SSHLoginOutput}   (tmos)#    ] ~ #
@@ -71,9 +71,9 @@ Verify SSH Connectivity
 Verify Remote Host is a BIG-IP via SSH
     [Documentation]    This test will run a command via SSH to verify that the remote host is
     ...                a BIG-IP device.
-    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections
     ...    AND    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
-    [Tags]    critical    
+    [Tags]    critical
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
@@ -82,7 +82,7 @@ Verify Remote Host is a BIG-IP via SSH
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
-    [Tags]    critical    
+    [Tags]    critical
     TRY
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}   ${bigip_username}   ${bigip_password}
     EXCEPT
@@ -101,14 +101,14 @@ Verify Remote Host is a BIG-IP via iControl REST
     [Documentation]    This test will query the iControl REST API to ensure the remote endpoint is
     ...                a BIG-IP device.
     [Teardown]    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
-    [Tags]    critical    
+    [Tags]    critical
     ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
     Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
 
-Check BIG-IP for Excessive CPU/Memory Utilization    
+Check BIG-IP for Excessive CPU/Memory Utilization
     [Documentation]    Verifies that resource utilization on the BIG-IP isn't critical and stops all testing if robot tests could cause impact
-    [Tags]    critical    
+    [Tags]    critical
     # Retrieve the desired data via API; returned in JSON format
     ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
@@ -156,27 +156,28 @@ Retrieve BIG-IP License Information
     Should not contain    ${retrieved_license_tmsh}    Can't load license, may not be operational
     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Service check date: ${service_check_date}    
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Service check date: ${service_check_date}
     Append to API Output    service_check_date    ${service_check_date}
     ${current_date}    Get current date    result_format=%Y/%m/%d
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Current date: ${service_check_date}
     Append to API Output    current_date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
     IF    ${days_until_service_check_date} < 1
-        Log to console    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
+        Log to console    \nWARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
         Log    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
     END
-    log to console    Days remaining before service check date: ${days_until_service_check_date}
     Append to API Output    license    ${retrieved_license_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** License: ${retrieved_license_tmsh}
 
 Retrieve BIG-IP TMOS Version
-    [Documentation]    Retrieves the current TMOS version of the device 
+    [Documentation]    Retrieves the current TMOS version of the device
     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    version    ${retrieved_version_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    BIG-IP Version: ${retrieved_version_tmsh}
+    Log to console    ${retrieved_version_api.text}
+    Log to console    ${retrieved_version_tmsh}
 
 Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
@@ -271,7 +272,7 @@ Retrieve BIG-IP Virtual Server Configuration
 Retrieve BIG-IP Virtual Server Statistics
     [Documentation]
     Set log level    trace
-    
+
 Retrieve BIG-IP Pool Configuration
     [Documentation]
     Set log level    trace
