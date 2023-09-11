@@ -29,11 +29,11 @@ Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsL
 Record Timestamp
     [Documentation]    This script simply outputs a timestamp to the console, log file, 
     ...    plain text output file and API output dictionary
-    ${timestamp}    Get Current Date
+    ${timestamp}   Get Current Date
     Log    First test started at ${timestamp}
     Log To Console    First test started at ${timestamp}
     Append to API Output    first_test_start_time    ${timestamp}
-    Create File    ${OUTPUT_DIR}/${text_output_file_name}    First test started at ${timestamp}\n
+    Create File    ${OUTPUT_DIR}/${text_output_file_name}   First test started at ${timestamp}\n
     
 Check for Required Variables
     [Documentation]    Ensures that all required variables are present and contain data
@@ -53,19 +53,19 @@ Verify SSH Connectivity
         # Use the SSH Library to connect to the host
         SSHLibrary.Open Connection    ${bigip_host}
         # Log in and note the returned prompt 
-        ${SSHLoginOutput}    SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
+        ${SSHLoginOutput}   SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
         # Verify that the prompt includes (tmos)# for tmsh or the default bash prompt
-        Should Contain Any    ${SSHLoginOutput}    (tmos)#    ] ~ #
+        Should Contain Any    ${SSHLoginOutput}   (tmos)#    ] ~ #
     EXCEPT
         Log    Could not connect to SSH
         Append to API Output    ssh_connectivity    ${False}
         Append to Text Output    SSH Connecitivity: Failed
-        Set Global Variable    ${ssh_reachable}    ${False}
+        Set Global Variable    ${ssh_reachable}   ${False}
     ELSE
         Log    Successfully connected to SSH
         Append to API Output    ssh_connectivity    ${True}
         Append to Text Output    SSH Connecitivity: Succeeded
-        Set Global Variable    ${ssh_reachable}    ${True}
+        Set Global Variable    ${ssh_reachable}   ${True}
     END
 
 Verify Remote Host is a BIG-IP via SSH
@@ -73,41 +73,41 @@ Verify Remote Host is a BIG-IP via SSH
     ...                a BIG-IP device.
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    
     ...    AND    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
-    Skip If    ${ssh_reachable} == ${False}    SSH is not reachable.
+    Skip If    ${ssh_reachable} == ${False}   SSH is not reachable.
     SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Log In    ${bigip_username}    ${bigip_password}
-    ${retrieved_show_sys_hardware_tmsh}    SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
-    Should Contain    ${retrieved_show_sys_hardware_tmsh}    BIG-IP
+    SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
+    ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
+    Should Contain    ${retrieved_show_sys_hardware_tmsh}   BIG-IP
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
     TRY
-        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}    ${bigip_username}    ${bigip_password}
+        Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}   ${bigip_username}   ${bigip_password}
     EXCEPT
         Log    Could not connect to iControl REST
         Append to API Output    api_connectivity    ${False}
         Append to Text Output    API Connecitivity: Failed
-        Set Global Variable    ${api_reachable}    ${False}
+        Set Global Variable    ${api_reachable}   ${False}
     ELSE
         Log    Successfully connected to iControl REST API
         Append to API Output    api_connectivity    ${True}
         Append to Text Output    API Connecitivity: Succeeded
-        Set Global Variable    ${api_reachable}    ${True}
+        Set Global Variable    ${api_reachable}   ${True}
     END
 
 Verify Remote Host is a BIG-IP via iControl REST
     [Documentation]    This test will query the iControl REST API to ensure the remote endpoint is
     ...                a BIG-IP device.
     [Teardown]    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
-    Skip If    ${api_reachable} == ${False}    API is not reachable.
-    ${retrieved_sys_hardware_api}    Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-    Should contain    ${retrieved_sys_hardware_api.text}    BIG-IP
+    Skip If    ${api_reachable} == ${False}   API is not reachable.
+    ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
 
 Verify Connectivity Availability
     [Documentation]    Ensure that either SSH or REST is available
     IF    ${api_reachable} == ${False} and ${ssh_reachable} == ${False}
         Append to Text Output    Fatal error: No SSH or API Connectivity succeeded
-        Append to API Output    fatal_error    No SSH or API Connectivity succeeded
+        Append to API Output    status    failed    message    No SSH or API Connectivity succeeded
         Log    Fatal error: No SSH or API Connectivity succeeded
         Log To Console    Fatal error: No SSH or API Connectivity succeeded
         Fatal Error    No connectivity to device via SSH or iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
@@ -116,85 +116,92 @@ Verify Connectivity Availability
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
     IF    ${api_reachable} == ${True}
-        ${retrieved_cpu_stats_api}    Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        ${retrieved_cpu_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=bash -c 'tmsh show sys cpu all'
-    ELSE IF   ${ssh_reachable} == ${True}        
-        ${retrieved_cpu_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/cpu/stats'
-        ${retrieved_cpu_stats_tmsh}    Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+        ${retrieved_cpu_stats_tmsh}   Run BASH Command on BIG-IP   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=bash -c 'tmsh show sys cpu all'
+        ${retrieved_cpu_stats_tmsh}   Get from dictionary   ${retrieved_cpu_stats_tmsh.json()}   commandResult
+    IF   ${ssh_reachable} == ${True}
+        ${retrieved_cpu_stats_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri='/mgmt/tm/sys/cpu/stats'
+        ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api.json()}
-    Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_cpu_stats_tmsh.json()}
-    ${retrieved_cpu_stats_tmsh.humanreadable}    Get from dictionary    ${retrieved_cpu_stats_tmsh.json()}    commandResult
-    Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh.humanreadable}
+    Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh}
 
 Retrieve BIG-IP Current Memory Utilization
     [Documentation]
     IF    ${api_reachable} == ${True}
-        ${retrieved_mem_stats_api}    Retrieve BIG-IP Memory Statistics via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        ${retrieved_mem_stats_tmsh}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=bash -c 'tmsh show sys mem all field-fmt'
-    ELSE IF   ${ssh_reachable} == ${True}        
-        ${retrieved_mem_stats_api}    Curl iControl REST via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    uri='/mgmt/tm/sys/mem'
-        ${retrieved_mem_stats_tmsh}    Retrieve BIG-IP Memory Statistics via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        # Retrieve the desired data via API; returned in JSON format
+        ${retrieved_mem_stats_api}   Retrieve BIG-IP Memory Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+        # Run the TMSH command via API
+        ${retrieved_mem_stats_tmsh}   Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=bash -c 'tmsh show sys mem all field-fmt'
+        # The response from the tmsh via API command will be in JSON, we'll extract the actual output from the commandResult key and overwrite the variable with the formatted output
+        ${retrieved_mem_stats_tmsh}   Get from dictionary    ${retrieved_mem_stats_tmsh.json()}    commandResult
+    IF   ${ssh_reachable} == ${True}
+        # Retrieve the desired data via API with localhost curl on BIG-IP; data returned in JSON format
+        ${retrieved_mem_stats_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri='/mgmt/tm/sys/mem'
+        ${retrieved_mem_stats_tmsh}   Retrieve BIG-IP Memory Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     END
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_mem_stats_api.json()}
-    Append to API Output    retrieved_cpu_stats_tmsh    ${retrieved_mem_stats_tmsh.json()}
-    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh.json().commandResult}
+    Append to Text Output    CPU Statistics:\n${retrieved_mem_stats_tmsh}
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     IF    ${api_reachable} == ${True}
-        ${retrieved_hostname_api}    Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        Append to API Output    hostname    ${retrieved_hostname_api}
+        ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+        ${retrieved_hostname_api}   get from dictionary    ${retrieved_hostname_api.json()}    hostname
+        ${retrieved_hostname_api}    Keep in dictionary    ${retrieved_hostname_api}    hostname
+        ${retrieved_hostname_tmsh}   Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=bash -c 'tmsh list sys global-settings hostname all'
+        ${retrieved_hostname_tmsh}    Get from dictionary    ${retrieved_hostname_tmsh.json()}    commandResult
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_hostname_tmsh}    Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
-        Append to Text Output    Hostname: ${retrieved_hostname_tmsh}
+        ${retrieved_hostname_api}   Curl iControl REST via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   uri='/mgmt/tm/sys/global-settings'
+        ${retrieved_hostname_api}    Keep in dictionary    ${retrieved_hostname_api.json()}    hostname
+        ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     END
 
 Retrieve BIG-IP License Information
     [Documentation]    Retrieves the license information from the BIG-IP
     IF    ${api_reachable} == ${True}
-        ${retrieved_license_api}    Retrieve BIG-IP License Information via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_license_api}   Retrieve BIG-IP License Information via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Append to API Output    license    ${retrieved_license_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_license_tmsh}    Retrieve BIG-IP License Information via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_license_tmsh}   Retrieve BIG-IP License Information via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Append to Text Output    License: ${retrieved_license_tmsh}
     END
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device 
     IF    ${api_reachable} == ${True}
-        ${retrieved_version_api}    Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Append to API Output    version    ${retrieved_version_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_version_tmsh}    Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Append to Text Output    BIG-IP Version: ${retrieved_version_tmsh}
     END
 
 Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     IF    ${api_reachable} == ${True}
-        ${retrieved_ntp_config_api}    Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_ntp_config_api}   Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Append to API Output    ntp-config    ${retrieved_ntp_config_api.json()}
-        Dictionary Should Contain Key    ${retrieved_ntp_config_api.json()}    servers
+        Dictionary Should Contain Key    ${retrieved_ntp_config_api.json()}   servers
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_ntp_config_tmsh}    Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_ntp_config_tmsh}   Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Append to Text Output    NTP Configuration: ${retrieved_ntp_config_tmsh}
-        Should Not Contain    ${retrieved_ntp_config_tmsh}    servers none
+        Should Not Contain    ${retrieved_ntp_config_tmsh}   servers none
     END
 
 Retrieve and Verify BIG-IP NTP Status
     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     IF    ${api_reachable} == ${True}
-        ${retrieved_ntp_status_api}    Retrieve BIG-IP NTP Status via iControl REST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_ntp_status_api}   Retrieve BIG-IP NTP Status via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_api}
         Append to API Output    ntp-status    ${retrieved_ntp_status_api}
     END
     IF   ${ssh_reachable} == ${True}
-        ${retrieved_ntp_status_tmsh}    Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}
+        ${retrieved_ntp_status_tmsh}   Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
         Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
         Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
     END
@@ -478,14 +485,14 @@ Retrieve BIG-IP Full Text Configuration
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     IF    ${api_reachable} == ${True}
-        ${full_text_configuration}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    command=list / one-line all-properties recursive
+        ${full_text_configuration}   Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}   command=list / one-line all-properties recursive
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
     IF   ${ssh_reachable} == ${True}
         SSHLibrary.Open Connection    ${bigip_host}
-        SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-        ${full_text_configuration}    Execute Command    list / one-line all-properties recursive
+        SSHLibrary.Login    ${bigip_username}   ${bigip_password}
+        ${full_text_configuration}   Execute Command    list / one-line all-properties recursive
         Append to Text Output    Output of "ls / one-line recursive all-properites":\n${full_text_configuration}
         Append to API Output    Full Text Configuration:    ${full_text_configuration}
     END
