@@ -162,7 +162,7 @@ Retrieve BIG-IP License Information
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Current date: ${service_check_date}
     Append to API Output    current_date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
-    IF    ${days_until_service_check_date} > 0
+    IF    ${days_until_service_check_date} < 1
         Log to console    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
         Log    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
