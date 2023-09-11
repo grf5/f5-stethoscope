@@ -65,7 +65,7 @@ Verify SSH Connectivity
     ELSE
         Log    Successfully connected to SSH
         Append to API Output    ssh_connectivity    ${True}
-        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    SSH Connecitivity: Succeeded
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    SSH Connecitivity: Succeeded\n
     END
 
 Verify Remote Host is a BIG-IP via SSH
@@ -78,7 +78,7 @@ Verify Remote Host is a BIG-IP via SSH
     SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
     Should Contain    ${retrieved_show_sys_hardware_tmsh}   BIG-IP
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    System Hardware:${retrieved_show_sys_hardware_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> System Hardware:${retrieved_show_sys_hardware_tmsh}\n
 
 Test IPv4 iControlREST API Connectivity
     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -86,15 +86,15 @@ Test IPv4 iControlREST API Connectivity
     TRY
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}   ${bigip_username}   ${bigip_password}
     EXCEPT
-        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Fatal error: API connectivity failed
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Fatal error: API connectivity failed\n
         Append to API Output    error    API connectivity failed
         Log    Fatal error: API connectivity failed
-        Log To Console    Fatal error: API connectivity failed
+        Log To Console    \nFatal error: API connectivity failed
         Fatal Error    No connectivity to device via iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
     ELSE
         Log    Successfully connected to iControl REST API
         Append to API Output    api_connectivity    ${True}
-        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    API Connecitivity: Succeeded
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> API Connecitivity: Succeeded\n
     END
 
 Verify Remote Host is a BIG-IP via iControl REST
@@ -119,7 +119,7 @@ Check BIG-IP for Excessive CPU/Memory Utilization
     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
     Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
-    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    System Performance All Statistics:${system_performance_tmsh}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> System Performance All Statistics:${system_performance_tmsh}\n
     IF    ${utilization_avg} >= 90
         Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
     END
@@ -130,8 +130,9 @@ Check BIG-IP for Excessive CPU/Memory Utilization
         Fatal error    FATAL ERROR: Excessive memory utilization: ${utilization_avg}%
     END
     IF    ${swap_used_avg} > 0
-        Log to Console    Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
-        Log    Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
+        Log to Console    \nWARNING! Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
+        Log    WARNING! Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING! Swap space in use on device!\n
     END
 
 Retrieve BIG-IP CPU Statistics
@@ -140,14 +141,14 @@ Retrieve BIG-IP CPU Statistics
     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
-    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    *** CPU Statistics:\n${retrieved_cpu_stats_tmsh}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}   ======>  CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    hostname    ${retrieved_hostname_api}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** Hostname: ${retrieved_hostname_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname: ${retrieved_hostname_tmsh}\n
 
 Retrieve BIG-IP License Information
     [Documentation]    Retrieves the license information from the BIG-IP
@@ -156,19 +157,19 @@ Retrieve BIG-IP License Information
     Should not contain    ${retrieved_license_tmsh}    Can't load license, may not be operational
     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Service check date: ${service_check_date}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Service check date: ${service_check_date}\n
     Append to API Output    service_check_date    ${service_check_date}
     ${current_date}    Get current date    result_format=%Y/%m/%d
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Current date: ${service_check_date}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Current date: ${service_check_date}\n
     Append to API Output    current_date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
     IF    ${days_until_service_check_date} < 1
-        Log to console    \nWARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
-        Log    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
-        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
+        Log to console    \nWARNING! License service check date occurs in the past! Re-activate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
+        Log    WARNING! License service check date occurs in the past! Reactivate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING! License service check date occurs in the past! Re-actviate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)\n
     END
     Append to API Output    license    ${retrieved_license_api}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** License: ${retrieved_license_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> License: ${retrieved_license_tmsh}\n
 
 Retrieve BIG-IP TMOS Version
     [Documentation]    Retrieves the current TMOS version of the device and verifies lifecycle status. (https://my.f5.com/manage/s/article/K5903)
@@ -176,7 +177,7 @@ Retrieve BIG-IP TMOS Version
     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${bigip_version}    Set variable    ${retrieved_version_api.json()}[entries][https://localhost/mgmt/tm/sys/version/0][nestedStats][entries][Version][description]
     Append to API Output    version    ${retrieved_version_api}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    BIG-IP Version: ${retrieved_version_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> BIG-IP Version: ${retrieved_version_tmsh}\n
     ${current_date}    Get current date    result_format=%Y/%m/%d
     IF    "17.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2027/03/31
@@ -186,16 +187,16 @@ Retrieve BIG-IP TMOS Version
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
         ELSE IF    ${remaining_days_software_development} <= 0
-            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         ELSE IF    ${remaining_days_technical_support} <= 0
-            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         END
     ELSE IF    "16.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2025/07/31
@@ -205,16 +206,16 @@ Retrieve BIG-IP TMOS Version
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
         ELSE IF    ${remaining_days_software_development} <= 0
-            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         ELSE IF    ${remaining_days_technical_support} <= 0
-            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         END
     ELSE IF    "15.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2024/12/31
@@ -224,16 +225,16 @@ Retrieve BIG-IP TMOS Version
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
         ELSE IF    ${remaining_days_software_development} <= 0
-            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         ELSE IF    ${remaining_days_technical_support} <= 0
-            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         END
     ELSE IF    "13.1." in "${bigip_version}" or "14.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2023/12/31
@@ -243,20 +244,20 @@ Retrieve BIG-IP TMOS Version
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Software Development Support: ${remaining_days_software_development}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Remaining Days of Technical Support: ${remaining_days_technical_support}
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
         ELSE IF    ${remaining_days_software_development} <= 0
-            Log to console    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         ELSE IF    ${remaining_days_technical_support} <= 0
-            Log to console    TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
         END    
     ELSE
-        Log to console    TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.
-        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.        
+        Log to console    \nTMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.\n
     END
 
 Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
@@ -271,7 +272,7 @@ Retrieve and Verify BIG-IP NTP Status
     ${retrieved_ntp_status_tmsh}   Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
     Append to API Output    ntp-status    ${retrieved_ntp_status_tmsh}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** NTP Status: ${retrieved_ntp_status_tmsh}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status: ${retrieved_ntp_status_tmsh}\n
 
 Retrieve BIG-IP Disk Space Utilization
     Set log level    trace
@@ -378,7 +379,7 @@ Retrieve BIG-IP Full Text Configuration via SSH
     SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}   Full Text Configuration:\n${full_text_configuration}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}   ======> Full Text Configuration:\n${full_text_configuration}\n
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
