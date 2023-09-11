@@ -102,7 +102,9 @@ Verify Remote Host is a BIG-IP via iControl REST
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
     Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
 
-Check BIG-IP for Excessive CPU/Memory Utilization    [Documentation]
+Check BIG-IP for Excessive CPU/Memory Utilization    
+    [Documentation]
+    [Teardown]    Run keyword if any tests failed    Fatal error    msg=BIG-IP is reporting excessive utilization; stopping all tests
     # Retrieve the desired data via API; returned in JSON format
     ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
@@ -118,7 +120,6 @@ Check BIG-IP for Excessive CPU/Memory Utilization    [Documentation]
     Should not be true    ${swap_used_avg} > 0
     Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
     Append to Text Output    Memory Statistics:${system_performance_tmsh}
-    Run keyword if any tests failed    Fatal error    msg=BIG-IP is reporting excessive utilization; stopping all tests
 
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
