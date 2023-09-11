@@ -194,3 +194,12 @@ Retrieve BIG-IP System Performance via SSH
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${sys_performance_all_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys performance all-stats detail raw'
     [Return]    ${sys_performance_all_stats}
+
+Retrieve BIG-IP Disk Space Utilization via SSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Documentation]    Retrieves the disk space utilization on the BIG-IP
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${disk_space_output}    SSHLibrary.Execute Command    bash -c 'df -h'
+    [Return]    ${disk_space_output}

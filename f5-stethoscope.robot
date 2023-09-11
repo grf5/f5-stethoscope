@@ -25,6 +25,8 @@ Suite Setup        Set Log Level    trace
 # closed and any API sessions are closed.
 Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
+    
+
 *** Test Cases ***
 Record Timestamp
     [Documentation]    This script simply outputs a timestamp to the console, log file,
@@ -140,7 +142,7 @@ Retrieve BIG-IP CPU Statistics
     # Retrieve desired information via iControl REST
     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
+    Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api.json()}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}   ======>  CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
 
 Retrieve BIG-IP Hostname
@@ -283,8 +285,10 @@ Retrieve and Verify BIG-IP NTP Status
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
 
 Retrieve BIG-IP Disk Space Utilization
-    Set log level    trace
-    [Documentation]
+    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
+    ${retrieved_disk_space_tmsh}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${retrieved_ntp_status_tmsh}\n
+    
 
 Retrieve BIG-IP Provisioned Software Modules
     [Documentation]
