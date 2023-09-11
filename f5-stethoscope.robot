@@ -178,7 +178,7 @@ Retrieve BIG-IP TMOS Version
     Append to API Output    version    ${retrieved_version_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    BIG-IP Version: ${retrieved_version_tmsh}
     ${current_date}    Get current date    result_format=%Y/%m/%d
-    IF    "17.1." in "${bigip_version}" 
+    IF    "17.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2027/03/31
         ${end_of_technical_support}    Set variable    2027/03/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
@@ -197,7 +197,7 @@ Retrieve BIG-IP TMOS Version
             Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
         END
-    ELSE IF    "16.1." in ${bigip_version}
+    ELSE IF    "16.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2025/07/31
         ${end_of_technical_support}    Set variable    2025/07/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
@@ -216,7 +216,7 @@ Retrieve BIG-IP TMOS Version
             Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
         END
-    ELSE IF    "15.1." in ${bigip_version}
+    ELSE IF    "15.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2024/12/31
         ${end_of_technical_support}    Set variable    2024/12/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
@@ -235,7 +235,7 @@ Retrieve BIG-IP TMOS Version
             Log    TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
         END
-    ELSE IF    "13.1." in ${bigip_version} or "14.1." in ${bigip_version}
+    ELSE IF    "13.1." in "${bigip_version}" or "14.1." in "${bigip_version}"
         ${end_of_software_development}    Set variable    2023/12/31
         ${end_of_technical_support}    Set variable    2023/12/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
