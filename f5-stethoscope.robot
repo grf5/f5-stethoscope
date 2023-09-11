@@ -104,7 +104,6 @@ Verify Remote Host is a BIG-IP via iControl REST
 
 Check BIG-IP for Excessive CPU/Memory Utilization    
     [Documentation]
-    [Teardown]    Run keyword if any tests failed    Fatal error    msg=BIG-IP is reporting excessive utilization; stopping all tests
     # Retrieve the desired data via API; returned in JSON format
     ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
