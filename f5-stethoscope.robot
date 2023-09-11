@@ -9,7 +9,7 @@ Documentation      F5 stethoscope is a Robot Framework script that checks the ge
 # (aka dictionaries), interact with the local filesystem to output custom formatted data, and
 # access the system clock to enabling custom timestamps
 Library            String
-Library            SSHLibrary    timeout=10 seconds    loglevel=trace
+Library            SSHLibrary    timeout=20 seconds    loglevel=trace
 Library            RequestsLibrary
 Library            Collections
 Library            OperatingSystem
