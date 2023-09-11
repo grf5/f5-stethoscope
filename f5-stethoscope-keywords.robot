@@ -78,7 +78,7 @@ Retrieve BIG-IP Hostname via SSH
     [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname all-properties'
+    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname'
     [Return]    ${hostname}
 
 Retrieve BIG-IP NTP Configuration via iControl REST
