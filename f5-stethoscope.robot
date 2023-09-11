@@ -263,7 +263,7 @@ Retrieve BIG-IP Full Text Configuration via SSH
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    ${full_text_configuration}    SSHLibrary.Execute command    bash -c tmsh list / all-properties one-line recursive
+    ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
     Append to Text Output    Full Text Configuration:\n${full_text_configuration}
 
 Log API Responses in JSON
