@@ -124,7 +124,6 @@ Retrieve BIG-IP CPU Statistics
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${retrieved_hostname_api}    Keep in dictionary    ${retrieved_hostname_api.json()}    hostname
     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    hostname    ${retrieved_hostname_api}
     Append to Text Output    Hostname: ${retrieved_hostname_tmsh}
