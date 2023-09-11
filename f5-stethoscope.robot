@@ -102,6 +102,17 @@ Verify Remote Host is a BIG-IP via iControl REST
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
     Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
 
+Check BIG-IP for Excessive CPU/Memory Utilization    [Documentation]
+    # Retrieve the desired data via API; returned in JSON format
+    ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Dictionary should contain item    ${system_performance_api.json()}    kind    tm:sys:performance:all-stats:all-statsstats
+    ${system_performance_stats}    Get from dictionary    ${system_performance_api}    entries
+    ${other_memory_used_avg}    Set variable    ${System_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
+    Should not be true    ${other_memory_used_avg} >= 90
+    Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
+    Append to Text Output    Memory Statistics:${system_performance_tmsh}
+
 Retrieve BIG-IP CPU Statistics
     [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
     # Retrieve desired information via iControl REST
@@ -109,14 +120,6 @@ Retrieve BIG-IP CPU Statistics
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
     Append to Text Output    CPU Statistics:\n${retrieved_cpu_stats_tmsh}
-
-Retrieve BIG-IP Current Memory Utilization
-    [Documentation]
-    # Retrieve the desired data via API; returned in JSON format
-    ${retrieved_mem_stats_api}   Retrieve BIG-IP Memory Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${retrieved_mem_stats_tmsh}   Retrieve BIG-IP Memory Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to API Output    retrieved_mem_stats_api    ${retrieved_mem_stats_api.json()}
-    Append to Text Output    Memory Statistics:${retrieved_mem_stats_tmsh}
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP

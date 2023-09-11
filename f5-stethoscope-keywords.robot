@@ -184,19 +184,19 @@ Retrieve BIG-IP Hardware Information
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP Memory Statistics via iControl REST
+Retrieve BIG-IP System Performance via iControl REST
     [Documentation]    Retrieves the CPU statistics from the BIG-IP using iControl REST (https://my.f5.com/manage/s/article/K15468)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/sys/mem
+    ${api_uri}    set variable    /mgmt/tm/sys/performance/system
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP Memory Statistics via SSH
+Retrieve BIG-IP System Performance via SSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${mem_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys mem all field-fmt'
-    [Return]    ${mem_stats}
+    ${sys_performance_all_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys performance all-stats detail raw'
+    [Return]    ${sys_performance_all_stats}
