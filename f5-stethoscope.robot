@@ -184,11 +184,13 @@ Retrieve BIG-IP TMOS Version
         ${end_of_technical_support}    Set variable    2027/03/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
         ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
+        ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
@@ -203,11 +205,13 @@ Retrieve BIG-IP TMOS Version
         ${end_of_technical_support}    Set variable    2025/07/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
         ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
+        ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
@@ -222,11 +226,13 @@ Retrieve BIG-IP TMOS Version
         ${end_of_technical_support}    Set variable    2024/12/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
         ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
+        ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
@@ -241,11 +247,13 @@ Retrieve BIG-IP TMOS Version
         ${end_of_technical_support}    Set variable    2023/12/31
         ${remaining_days_software_development}    Subtract date from date    ${end_of_software_development}    ${current_date}
         ${remaining_days_technical_support}    Subtract date from date    ${end_of_technical_support}    ${current_date}
+        ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
+        ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
             Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
             Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development}\n
-            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+            Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
