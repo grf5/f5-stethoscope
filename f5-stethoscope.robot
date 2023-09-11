@@ -156,8 +156,17 @@ Retrieve BIG-IP License Information
     Should not contain    ${retrieved_license_tmsh}    Can't load license, may not be operational
     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Service check date: ${service_check_date}    
+    Append to API Output    service_check_date    ${service_check_date}
     ${current_date}    Get current date    result_format=%Y/%m/%d
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    Current date: ${service_check_date}
+    Append to API Output    current_date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
+    IF    ${days_until_service_check_date} > 0
+        Log to console    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
+        Log    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    WARNING! License service check date occurs in the past! See https://my.f5.com/manage/s/article/K7727
+    END
     log to console    Days remaining before service check date: ${days_until_service_check_date}
     Append to API Output    license    ${retrieved_license_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    *** License: ${retrieved_license_tmsh}
