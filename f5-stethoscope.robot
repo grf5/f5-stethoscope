@@ -60,13 +60,11 @@ Verify SSH Connectivity
         Log    Could not connect to SSH
         Append to API Output    ssh_connectivity    ${False}
         Append to Text Output    SSH Connecitivity: Failed
-        Set Global Variable    ${ssh_reachable}   ${False}
         Fatal Error
     ELSE
         Log    Successfully connected to SSH
         Append to API Output    ssh_connectivity    ${True}
         Append to Text Output    SSH Connecitivity: Succeeded
-        Set Global Variable    ${ssh_reachable}   ${True}
     END
 
 Verify Remote Host is a BIG-IP via SSH
@@ -74,7 +72,6 @@ Verify Remote Host is a BIG-IP via SSH
     ...                a BIG-IP device.
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    
     ...    AND    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
-    Skip If    ${ssh_reachable} == ${False}   SSH is not reachable.
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
     ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
@@ -101,7 +98,6 @@ Verify Remote Host is a BIG-IP via iControl REST
     [Documentation]    This test will query the iControl REST API to ensure the remote endpoint is
     ...                a BIG-IP device.
     [Teardown]    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
-    Skip If    ${api_reachable} == ${False}   API is not reachable.
     ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
     Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
@@ -262,7 +258,6 @@ Retrieve BIG-IP SNAT Configuration
 Retrieve BIG-IP Full Text Configuration via SSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
-    Skip if    ${ssh_reachable} == ${False}
     SSHLibrary.Open connection    ${bigip_host
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${full_text_configuration}    SSHLibrary.Execute command    bash -c tmsh list / all-properties one-line recursive
@@ -270,9 +265,7 @@ Retrieve BIG-IP Full Text Configuration via SSH
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
-    IF    ${api_reachable} == ${True}
-        Log Dictionary   ${api_info_block}
-    END
+    Log Dictionary   ${api_info_block}
 
 Record Text Output from Tests
     [Documentation]    Displays the contents of the plain text file output
