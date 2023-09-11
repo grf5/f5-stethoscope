@@ -108,10 +108,10 @@ Check BIG-IP for Excessive CPU/Memory Utilization    [Documentation]
     ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Dictionary should contain item    ${system_performance_api.json()}    kind    tm:sys:performance:all-stats:all-statsstats
     ${system_performance_stats}    Get from dictionary    ${system_performance_api.json()}    entries
-    ${utilization_avg}    Set variable    ${system_performance_api}[https://localhost/mgmt/tm/sys/performance/all-stats/Utilization][nestedStats][entries][Average][description]
+    ${utilization_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Utilization][nestedStats][entries][Average][description]
     ${other_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
-    ${tmm_mem_used_avg}    Set variable    ${system_performance_api}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
-    ${swap_used_avg}    Set variable    ${system_performance_api}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
+    ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
+    ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
     Should not be true    ${utilization_avg} >= 90
     Should not be true    ${tmm_mem_used_avg} >= 90
     Should not be true    ${other_mem_used_avg} >= 90
