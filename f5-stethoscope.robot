@@ -258,7 +258,7 @@ Retrieve BIG-IP SNAT Configuration
 Retrieve BIG-IP Full Text Configuration via SSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
-    SSHLibrary.Open connection    ${bigip_host
+    SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${full_text_configuration}    SSHLibrary.Execute command    bash -c tmsh list / all-properties one-line recursive
     Append to Text Output    Full Text Configuration:\n${full_text_configuration}
