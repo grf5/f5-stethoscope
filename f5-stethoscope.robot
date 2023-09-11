@@ -161,207 +161,103 @@ Retrieve and Verify BIG-IP NTP Status
     Append to Text Output    NTP Status: ${retrieved_ntp_status_tmsh}
 
 Retrieve BIG-IP Disk Space Utilization
+    Set log level    trace
     [Documentation]
 
 Retrieve BIG-IP Provisioned Software Modules
     [Documentation]
+    Set log level    trace
 
 List All System Database Variables
+    Set log level    trace
     [Documentation]
 
 Retrieve BIG-IP High Availability Configuration
+    Set log level    trace
     [Documentation]
 
 Retrieve BIG-IP SSL Certificate Metadata
     [Documentation]
+    Set log level    trace
 
 Retrieve BIG-IP Interface Configuration
     [Documentation]
+    Set log level    trace
 
 Retrieve BIG-IP Interface Statistics
     [Documentation]
+    Set log level    trace
 
 Retrieve BIG-IP VLAN Configuration
     [Documentation]
+    Set log level    trace
 
 Retrieve BIG-IP VLAN Statistics
     [Documentation]
+    Set log level    trace
 
 Retrieve Route Domain Information
     [Documentation]
-    Set Global Variable    ${retrieved_route_domain_config_api}
-    Set Global Variable    ${retrieved_route_domain_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Authentication Partition Information
     [Documentation]
-    Set Global Variable    ${retrieved_part_config_api}
-    Set Global Variable    ${retrieved_part_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Trunk Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_trunk_config_api}
-    Set Global Variable    ${retrieved_trunk_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Trunk Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_trunk_stats_api}
-    Set Global Variable    ${retrieved_trunk_stats_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve Self-IP Configuration
     [Documentation]
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-        Set Global Variable    ${retrieved_selfip_config_api}
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-        Set Global Variable    ${retrieved_selfip_config_tmsh}
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Self-IP Statistics
     [Documentation]
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-        Set Global Variable    ${retrieved_selfip_stats_api}
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-        Set Global Variable    ${retrieved_selfip_stats_tmsh}
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Static Route Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_static_routing_config_api}
-    Set Global Variable    ${retrieved_static_routing_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Dynamic Route Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_dynamic_routing_config_api}
-    Set Global Variable    ${retrieved_dynamic_routing_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Dynamic Route Status
     [Documentation]
-    Set Global Variable    ${retrieved_dynamic_routing_status_api}
-    Set Global Variable    ${retrieved_dynamic_routing_status_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Virtual Server Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_virtual_config_api}
-    Set Global Variable    ${retrieved_virtual_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Virtual Server Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_virtual_stats_api}
-    Set Global Variable    ${retrieved_virtual_stats_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
     
 Retrieve BIG-IP Pool Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_pool_config_api}
-    Set Global Variable    ${retrieved_pool_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve Pool Statistics
     [Documentation]
-    Set Global Variable    ${retrieved_pool_stats_api}
-    Set Global Variable    ${retrieved_pool_stats_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Policy Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_policy_config_api}
-    Set Global Variable    ${retrieved_policy_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
-
+    Set log level    trace
 Retrieve BIG-IP Monitor Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_monitor_config_api}
-    Set Global Variable    ${retrieved_monitor_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP SNAT Configuration
     [Documentation]
-    Set Global Variable    ${retrieved_snat_config_api}
-    Set Global Variable    ${retrieved_snat_config_tmsh}
-    IF    ${api_reachable} == ${True}
-        Log    Placeholder
-    END
-    IF   ${ssh_reachable} == ${True}
-        Log    Placeholder
-    END
+    Set log level    trace
 
 Retrieve BIG-IP Full Text Configuration via SSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
