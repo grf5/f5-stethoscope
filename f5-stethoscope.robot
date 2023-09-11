@@ -148,7 +148,7 @@ Retrieve BIG-IP Hostname
     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to API Output    hostname    ${retrieved_hostname_api}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname: ${retrieved_hostname_tmsh}\n
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname:\n${retrieved_hostname_tmsh}\n
 
 Retrieve BIG-IP License Information
     [Documentation]    Retrieves the license information from the BIG-IP
@@ -160,7 +160,7 @@ Retrieve BIG-IP License Information
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Service check date: ${service_check_date}\n
     Append to API Output    service_check_date    ${service_check_date}
     ${current_date}    Get current date    result_format=%Y/%m/%d
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Current date: ${service_check_date}\n
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Current date: ${current_date}\n
     Append to API Output    current_date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
     IF    ${days_until_service_check_date} < 1
@@ -280,7 +280,7 @@ Retrieve and Verify BIG-IP NTP Status
     ${retrieved_ntp_status_tmsh}   Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
     Append to API Output    ntp-status    ${retrieved_ntp_status_tmsh}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status: ${retrieved_ntp_status_tmsh}\n
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
 
 Retrieve BIG-IP Disk Space Utilization
     Set log level    trace
