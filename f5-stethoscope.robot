@@ -107,7 +107,7 @@ Check BIG-IP for Excessive CPU/Memory Utilization    [Documentation]
     ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Dictionary should contain item    ${system_performance_api.json()}    kind    tm:sys:performance:all-stats:all-statsstats
-    ${system_performance_stats}    Get from dictionary    ${system_performance_api}    entries
+    ${system_performance_stats}    Get from dictionary    ${system_performance_api.json()}    entries
     ${other_memory_used_avg}    Set variable    ${System_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
     Should not be true    ${other_memory_used_avg} >= 90
     Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
