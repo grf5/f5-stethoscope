@@ -397,7 +397,7 @@ Retrieve Pool Statistics
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
-    Log to console    ${pool_stats_api}
+    Log to console    ${pool_stats_api.text}
 
 Retrieve BIG-IP Database Variables via TMSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
