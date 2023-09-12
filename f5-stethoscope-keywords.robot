@@ -293,21 +293,6 @@ Retrieve BIG-IP VLAN Statistics via TMSH
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
     [Return]    ${command_output}
 
-Retrieve BIG-IP Route Domain Statistics via iControl REST
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/net/route-domain/stats
-    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response}
-
-Retrieve BIG-IP Route Domain Statistics via TMSH
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net route-domain all'
-    [Return]    ${command_output}
-
 Retrieve BIG-IP Trunk Statistics via iControl REST
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     ${api_uri}    set variable    /mgmt/tm/net/trunk/stats
