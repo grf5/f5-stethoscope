@@ -279,7 +279,6 @@ Verify BIG-IP Disk Space
     FOR    ${current_mount_point}    IN    @{df_output_items}
         @{df_output_columns}    Split string    ${current_mount_point}
         Log to console    1: ${df_output_columns}
-        list
     END
 
 Retrieve BIG-IP Provisioned Software Modules
