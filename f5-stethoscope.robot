@@ -317,100 +317,100 @@ Retrieve Top 20 Directories and Files by Size on Disk
     Log to console    ${top_20_files.json()}
     
 
-Retrieve BIG-IP Provisioned Software Modules
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Provisioned Software Modules
+#     [Documentation]
+#     Set log level    trace
 
-List All System Database Variables
-    Set log level    trace
-    [Documentation]
+# List All System Database Variables
+#     Set log level    trace
+#     [Documentation]
 
-Retrieve BIG-IP High Availability Configuration
-    Set log level    trace
-    [Documentation]
+# Retrieve BIG-IP High Availability Configuration
+#     Set log level    trace
+#     [Documentation]
 
-Retrieve BIG-IP SSL Certificate Metadata
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP SSL Certificate Metadata
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Interface Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Interface Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Interface Statistics
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Interface Statistics
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP VLAN Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP VLAN Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP VLAN Statistics
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP VLAN Statistics
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve Route Domain Information
-    [Documentation]
-    Set log level    trace
+# Retrieve Route Domain Information
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Authentication Partition Information
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Authentication Partition Information
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Trunk Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Trunk Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Trunk Statistics
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Trunk Statistics
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve Self-IP Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve Self-IP Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Self-IP Statistics
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Self-IP Statistics
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Static Route Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Static Route Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Dynamic Route Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Dynamic Route Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Dynamic Route Status
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Dynamic Route Status
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Virtual Server Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Virtual Server Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Virtual Server Statistics
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Virtual Server Statistics
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Pool Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Pool Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve Pool Statistics
-    [Documentation]
-    Set log level    trace
+# Retrieve Pool Statistics
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP Policy Configuration
-    [Documentation]
-    Set log level    trace
-Retrieve BIG-IP Monitor Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP Policy Configuration
+#     [Documentation]
+#     Set log level    trace
+# Retrieve BIG-IP Monitor Configuration
+#     [Documentation]
+#     Set log level    trace
 
-Retrieve BIG-IP SNAT Configuration
-    [Documentation]
-    Set log level    trace
+# Retrieve BIG-IP SNAT Configuration
+#     [Documentation]
+#     Set log level    trace
 
 Retrieve BIG-IP Full Text Configuration via SSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
