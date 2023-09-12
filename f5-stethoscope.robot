@@ -271,12 +271,14 @@ Retrieve and Verify BIG-IP NTP Status
     Set to Dictionary    ${api_info_block}    ntp-status    ${retrieved_ntp_status_tmsh}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
 
-Verify BIG-IP Disk Space    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
+Verify BIG-IP Disk Space    
+    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
     ${df_output}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
     @{df_output_items}    Split to lines    ${df_output}
     FOR    ${current_mount_point}    IN    @{df_output_items}
         @{df_output_columns}    Split string    ${current_mount_point}    ${SPACE}
+        ${df_output_columns}    Remove values from list    @{df_output_columns}    ${null}
         Log to Console    ${df_output_columns}
     END
 
