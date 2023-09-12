@@ -395,7 +395,7 @@ Retrieve BIG-IP Virtual Address Statistics
 Retrieve Pool Statistics
     [Documentation]
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    @{pool_stats}    Get from dictionary    ${pool_stats_api}    entries
+    @{pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
     FOR    ${current_pool}    IN    @{pool_stats}
         Log to console    ${current_pool}
     END
