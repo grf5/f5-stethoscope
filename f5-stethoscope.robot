@@ -396,8 +396,11 @@ Retrieve Pool Statistics
     [Documentation]
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     &{pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
-    @{pool_count}    Get dictionary keys    ${pool_stats}
-    Log to console    ${pool_count}
+    @{pool_list}    Get dictionary keys    ${pool_stats}
+    FOR    ${current_pool}    IN    @{pool_list}
+        ${current_pool_stats}    Get from dictionary    ${pool_stats}    ${current_pool}
+        Log to console    ${current_pool_stats}        
+    END
     ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
 
