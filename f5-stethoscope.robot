@@ -292,7 +292,14 @@ Verify BIG-IP Disk Space
             ${avail}    Get from list    ${df_entry_data}    8
             ${used_pct}    Get from list    ${df_entry_data}    9
             ${target}    Get from list    ${df_entry_data}    11
-            Log to console    Filesystem ${target} using ${used_pct} of available space (${avail} free)
+            IF    "${target}" == "/usr"
+                Log    Skipping disk space check for /usr (https://my.f5.com/manage/s/article/K23607394)
+            ELSE
+                ${percentage_used}    Get substring    ${used_pct}    -1
+                IF    ${percentage_used} > 90
+                    Log to Console    WARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
+                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
+                END
         END
     END
 
