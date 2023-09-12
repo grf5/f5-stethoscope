@@ -25,8 +25,6 @@ Suite Setup        Set Log Level    trace
 # closed and any API sessions are closed.
 Suite Teardown     Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
 
-    
-
 *** Test Cases ***
 Record Timestamp
     [Documentation]    This script simply outputs a timestamp to the console, log file,
