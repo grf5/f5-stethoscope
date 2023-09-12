@@ -319,12 +319,12 @@ Record Timestamp
 #     ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
 #     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Top files on disk by size:\n${top_files}\n
 
-Retrieve BIG-IP High Availability Status
+Verify BIG-IP High Availability Status
     [Documentation]    Retrieves the BIG-IP high availability status (https://my.f5.com/manage/s/article/K08452454)
     ${bigip_cm_devices}    Retrieve BIG-IP Cluster Management Device Details via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     @{bigip_cm_devices}    Set variable    ${bigip_cm_devices.json()}[items]
     FOR    ${current_cm_device}    IN    @{bigip_cm_devices}
-        Log to console    ${current_cm_device}
+        Log to console    ${current_cm_device}[name]
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Cluster Management Device:\n${current_cm_device}\n
     END
 
