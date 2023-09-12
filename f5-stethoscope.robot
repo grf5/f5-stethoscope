@@ -302,12 +302,17 @@ Verify BIG-IP Disk Space
                 END
                 ${inodes_used}    Remove string    ${inodes_used}    %
                 IF    ${${inodes_used}} > 90
-                    Log to Console    \nWARNING: Filesystem ${target} has using a high percentage (${inodes_used_pct}) of available inodes! (https://my.f5.com/manage/s/article/K14403)
-                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> \nWARNING: Filesystem ${target} has using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
+                    Log to Console    \nWARNING: Filesystem ${target} is using a high percentage (${inodes_used_pct}) of available inodes! (https://my.f5.com/manage/s/article/K14403)
+                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
                 END
             END
         END
     END
+
+Retrieve Top 20 Directories by Size on Disk
+    [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
+    ${top_20_directories}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}    command='find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -20'
+    Log to console    ${top_20_directories}
 
 Retrieve BIG-IP Provisioned Software Modules
     [Documentation]
