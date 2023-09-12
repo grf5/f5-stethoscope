@@ -265,7 +265,25 @@ Retrieve BIG-IP Interface Statistics via TMSH
 
 Retrieve BIG-IP Route Domain Statistics via iControl REST
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    
+    ${api_uri}    set variable    /mgmt/tm/net/route-domain/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Route Domain Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net route-domain all'
+    [Return]    ${command_output}
+
+Retrieve BIG-IP VLAN Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/net/vlan/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP VLAN Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
@@ -274,6 +292,13 @@ Retrieve BIG-IP VLAN Statistics via TMSH
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
     [Return]    ${command_output}
+
+Retrieve BIG-IP Route Domain Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/net/route-domain/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP Route Domain Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
@@ -285,7 +310,10 @@ Retrieve BIG-IP Route Domain Statistics via TMSH
 
 Retrieve BIG-IP Trunk Statistics via iControl REST
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    
+    ${api_uri}    set variable    /mgmt/tm/net/trunk/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP Trunk Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
@@ -294,10 +322,12 @@ Retrieve BIG-IP Trunk Statistics via TMSH
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net trunk all-properties'
     [Return]    ${command_output}
 
-
 Retrieve BIG-IP Self IP Statistics via iControl REST
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    
+    ${api_uri}    set variable    /mgmt/tm/net/self/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
 
 Retrieve BIG-IP Self IP Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
@@ -306,13 +336,33 @@ Retrieve BIG-IP Self IP Statistics via TMSH
     ${command_output}    SSHLibrary.Execute Command    bash -c 'show / net self recursive all'
     [Return]    ${command_output}
 
+Retrieve BIG-IP Virtual Server Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/ltm/virtual/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
 Retrieve BIG-IP Virtual Server Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show / ltm virtual recursive all-properties'
     [Return]    ${command_output}
-    
+
+Retrieve BIG-IP Virtual Address Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/ltm/virtual-address/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Virtual Address Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show ltm virtual-address all-properties'
+    [Return]    ${command_output}
 
 Retrieve BIG-IP Pool Statistics via iControl REST
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
@@ -321,14 +371,11 @@ Retrieve BIG-IP Pool Statistics via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP Virtual Server Statistics via iControl REST
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/ltm/virtual/stats
-    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
-    Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response}
-
 Retrieve BIG-IP Pool Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show / ltm pool recursive'
+    [Return]    ${command_output}
     
 
