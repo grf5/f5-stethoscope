@@ -397,14 +397,31 @@ Retrieve Pool Statistics
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     &{pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
     @{pool_list}    Get dictionary keys    ${pool_stats}
+    @{unavailable_pools}    Create list
+    @{zero_connection_count_pools}    Create list
+    @{unavailable_member_pools}    Create list
     FOR    ${current_pool}    IN    @{pool_list}
         ${current_pool_stats}    Get from dictionary    ${pool_stats}    ${current_pool}
         ${current_pool_availability_state}    Set variable    ${current_pool_stats}[nestedStats][entries][status.availabilityState][description]
         ${current_pool_status_reason}    Set variable    ${current_pool_stats}[nestedStats][entries][status.statusReason][description]
+        IF    ${current_pool_availability_state} != available
+            Append to list    ${current_pool} is ${current_pool_availability_state} (${current_pool_status_reason})
+        END
+        # Check for the total number of members and if the available member count is less, append to the list
         ${current_pool_available_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][availableMemberCnt][value]
         ${current_pool_total_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][memberCnt][value]
-        ${current_pool_current_sessions}    Set variable    ${current_pool_stats}[nestedStats][entries][curSessions][value]
+        IF    [${${current_pool_total_member_count}} - ${${current_pool_available_member_count}}] != 0
+            Append to list    ${unavailable_member_pools}    ${current_pool}
+        END
+        # Check for pools that have no current connections and record the list
+        ${current_pool_current_sessions}    Set variable    ${current_pool_stats}[nestedStats][entries][curSessions][value]    
+        IF    ${current_pool_total_member_count} <= 0
+            Append to list    ${zero_connection_count_pools}    ${current_pool}
+        END
     END
+    Log to Console    Unavailalable Pools:\n${unavailable_pools}
+    Log to console    Pools with Unavailable Members:\n${unavailable_member_pools
+    Log to console    Pools with Zero Current Connections:\n${zero_connection_count_pools}
     ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
 
