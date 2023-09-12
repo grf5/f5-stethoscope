@@ -278,7 +278,7 @@ Verify BIG-IP Disk Space
     @{df_output_items}    Split to lines    ${df_output}
     FOR    ${current_mount_point}    IN    @{df_output_items}
         @{df_output_columns}    Split string    ${current_mount_point}    ${SPACE}
-        ${df_output_columns}    Remove values from list    @{df_output_columns}    ${null}
+        ${df_output_columns}    Remove values from list    ${df_output_columns}    ${null}
         Log to Console    ${df_output_columns}
     END
 
