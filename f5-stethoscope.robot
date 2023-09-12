@@ -318,6 +318,8 @@ Retrieve Top 20 Directories and Files by Size on Disk
     Log to console    \nTop 20 directories:\n${top_directories}
     ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
     Log to console    \nTop 20 files:\n${top_files}
+    ${top_directories}    SSHLibrary.Execute command    bash -c "find / -type d -exec du --exclude=/proc/* -Sh {} + | sort -rh  | head -n 20"
+    Log to console    \nTop 20 directories:\n${top_directories}
 
 # Retrieve BIG-IP Provisioned Software Modules
 #     [Documentation]
