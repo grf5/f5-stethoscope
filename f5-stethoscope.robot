@@ -399,8 +399,11 @@ Retrieve Pool Statistics
     @{pool_list}    Get dictionary keys    ${pool_stats}
     FOR    ${current_pool}    IN    @{pool_list}
         ${current_pool_stats}    Get from dictionary    ${pool_stats}    ${current_pool}
-        ${current_pool_admin_state}    Set variable    ${current_pool_stats}[nestedStats][entries][status.enabledState][description]
-        Log to console    ${current_pool_admin_state}        
+        ${current_pool_availability_state}    Set variable    ${current_pool_stats}[nestedStats][entries][status.availabilityState][description]
+        ${current_pool_status_reason}    Set variable    ${current_pool_stats}[nestedStats][entries][status.statusReason][description]
+        ${current_pool_available_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][availableMemberCnt][value]
+        ${current_pool_total_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][memberCnt][value]
+        ${current_pool_current_sessions}    Set variable    ${current_pool_stats}[nestedStats][entries][curSessions][value]
     END
     ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
