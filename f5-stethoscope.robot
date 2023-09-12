@@ -131,7 +131,7 @@ Retrieve BIG-IP CPU Statistics
     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Set to Dictionary    ${api_info_block}    retrieved-cpu-stats    ${retrieved_cpu_stats_api}
-    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}   ======>  CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
