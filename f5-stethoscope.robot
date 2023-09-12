@@ -37,7 +37,7 @@ Record Timestamp
     Create File    ${OUTPUT_DIR}/${statistics_output_file_name}   Test started at ${timestamp}\n
 
 # Verify SSH Connectivity
-#     [Documentation]    Logs into the BIG-IP via SSH, executes a BASH command and validates the expected response
+#     [Documentation]    Logs into the BIG-IP via TMSH, executes a BASH command and validates the expected response
 #     [Teardown]    Run Keywords    SSHLibrary.Close All Connections
 #     [Tags]    critical
 #     TRY
@@ -57,17 +57,17 @@ Record Timestamp
 #         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    SSH Connecitivity: Succeeded\n
 #     END
 
-# Verify Remote Host is a BIG-IP via SSH
-#     [Documentation]    This test will run a command via SSH to verify that the remote host is
+# Verify Remote Host is a BIG-IP via TMSH
+#     [Documentation]    This test will run a command via TMSH to verify that the remote host is
 #     ...                a BIG-IP device.
 #     [Teardown]    Run Keywords    SSHLibrary.Close All Connections
 #     ...    AND    Run Keyword If Test Failed    Fatal Error    FATAL_ERROR: Aborting as endpoint is not a BIG-IP device!
 #     [Tags]    critical
 #     SSHLibrary.Open Connection    ${bigip_host}
 #     SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
-#     ${retrieved_show_sys_hardware_tmsh}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
-#     Should Contain    ${retrieved_show_sys_hardware_tmsh}   BIG-IP
-#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> System Hardware:${retrieved_show_sys_hardware_tmsh}\n
+#     ${retrieved_show_sys_hardware_cli}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
+#     Should Contain    ${retrieved_show_sys_hardware_cli}   BIG-IP
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> System Hardware:${retrieved_show_sys_hardware_cli}\n
 
 # Test IPv4 iControlREST API Connectivity
 #     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -100,7 +100,7 @@ Record Timestamp
 #     [Tags]    critical
 #     # Retrieve the desired data via API; returned in JSON format
 #     ${system_performance_api}   Retrieve BIG-IP System Performance via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     ${system_performance_tmsh}   Retrieve BIG-IP System Performance via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${system_performance_cli}   Retrieve BIG-IP System Performance via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Dictionary should contain item    ${system_performance_api.json()}    kind    tm:sys:performance:all-stats:all-statsstats
 #     ${system_performance_stats}    Get from dictionary    ${system_performance_api.json()}    entries
 #     ${utilization_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Utilization][nestedStats][entries][Average][description]
@@ -108,7 +108,7 @@ Record Timestamp
 #     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
 #     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
 #     Set to Dictionary    ${api_info_block}    system-performance-all-stats    ${system_performance_api.json()}
-#     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> System Performance All Statistics:${system_performance_tmsh}\n
+#     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> System Performance All Statistics:${system_performance_cli}\n
 #     IF    ${utilization_avg} >= 90
 #         Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
 #     END
@@ -128,22 +128,22 @@ Record Timestamp
 #     [Documentation]    Retrieves the CPU utilization from the BIG-IP (https://my.f5.com/manage/s/article/K05501591)
 #     # Retrieve desired information via iControl REST
 #     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${retrieved_cpu_stats_cli}   Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Set to Dictionary    ${api_info_block}    retrieved-cpu-stats    ${retrieved_cpu_stats_api}
-#     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
+#     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> CPU Statistics:\n${retrieved_cpu_stats_cli}\n
 
 # Retrieve BIG-IP Hostname
 #     [Documentation]    Retrieves the configured hostname on the BIG-IP
 #     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${retrieved_hostname_cli}   Retrieve BIG-IP Hostname via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Set to Dictionary    ${api_info_block}    hostname=${retrieved_hostname_api}
-#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname:\n${retrieved_hostname_tmsh}\n
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname:\n${retrieved_hostname_cli}\n
 
 # Retrieve BIG-IP License Information
 #     [Documentation]    Retrieves the license information from the BIG-IP
 #     ${retrieved_license_api}   Retrieve BIG-IP License Information via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     ${retrieved_license_tmsh}   Retrieve BIG-IP License Information via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     Should not contain    ${retrieved_license_tmsh}    Can't load license, may not be operational
+#     ${retrieved_license_cli}   Retrieve BIG-IP License Information via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Should not contain    ${retrieved_license_cli}    Can't load license, may not be operational
 #     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
 #     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
 #     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Service check date: ${service_check_date}\n
@@ -158,15 +158,15 @@ Record Timestamp
 #         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING! License service check date occurs in the past! Re-actviate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)\n
 #     END
 #     Set to Dictionary    ${api_info_block}    license    ${retrieved_license_api}
-#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> License: ${retrieved_license_tmsh}\n
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> License: ${retrieved_license_cli}\n
 
 # Retrieve BIG-IP TMOS Version
 #     [Documentation]    Retrieves the current TMOS version of the device and verifies lifecycle status. (https://my.f5.com/manage/s/article/K5903)
 #     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${retrieved_version_cli}   Retrieve BIG-IP TMOS Version via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     ${bigip_version}    Set variable    ${retrieved_version_api.json()}[entries][https://localhost/mgmt/tm/sys/version/0][nestedStats][entries][Version][description]
 #     Set to Dictionary    ${api_info_block}    version    ${retrieved_version_api}
-#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> BIG-IP Version: ${retrieved_version_tmsh}\n
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> BIG-IP Version: ${retrieved_version_cli}\n
 #     ${current_date}    Get current date    result_format=%Y/%m/%d
 #     IF    "17.1." in "${bigip_version}"
 #         ${end_of_software_development}    Set variable    2027/03/31
@@ -261,19 +261,19 @@ Record Timestamp
 #     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
 #     ${retrieved_ntp_config_api}   Retrieve BIG-IP NTP Configuration via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Dictionary Should Contain Key    ${retrieved_ntp_config_api.json()}   servers
-#     ${retrieved_ntp_config_tmsh}   Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     Should Not Contain    ${retrieved_ntp_config_tmsh}   servers none
+#     ${retrieved_ntp_config_cli}   Retrieve BIG-IP NTP Configuration via TMSH        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Should Not Contain    ${retrieved_ntp_config_cli}   servers none
 
 # Retrieve and Verify BIG-IP NTP Status
 #     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
-#     ${retrieved_ntp_status_tmsh}   Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
-#     Set to Dictionary    ${api_info_block}    ntp-status    ${retrieved_ntp_status_tmsh}
-#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
+#     ${retrieved_ntp_status_cli}   Retrieve BIG-IP NTP Status via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_cli}
+#     Set to Dictionary    ${api_info_block}    ntp-status    ${retrieved_ntp_status_cli}
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_cli}\n
 
 # Verify BIG-IP Disk Space    
 #     [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
-#     ${df_output}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${df_output}    Retrieve BIG-IP Disk Space Utilization via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
 #     @{df_output_items}    Split to lines    ${df_output}
 #     FOR    ${current_mount_point}    IN    @{df_output_items}
@@ -321,97 +321,86 @@ Record Timestamp
 
 Verify BIG-IP High Availability Status
     [Documentation]    Retrieves the BIG-IP high availability status (https://my.f5.com/manage/s/article/K08452454)
-    ${bigip_cm_devices}    Retrieve BIG-IP Cluster Management Device Details via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    @{bigip_cm_devices}    Set variable    ${bigip_cm_devices.json()}[items]
-    FOR    ${current_cm_device}    IN    @{bigip_cm_devices}
-        Log to console    ${current_cm_device}[name]
-        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Cluster Management Device:\n${current_cm_device}\n
-    END
+    ${bigip_cm_devices_api}    Retrieve BIG-IP Cluster Management Device Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-devices    ${bigip_cm_devices_api}
+    ${bigip_cm_devices_status_api}    Retrieve BIG-IP Cluster Management Device Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-devices-status    ${bigip_cm_devices_api}
+    @{bigip_cm_device_groups_api}    Retrieve BIG-IP Cluster Management Device Group Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-device-groups    ${bigip_cm_device_groups_api}
+    ${bigip_cm_device_groups_status_api}    Retrieve BIG-IP Cluster Management Device Group Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-device-groups-status    ${bigip_cm_device_groups_status_api}
+    @{bigip_cm_traffic_groups_api}    Retrieve BIG-IP Cluster Management Traffic Group Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-traffic-groups    ${bigip_cm_traffic_groups_api}
+    ${bigip_cm_traffic_groups_status_api}    Retrieve BIG-IP Cluster Management Traffic Group Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-traffic-groups-status    ${bigip_cm_traffic_groups_status_api}
+    @{bigip_cm_trust_domains_api}    Retrieve BIG-IP Cluster Management Trust Domain Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-trust-domains    ${bigip_cm_trust_domains_api}
+    ${bigip_cm_failover_status_api}    Retrieve BIG-IP Cluster Management Failover Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Set to Dictionary    ${api_info_block}    cm-failover-status    ${bigip_cm_failover_status_api}
+    ${bigip_cm_devices_cli}    Retrieve BIG-IP Cluster Management Status via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Cluster Management Status:\n${bigip_cm_devices_cli}\n
 
-# Retrieve BIG-IP SSL Certificate Metadata
-#     [Documentation]
-#     Set log level    trace
+Verify Certificate/Key Status and Expiration
+    [Documentation]
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
+    SSHLibrary.Open connection    ${bigip_host}
+    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+    ${check-cert_output}    SSHLibrary.Execute command    bash -c "tmsh run sys crypto check-cert verbose enabled"
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Certificate Check Output:\n${check-cert_output}\n
 
-# Retrieve BIG-IP Interface Configuration
-#     [Documentation]
-#     Set log level    trace
+Retrieve BIG-IP Interface Statistics
+    [Documentation]
+    ${interface_stats_api}    Retrieve BIG-IP Interface Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${interface_stats_cli}    Retrieve BIG-IP Interface Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Interface Statistics:\n${interface_stats_cli}\n
 
-# Retrieve BIG-IP Interface Statistics
-#     [Documentation]
-#     Set log level    trace
+Retrieve BIG-IP VLAN Statistics
+    [Documentation]
+    ${vlan_stats_api}    Retrieve BIG-IP VLAN Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${vlan_stats_cli}    Retrieve BIG-IP VLAN Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> VLAN Statistics:\n${vlan_stats_cli}\n
 
-# Retrieve BIG-IP VLAN Configuration
-#     [Documentation]
-#     Set log level    trace
+Retrieve Route Domain Information
+    [Documentation]
+    ${route_domain_stats_api}    Retrieve BIG-IP Route Domain Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${route_domain_stats_cli}    Retrieve BIG-IP Route Domain Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Route Domain Statistics:\n${route_domain_stats_cli}\n
+    ${route_domain_dynamic_routing_protocols}    Set variable    temporary
+    ${route_domain_dynamic_routing}    Set variable    temporary
 
-# Retrieve BIG-IP VLAN Statistics
-#     [Documentation]
-#     Set log level    trace
+Retrieve BIG-IP Trunk Statistics
+    [Documentation]
+    ${trunk_stats_api}    Retrieve BIG-IP Trunk Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${trunk_stats_cli}    Retrieve BIG-IP Trunk Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Trunk Statistics:\n${trunk_stats_cli}\n
 
-# Retrieve Route Domain Information
-#     [Documentation]
-#     Set log level    trace
+Retrieve BIG-IP Self-IP Statistics
+    [Documentation]
+    ${self-ip_stats_api}    Retrieve BIG-IP Self IP Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${self-ip_stats_cli}    Retrieve BIG-IP Self IP Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Self-IP Statistics:\n${self-ip_stats_cli}\n
 
-# Retrieve BIG-IP Authentication Partition Information
-#     [Documentation]
-#     Set log level    trace
+Retrieve BIG-IP Virtual Server Statistics
+    [Documentation]
+    ${virtual_server_stats_api}    Retrieve BIG-IP Virtual Server Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${virtual_server_stats_cli}    Retrieve BIG-IP Virtual Server Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Virtual Server Statistics:\n${virtual_server_stats_cli}\n
 
-# Retrieve BIG-IP Trunk Configuration
-#     [Documentation]
-#     Set log level    trace
+Retrieve Pool Statistics
+    [Documentation]
+    ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
 
-# Retrieve BIG-IP Trunk Statistics
-#     [Documentation]
-#     Set log level    trace
+Retrieve BIG-IP Full Text Configuration via TMSH
+    [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
+    SSHLibrary.Open connection    ${bigip_host}
+    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+    ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}   ======> Full Text Configuration:\n${full_text_configuration}\n
 
-# Retrieve Self-IP Configuration
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Self-IP Statistics
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Static Route Configuration
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Dynamic Route Configuration
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Dynamic Route Status
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Virtual Server Configuration
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Virtual Server Statistics
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Pool Configuration
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve Pool Statistics
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP Policy Configuration
-#     [Documentation]
-#     Set log level    trace
-# Retrieve BIG-IP Monitor Configuration
-#     [Documentation]
-#     Set log level    trace
-
-# Retrieve BIG-IP SNAT Configuration
-#     [Documentation]
-#     Set log level    trace
-
-Retrieve BIG-IP Full Text Configuration via SSH
+Retrieve BIG-IP Full Text Configuration via TMSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     SSHLibrary.Open connection    ${bigip_host}

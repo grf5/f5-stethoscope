@@ -25,14 +25,14 @@ Retrieve BIG-IP TMOS Version via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP TMOS Version via SSH
+Retrieve BIG-IP TMOS Version via TMSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${version}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version'
-    [Return]    ${version}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version'
+    [Return]    ${command_output}
 
 Retrieve BIG-IP License Information via iControl REST
     [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
@@ -42,14 +42,14 @@ Retrieve BIG-IP License Information via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP License Information via SSH
+Retrieve BIG-IP License Information via TMSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${license}    SSHLibrary.Execute Command    bash -c 'tmsh show sys license'
-    [Return]    ${license}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys license'
+    [Return]    ${command_output}
 
 Retrieve BIG-IP Hostname via iControl REST
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
@@ -57,17 +57,17 @@ Retrieve BIG-IP Hostname via iControl REST
     ${api_uri}    set variable    /mgmt/tm/sys/global-settings
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    ${configured_hostname}    get from dictionary    ${api_response.json()}    hostname
-    [Return]    ${configured_hostname}
+    ${command_output}    get from dictionary    ${api_response.json()}    hostname
+    [Return]    ${command_output}
 
-Retrieve BIG-IP Hostname via SSH
+Retrieve BIG-IP Hostname via TMSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname'
-    [Return]    ${hostname}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname'
+    [Return]    ${command_output}
 
 Retrieve BIG-IP NTP Configuration via iControl REST
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
@@ -77,14 +77,14 @@ Retrieve BIG-IP NTP Configuration via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP NTP Configuration via SSH
+Retrieve BIG-IP NTP Configuration via TMSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
-    [Return]    ${hostname}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
+    [Return]    ${command_output}
 
 BIG-IP iControl BasicAuth POST    
     [Documentation]    Performs an iControl REST API POST call using basic auth (See pages 39-44 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
@@ -96,14 +96,14 @@ BIG-IP iControl BasicAuth POST
     ${api_response}    RequestsLibrary.POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
     [Return]    ${api_response}
 
-Retrieve BIG-IP NTP Status via SSH
+Retrieve BIG-IP NTP Status via TMSH
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${ntpq_output}    SSHLibrary.Execute Command    bash -c 'ntpq -pn'
-    [Return]    ${ntpq_output}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'ntpq -pn'
+    [Return]    ${command_output}
 
 Verify BIG-IP NTP Server Associations
     [Documentation]    Verifies that all configured NTP servers are synced (https://support.f5.com/csp/article/K13380)
@@ -139,14 +139,14 @@ Retrieve BIG-IP CPU Statistics via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP CPU Statistics via SSH
+Retrieve BIG-IP CPU Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${cpu_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu all field-fmt'
-    [Return]    ${cpu_stats}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu all field-fmt'
+    [Return]    ${command_output}
 
 Retrieve BIG-IP Hardware Information
     [Documentation]    Retrieves the BIG-IP hardware information, applicable to virtual editions as well (https://my.f5.com/manage/s/article/K13144)
@@ -164,28 +164,171 @@ Retrieve BIG-IP System Performance via iControl REST
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
 
-Retrieve BIG-IP System Performance via SSH
+Retrieve BIG-IP System Performance via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${sys_performance_all_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys performance all-stats detail raw'
-    [Return]    ${sys_performance_all_stats}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys performance all-stats detail raw'
+    [Return]    ${command_output}
 
-Retrieve BIG-IP Disk Space Utilization via SSH
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+Retrieve BIG-IP Disk Space Utilization via TMSH
     [Documentation]    Retrieves the disk space utilization on the BIG-IP
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${disk_space_output}    SSHLibrary.Execute Command    bash -c 'df --human-readable --output'
-    [Return]    ${disk_space_output}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'df --human-readable --output'
+    [Return]    ${command_output}
 
-Retrieve BIG-IP Cluster Management Device Details via iControl REST
-    [Documentation]    Retrieves the HA status of a BIG-IP via API (https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_cm.html)
+Retrieve BIG-IP Cluster Management Status via TMSH
+    [Documentation]    Retrieves the HA status of a BIG-IP via TMSH (https://my.f5.com/manage/s/article/K08452454)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/tm/cm/device
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
+    [Return]    ${command_output}
+
+Retrieve BIG-IP Cluster Management Device Configuration via iControl REST
+    [Documentation]    (https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_cm.html)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/cm/device
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Device Status via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/device/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Device Group Configuration via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/device-group
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Device Group Status via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/device-group/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Traffic Group Configuration via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/traffic-group
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Traffic Group Status via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/traffic-group/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Trust Domain Configuration via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/trust-domain
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Cluster Management Failover Status via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm/failover-status
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Interface Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/net/interface/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Interface Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
+    [Return]    ${command_output}
+
+Retrieve BIG-IP Route Domain Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    
+
+Retrieve BIG-IP VLAN Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
+    [Return]    ${command_output}
+
+Retrieve BIG-IP Route Domain Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    [Teardown]    SSHLibrary.Close All Connections
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net route-domain all'
+    [Return]    ${command_output}
+
+Retrieve BIG-IP Trunk Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    
+
+Retrieve BIG-IP Trunk Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net trunk all-properties'
+    [Return]    ${command_output}
+
+
+Retrieve BIG-IP Self IP Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    
+
+Retrieve BIG-IP Self IP Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'show / net self recursive all'
+    [Return]    ${command_output}
+
+Retrieve BIG-IP Virtual Server Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}
+    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show / ltm virtual recursive all-properties'
+    [Return]    ${command_output}
+    
+
+Retrieve BIG-IP Pool Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/ltm/pool/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Virtual Server Statistics via iControl REST
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/ltm/virtual/stats
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
+
+Retrieve BIG-IP Pool Statistics via TMSH
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    
+
