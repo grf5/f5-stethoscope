@@ -277,10 +277,23 @@ Verify BIG-IP Disk Space
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
     @{df_output_items}    Split to lines    ${df_output}
     FOR    ${current_mount_point}    IN    @{df_output_items}
-        @{df_output_columns}    Split string    ${current_mount_point}
-        ${filesystem}    Get index from list    ${df_output_columns}    Filesystem
-        Log to Console    File system index: ${filesystem}
-        Log to console    1: ${df_output_columns}
+        IF    "Filesystem" in "${current_mount_point}" and "Use%" in "${current_mount_point}"
+            Log    Skipping column header line
+        ELSE
+            @{df_entry_data}    Split string    ${current_mount_point}
+            ${source}    Get from list    ${df_entry_data}    0
+            ${type}    Get from list    ${df_entry_data}    1
+            ${inodes_total}    Get from list    ${df_entry_data}    2
+            ${inodes_used}    Get from list    ${df_entry_data}    3
+            ${inodes_free}    Get from list    ${df_entry_data}    4
+            ${inodes_used_pct}    Get from list    ${df_entry_data}    5
+            ${size}    Get from list    ${df_entry_data}    6
+            ${used}    Get from list    ${df_entry_data}    7
+            ${avail}    Get from list    ${df_entry_data}    8
+            ${used_pct}    Get from list    ${df_entry_data}    9
+            ${target}    Get from list    ${df_entry_data}    11
+        END
+        Log to console    Filesystem ${target} using ${used_pct} of available space (${avail} free)
         Get 
     END
 
