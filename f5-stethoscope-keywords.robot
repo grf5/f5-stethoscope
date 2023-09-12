@@ -194,7 +194,7 @@ Retrieve BIG-IP Cluster Management Status via TMSH
 Retrieve BIG-IP Cluster Management Device Configuration via iControl REST
     [Documentation]    (https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_cm.html)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    ${api_uri}    set variable    /mgmt/cm/device
+    ${api_uri}    set variable    /mgmt/tm/cm/device
     ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
     Should Be Equal As Strings    ${api_response.status_code}    ${200}
     [Return]    ${api_response}
