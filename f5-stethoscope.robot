@@ -316,7 +316,7 @@ Retrieve Top 20 Directories and Files by Size on Disk
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${top_20_directories}    SSHLibrary.Execute command    find / -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -20
     Log to console    \nTop 20 directories:\n${top_20_directories}
-    ${top_20_files}    SSHLibrary.Execute command    find / -type f -exec du {} \; | sort -rn | head -20
+    ${top_20_files}    SSHLibrary.Execute command    du -ah --exclude=/proc/* / | sort -n -r | head -n 20
     Log to console    \nTop 20 files:\n${top_20_files}
     
 
