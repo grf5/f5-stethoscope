@@ -395,8 +395,7 @@ Record Timestamp
 Retrieve Pool Statistics
     [Documentation]
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Log to console    \n\n${pool_stats_api.text}\n\n
-    ${pool_stats}    Get from dictionary    ${pool_stats_api.json()}
+    ${pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
     FOR    ${current_pool}    IN    ${pool_stats}
         Log to console    \n${current_pool}\n
     END
