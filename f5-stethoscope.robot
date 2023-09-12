@@ -36,17 +36,6 @@ Record Timestamp
     Create File    ${OUTPUT_DIR}/${status_output_file_name}   Test started at ${timestamp}\n
     Create File    ${OUTPUT_DIR}/${statistics_output_file_name}   Test started at ${timestamp}\n
 
-Check for Required Variables
-    [Documentation]    Ensures that all required variables are present and contain data
-    [Tags]    critical
-    TRY
-        Should Not Be Empty    ${bigip_host}
-        Should Not Be Empty    ${bigip_username}
-        Should Not Be Empty    ${bigip_password}
-    EXCEPT
-        Fatal Error
-    END
-
 Verify SSH Connectivity
     [Documentation]    Logs into the BIG-IP via SSH, executes a BASH command and validates the expected response
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections
@@ -285,7 +274,7 @@ Retrieve and Verify BIG-IP NTP Status
 
 Verify BIG-IP Disk Space    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
     ${df_output}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${retrieved_ntp_status_tmsh}\n
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
     @{df_output_items}    Split to lines    ${df_output}
     FOR    ${current_mount_point}    IN    @{df_output_items}
         Log to Console    ${current_mount_point}
