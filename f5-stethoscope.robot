@@ -259,7 +259,7 @@ Record Timestamp
 
 # Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
 #     [Documentation]    Retrieves the NTP Configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
-#     ${retrieved_ntp_config_api}   Retrieve BIG-IP NTP Configuration via iControl REST        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${retrieved_ntp_config_api}   Retrieve BIG-IP NTP Configuration via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Dictionary Should Contain Key    ${retrieved_ntp_config_api.json()}   servers
 #     ${retrieved_ntp_config_tmsh}   Retrieve BIG-IP NTP Configuration via SSH        bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Should Not Contain    ${retrieved_ntp_config_tmsh}   servers none
@@ -309,27 +309,20 @@ Record Timestamp
 #         END
 #     END
 
-Retrieve Top 20 Directories and Files by Size on Disk
-    [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
-    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
-    SSHLibrary.Open connection    ${bigip_host}
-    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    ${top_directories}    SSHLibrary.Execute command    bash -c "du --exclude=/proc/* -Sh / | sort -rh | head -n 20"
-    Log to console    \nTop 20 directories:\n${top_directories}
-    ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
-    Log to console    \nTop 20 files:\n${top_files}
+# Retrieve Top 20 Directories and Files by Size on Disk
+#     [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
+#     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
+#     SSHLibrary.Open connection    ${bigip_host}
+#     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+#     ${top_directories}    SSHLibrary.Execute command    bash -c "du --exclude=/proc/* -Sh / | sort -rh | head -n 20"
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Top directories on disk by size:\n${top_directories}\n
+#     ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Top files on disk by size:\n${top_files}\n
 
-# Retrieve BIG-IP Provisioned Software Modules
-#     [Documentation]
-#     Set log level    trace
-
-# List All System Database Variables
-#     Set log level    trace
-#     [Documentation]
-
-# Retrieve BIG-IP High Availability Configuration
-#     Set log level    trace
-#     [Documentation]
+Retrieve BIG-IP High Availability Status
+    [Documentation]    Retrieves the BIG-IP high availability status (https://my.f5.com/manage/s/article/K08452454)
+    ${bigip_ha_status}    Retrieve BIG-IP HA Status via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    Log to console    ${bigip_ha_status.text}
 
 # Retrieve BIG-IP SSL Certificate Metadata
 #     [Documentation]

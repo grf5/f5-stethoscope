@@ -181,3 +181,11 @@ Retrieve BIG-IP Disk Space Utilization via SSH
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
     ${disk_space_output}    SSHLibrary.Execute Command    bash -c 'df --human-readable --output'
     [Return]    ${disk_space_output}
+
+Retrieve BIG-IP HA Status via iControl REST
+    [Documentation]    Retrieves the HA status of a BIG-IP via API (https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_cm.html)
+    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
+    ${api_uri}    set variable    /mgmt/tm/cm
+    ${api_response}    BIG-IP iControl BasicAuth GET    bigip_host=${bigip_host}  bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}
+    Should Be Equal As Strings    ${api_response.status_code}    ${200}
+    [Return]    ${api_response}
