@@ -276,7 +276,8 @@ Verify BIG-IP Disk Space    [Documentation]    Verifies that the BIG-IP disk uti
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
     @{df_output_items}    Split to lines    ${df_output}
     FOR    ${current_mount_point}    IN    @{df_output_items}
-        Log to Console    ${current_mount_point}
+        @{df_output_columns}    Split string    ${current_mount_point}    ${SPACE}
+        Log to Console    ${df_output_columns}
     END
 
 Retrieve BIG-IP Provisioned Software Modules
