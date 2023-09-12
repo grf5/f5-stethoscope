@@ -136,8 +136,7 @@ Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to dictionary    dictionary
-    Set to Dictionary    ${api_info_block}    hostname    ${retrieved_hostname_api}
+    Set to Dictionary    ${api_info_block}    hostname=${retrieved_hostname_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname:\n${retrieved_hostname_tmsh}\n
 
 Retrieve BIG-IP License Information
