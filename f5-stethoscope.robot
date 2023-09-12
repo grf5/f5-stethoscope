@@ -292,9 +292,8 @@ Verify BIG-IP Disk Space
             ${avail}    Get from list    ${df_entry_data}    8
             ${used_pct}    Get from list    ${df_entry_data}    9
             ${target}    Get from list    ${df_entry_data}    11
+            Log to console    Filesystem ${target} using ${used_pct} of available space (${avail} free)
         END
-        Log to console    Filesystem ${target} using ${used_pct} of available space (${avail} free)
-        Get 
     END
 
 Retrieve BIG-IP Provisioned Software Modules
