@@ -278,7 +278,10 @@ Verify BIG-IP Disk Space
     @{df_output_items}    Split to lines    ${df_output}
     FOR    ${current_mount_point}    IN    @{df_output_items}
         @{df_output_columns}    Split string    ${current_mount_point}
+        ${filesystem}    Get index from list    @{df_output_columns}    Filesystem
+        Log to Console    File system index: ${filesystem}
         Log to console    1: ${df_output_columns}
+        Get 
     END
 
 Retrieve BIG-IP Provisioned Software Modules
