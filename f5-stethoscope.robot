@@ -314,10 +314,10 @@ Retrieve Top 20 Directories and Files by Size on Disk
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
     SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    ${top_20_directories}    SSHLibrary.Execute command    bash -c "find / -type d -exec du --exclude=/proc/* -Sh {} + | sort -rh  | head -n 20"
-    Log to console    \nTop 20 directories:\n${top_20_directories}
-    ${top_20_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
-    Log to console    \nTop 20 files:\n${top_20_files}
+    ${top_directories}    SSHLibrary.Execute command    bash -c "find / -type d -exec du --exclude=/proc/* -Sh {} + | sort -rh  | head -n 20"
+    Log to console    \nTop 20 directories:\n${top_directories}
+    ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
+    Log to console    \nTop 20 files:\n${top_files}
 
 # Retrieve BIG-IP Provisioned Software Modules
 #     [Documentation]
