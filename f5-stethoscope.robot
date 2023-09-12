@@ -315,9 +315,9 @@ Retrieve Top 20 Directories and Files by Size on Disk
     SSHLibrary.Open connection    ${bigip_host}
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${top_20_directories}    SSHLibrary.Execute command    find / -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -20
-    Log to console    ${top_20_directories.json()}
+    Log to console    ${top_20_directories}
     ${top_20_files}    SSHLibrary.Execute command    find / -type f -exec du {} \; | sort -rn | head -20
-    Log to console    ${top_20_files.json()}
+    Log to console    ${top_20_files}
     
 
 # Retrieve BIG-IP Provisioned Software Modules
