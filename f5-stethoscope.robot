@@ -405,7 +405,7 @@ Retrieve Pool Statistics
         ${current_pool_availability_state}    Set variable    ${current_pool_stats}[nestedStats][entries][status.availabilityState][description]
         ${current_pool_status_reason}    Set variable    ${current_pool_stats}[nestedStats][entries][status.statusReason][description]
         IF    "${current_pool_availability_state}" != "available"
-            Append to list    ${current_pool} is ${current_pool_availability_state} (${current_pool_status_reason})
+            Append to list    ${unavailable_pools}    ${current_pool} is ${current_pool_availability_state} (${current_pool_status_reason})
         END
         # Check for the total number of members and if the available member count is less, append to the list
         ${current_pool_available_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][availableMemberCnt][value]
