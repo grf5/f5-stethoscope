@@ -279,7 +279,7 @@ Verify BIG-IP Disk Space
     FOR    ${current_mount_point}    IN    @{df_output_items}
         @{df_output_columns}    Split string    ${current_mount_point}    ${SPACE}
         Log to console    1: ${df_output_columns}
-        ${df_output_columns}    Remove values from list    ${df_output_columns}    ${null}
+        ${df_output_columns}    Remove values from list    ${df_output_columns}    ${EMPTY}
         Log to Console    2: ${df_output_columns}
     END
 
