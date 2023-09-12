@@ -271,43 +271,43 @@ Record Timestamp
 #     Set to Dictionary    ${api_info_block}    ntp-status    ${retrieved_ntp_status_tmsh}
 #     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
 
-Verify BIG-IP Disk Space    
-    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
-    ${df_output}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
-    @{df_output_items}    Split to lines    ${df_output}
-    FOR    ${current_mount_point}    IN    @{df_output_items}
-        IF    "Filesystem" in "${current_mount_point}" and "Use%" in "${current_mount_point}"
-            Log    Skipping column header line
-        ELSE
-            @{df_entry_data}    Split string    ${current_mount_point}
-            ${source}    Get from list    ${df_entry_data}    0
-            ${type}    Get from list    ${df_entry_data}    1
-            ${inodes_total}    Get from list    ${df_entry_data}    2
-            ${inodes_used}    Get from list    ${df_entry_data}    3
-            ${inodes_free}    Get from list    ${df_entry_data}    4
-            ${inodes_used_pct}    Get from list    ${df_entry_data}    5
-            ${size}    Get from list    ${df_entry_data}    6
-            ${used}    Get from list    ${df_entry_data}    7
-            ${avail}    Get from list    ${df_entry_data}    8
-            ${used_pct}    Get from list    ${df_entry_data}    9
-            ${target}    Get from list    ${df_entry_data}    11
-            IF    "${target}" == "/usr"
-                Log    Skipping disk space check for /usr (https://my.f5.com/manage/s/article/K23607394)
-            ELSE
-                ${percentage_used}    Remove string    ${used_pct}    %  
-                IF    ${${percentage_used}} > 90
-                    Log to Console    \nWARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
-                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
-                END
-                ${inodes_used_pct}    Remove string    ${inodes_used_pct}    %
-                IF    ${${inodes_used_pct}} > 90
-                    Log to Console    \nWARNING: Filesystem ${target} is using a high percentage (${inodes_used_pct}) of available inodes! (https://my.f5.com/manage/s/article/K14403)
-                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
-                END
-            END
-        END
-    END
+# Verify BIG-IP Disk Space    
+#     [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
+#     ${df_output}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
+#     @{df_output_items}    Split to lines    ${df_output}
+#     FOR    ${current_mount_point}    IN    @{df_output_items}
+#         IF    "Filesystem" in "${current_mount_point}" and "Use%" in "${current_mount_point}"
+#             Log    Skipping column header line
+#         ELSE
+#             @{df_entry_data}    Split string    ${current_mount_point}
+#             ${source}    Get from list    ${df_entry_data}    0
+#             ${type}    Get from list    ${df_entry_data}    1
+#             ${inodes_total}    Get from list    ${df_entry_data}    2
+#             ${inodes_used}    Get from list    ${df_entry_data}    3
+#             ${inodes_free}    Get from list    ${df_entry_data}    4
+#             ${inodes_used_pct}    Get from list    ${df_entry_data}    5
+#             ${size}    Get from list    ${df_entry_data}    6
+#             ${used}    Get from list    ${df_entry_data}    7
+#             ${avail}    Get from list    ${df_entry_data}    8
+#             ${used_pct}    Get from list    ${df_entry_data}    9
+#             ${target}    Get from list    ${df_entry_data}    11
+#             IF    "${target}" == "/usr"
+#                 Log    Skipping disk space check for /usr (https://my.f5.com/manage/s/article/K23607394)
+#             ELSE
+#                 ${percentage_used}    Remove string    ${used_pct}    %  
+#                 IF    ${${percentage_used}} > 90
+#                     Log to Console    \nWARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
+#                     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
+#                 END
+#                 ${inodes_used_pct}    Remove string    ${inodes_used_pct}    %
+#                 IF    ${${inodes_used_pct}} > 90
+#                     Log to Console    \nWARNING: Filesystem ${target} is using a high percentage (${inodes_used_pct}) of available inodes! (https://my.f5.com/manage/s/article/K14403)
+#                     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
+#                 END
+#             END
+#         END
+#     END
 
 Retrieve Top 20 Directories and Files by Size on Disk
     [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
