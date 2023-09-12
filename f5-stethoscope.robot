@@ -311,9 +311,12 @@ Verify BIG-IP Disk Space
 
 Retrieve Top 20 Directories and Files by Size on Disk
     [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
-    ${top_20_directories}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}    command="find / -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -20"
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
+    SSHLibrary.Open connection    ${bigip_host}
+    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+    ${top_20_directories}    SSHLibrary.Execute command    find / -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -20
     Log to console    ${top_20_directories.json()}
-    ${top_20_files}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}    command="find / -type f -exec du {} \; | sort -rn | head -20"
+    ${top_20_files}    SSHLibrary.Execute command    find / -type f -exec du {} \; | sort -rn | head -20
     Log to console    ${top_20_files.json()}
     
 

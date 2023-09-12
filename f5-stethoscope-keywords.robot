@@ -86,15 +86,6 @@ Retrieve BIG-IP NTP Configuration via SSH
     ${hostname}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
     [Return]    ${hostname}
 
-Run BASH Command on BIG-IP
-    [Documentation]    Executes bash command on the BIG-IP via iControl REST (https://my.f5.com/manage/s/article/K13225405)
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${command}
-    ${api_payload}    create dictionary    command=run    utilCmdArgs=-c "${command}"
-    ${api_uri}    set variable    /mgmt/tm/util/bash
-    ${api_response}    BIG-IP iControl BasicAuth POST    bigip_host=${bigip_host}    bigip_username=${bigip_username}    bigip_password=${bigip_password}    api_uri=${api_uri}    api_payload=${api_payload}
-    Should Be Equal As Strings    ${api_response.status_code}    ${200}
-    [Return]    ${api_response}
-
 BIG-IP iControl BasicAuth POST    
     [Documentation]    Performs an iControl REST API POST call using basic auth (See pages 39-44 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}    ${api_payload}
