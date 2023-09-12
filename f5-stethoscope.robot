@@ -284,11 +284,13 @@ Retrieve and Verify BIG-IP NTP Status
     Append to API Output    ntp-status    ${retrieved_ntp_status_tmsh}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
 
-Retrieve BIG-IP Disk Space Utilization
-    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
-    ${retrieved_disk_space_tmsh}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+Verify BIG-IP Disk Space    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
+    ${df_output}    Retrieve BIG-IP Disk Space Utilization via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Disk Space Utilization:\n${retrieved_ntp_status_tmsh}\n
-    
+    @{df_output_items}    Split to lines    ${df_output}
+    FOR    ${current_mount_point}    IN    @{df_output_items}
+        Log to Console    ${current_mount_point}
+    END
 
 Retrieve BIG-IP Provisioned Software Modules
     [Documentation]

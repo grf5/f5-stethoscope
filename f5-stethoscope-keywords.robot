@@ -201,5 +201,5 @@ Retrieve BIG-IP Disk Space Utilization via SSH
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${disk_space_output}    SSHLibrary.Execute Command    bash -c 'df -h'
+    ${disk_space_output}    SSHLibrary.Execute Command    bash -c 'df --human-readable --output'
     [Return]    ${disk_space_output}
