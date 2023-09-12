@@ -395,21 +395,14 @@ Retrieve BIG-IP Virtual Address Statistics
 Retrieve Pool Statistics
     [Documentation]
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    @{pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
+    ${pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
+    Log to console    ${pool_stats}
     FOR    ${current_pool}    IN    @{pool_stats}
         Log to console    ${current_pool}
     END
     ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
     
-Retrieve BIG-IP Database Variables via TMSH
-    [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
-    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
-    SSHLibrary.Open connection    ${bigip_host}
-    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list sys db all-properties one-line'
-    Append to file    ${OUTPUT_DIR}/${status_output_file_name}   ======> Database Variables:\n${full_text_configuration}\n
-
 Retrieve BIG-IP Full Text Configuration via TMSH
     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
     [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
@@ -417,6 +410,14 @@ Retrieve BIG-IP Full Text Configuration via TMSH
     SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
     ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}   ======> Full Text Configuration:\n${full_text_configuration}\n
+
+Retrieve BIG-IP Database Variables via TMSH
+    [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
+    [Teardown]    Run Keywords    SSHLibrary.Close All Connections    RequestsLibrary.Delete All Sessions
+    SSHLibrary.Open connection    ${bigip_host}
+    SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+    ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list sys db all-properties one-line'
+    Append to file    ${OUTPUT_DIR}/${status_output_file_name}   ======> Database Variables:\n${full_text_configuration}\n
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes

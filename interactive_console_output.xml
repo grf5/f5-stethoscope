@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 6.1.1 (Python 3.11.4 on darwin)" generated="20230911 16:56:04.722" rpa="false" schemaversion="4">
+<robot generator="Robot 6.1.1 (Python 3.11.4 on darwin)" generated="20230912 15:28:17.703" rpa="false" schemaversion="4">
 <suite id="s1" name="Robot Interactive Console" source="/Users/G.Robinson/.vscode/extensions/robocorp.robotframework-lsp-1.11.0/src/robotframework_ls/vendored/robotframework_interactive/robot_interactive_console.robot">
 <test id="s1-t1" name="Default Task/Test" line="5">
 <kw name="Interpreter Main Loop" library="MainLoop">
-<try>
-<branch type="TRY">
-<kw name="OperatingSystem.Get File">
-<arg>${OUTPUT_DIR}/${text_output_file_name}</arg>
-<msg timestamp="20230911 16:56:04.963" level="FAIL">No keyword with name 'OperatingSystem.Get File' found.</msg>
-<status status="FAIL" starttime="20230911 16:56:04.963" endtime="20230911 16:56:04.963"/>
+<kw name="SSHLibrary.Open connection">
+<arg>${bigip_host}</arg>
+<msg timestamp="20230912 15:28:18.124" level="FAIL">No keyword with name 'SSHLibrary.Open connection' found.</msg>
+<status status="FAIL" starttime="20230912 15:28:18.124" endtime="20230912 15:28:18.124"/>
 </kw>
-<status status="FAIL" starttime="20230911 16:56:04.962" endtime="20230911 16:56:04.963"/>
-</branch>
-<branch type="EXCEPT">
-<pattern>message</pattern>
-<kw name="Log" library="BuiltIn">
-<arg>Could not retrieve text file output</arg>
-<doc>Logs the given message with the given level.</doc>
-<status status="NOT RUN" starttime="20230911 16:56:04.963" endtime="20230911 16:56:04.963"/>
+<kw name="SSHLibrary.Login">
+<arg>username=${bigip_username}</arg>
+<arg>password=${bigip_password}</arg>
+<status status="NOT RUN" starttime="20230912 15:28:18.124" endtime="20230912 15:28:18.124"/>
 </kw>
-<status status="NOT RUN" starttime="20230911 16:56:04.963" endtime="20230911 16:56:04.963"/>
-</branch>
-<status status="FAIL" starttime="20230911 16:56:04.962" endtime="20230911 16:56:04.963"/>
-</try>
-<status status="PASS" starttime="20230911 16:56:04.731" endtime="20230911 16:56:11.479"/>
+<kw name="SSHLibrary.Execute command">
+<var>${full_text_configuration}</var>
+<arg>bash -c 'tmsh -q list sys db all-properties one-line'</arg>
+<status status="NOT RUN" starttime="20230912 15:28:18.125" endtime="20230912 15:28:18.125"/>
 </kw>
-<status status="PASS" starttime="20230911 16:56:04.730" endtime="20230911 16:56:11.480"/>
+<kw name="Append to file">
+<arg>${OUTPUT_DIR}/${status_output_file_name}</arg>
+<arg>======&gt; Database Variables:\n${full_text_configuration}\n</arg>
+<status status="NOT RUN" starttime="20230912 15:28:18.126" endtime="20230912 15:28:18.126"/>
+</kw>
+<status status="PASS" starttime="20230912 15:28:17.712" endtime="20230912 15:28:19.621"/>
+</kw>
+<status status="PASS" starttime="20230912 15:28:17.712" endtime="20230912 15:28:19.621"/>
 </test>
-<status status="PASS" starttime="20230911 16:56:04.723" endtime="20230911 16:56:11.481"/>
+<status status="PASS" starttime="20230912 15:28:17.704" endtime="20230912 15:28:19.622"/>
 </suite>
 <statistics>
 <total>
