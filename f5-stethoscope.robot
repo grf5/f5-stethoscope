@@ -296,6 +296,7 @@ Verify BIG-IP Disk Space
                 Log    Skipping disk space check for /usr (https://my.f5.com/manage/s/article/K23607394)
             ELSE
                 ${percentage_used}    Get substring    ${used_pct}    -1
+                Log to console    ${percentage_used}
                 IF    ${${percentage_used}} > 90
                     Log to Console    \nWARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
                     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
