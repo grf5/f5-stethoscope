@@ -260,7 +260,7 @@ Retrieve BIG-IP Interface Statistics via TMSH
     [Teardown]    SSHLibrary.Close All Connections
     SSHLibrary.Open Connection    ${bigip_host}
     SSHLibrary.Login    ${bigip_username}    ${bigip_password}
-    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
+    ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net interface all-properties'
     [Return]    ${command_output}
 
 Retrieve BIG-IP Route Domain Statistics via iControl REST
