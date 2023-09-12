@@ -7,12 +7,6 @@ Library            OperatingSystem
 Resource           f5-stethoscope-variables.robot
 
 *** Keywords ***
-Append to API Output
-    [Documentation]    Builds the JSON output block for API information
-    [Arguments]    ${key}    ${value}
-    Set To Dictionary    ${api_info_block}    ${key}    ${value}
-    [Return]
-
 BIG-IP iControl BasicAuth GET    
     [Documentation]    Performs an iControl REST API GET call using basic auth (See pages 25-38 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}

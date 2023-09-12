@@ -32,7 +32,7 @@ Record Timestamp
     ${timestamp}   Get Current Date
     Log    Test started at ${timestamp}
     Log To Console    \nTest started at ${timestamp}
-    Append to API Output    test_start_time    ${timestamp}
+    Set to Dictionary    ${api_info_block}    test-start-time    ${timestamp}
     Create File    ${OUTPUT_DIR}/${status_output_file_name}   Test started at ${timestamp}\n
     Create File    ${OUTPUT_DIR}/${statistics_output_file_name}   Test started at ${timestamp}\n
 
@@ -44,18 +44,18 @@ Verify SSH Connectivity
         # Use the SSH Library to connect to the host
         SSHLibrary.Open Connection    ${bigip_host}
         # Log in and note the returned prompt
-        ${SSHLoginOutput}   SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
+        ${login_output}   SSHLibrary.Log In    ${bigip_username}   ${bigip_password}
         # Verify that the prompt includes (tmos)# for tmsh or the default bash prompt
-        Should Contain Any    ${SSHLoginOutput}   (tmos)#    ] ~ #
+        Should Contain Any    ${login_output}   (tmos)#    ] ~ #
     EXCEPT
         Log    Could not connect to SSH
-        Append to API Output    ssh_connectivity    ${False}
-        Append to Status File    SSH Connecitivity: Failed
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    SSH Connecitivity: FAILED\n
+        Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    SSH Connecitivity: FAILED\n
         Fatal Error
     ELSE
         Log    Successfully connected to SSH
-        Append to API Output    ssh_connectivity    ${True}
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    SSH Connecitivity: Succeeded\n
+        Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    SSH Connecitivity: Succeeded\n
     END
 
 Verify Remote Host is a BIG-IP via SSH
@@ -77,13 +77,13 @@ Test IPv4 iControlREST API Connectivity
         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}   ${bigip_username}   ${bigip_password}
     EXCEPT
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Fatal error: API connectivity failed\n
-        Append to API Output    error    API connectivity failed
+        Set to Dictionary    ${api_info_block}    error    API connectivity failed
         Log    Fatal error: API connectivity failed
         Log To Console    \nFatal error: API connectivity failed
         Fatal Error    No connectivity to device via iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
     ELSE
         Log    Successfully connected to iControl REST API
-        Append to API Output    api_connectivity    ${True}
+        Set to Dictionary    ${api_info_block}    api_connectivity    ${True}
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> API Connecitivity: Succeeded\n
     END
 
@@ -94,7 +94,7 @@ Verify Remote Host is a BIG-IP via iControl REST
     [Tags]    critical
     ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
-    Append to API Output    sys_hardware_api    ${retrieved_sys_hardware_api}
+    Set to Dictionary    ${api_info_block}    sys_hardware_api    ${retrieved_sys_hardware_api}
 
 Check BIG-IP for Excessive CPU/Memory Utilization
     [Documentation]    Verifies that resource utilization on the BIG-IP isn't critical and stops all testing if robot tests could cause impact
@@ -108,7 +108,7 @@ Check BIG-IP for Excessive CPU/Memory Utilization
     ${other_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
-    Append to API Output    system_performance_all_stats    ${system_performance_api.json()}
+    Set to Dictionary    ${api_info_block}    system_performance_all_stats    ${system_performance_api.json()}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> System Performance All Statistics:${system_performance_tmsh}\n
     IF    ${utilization_avg} >= 90
         Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
@@ -130,14 +130,15 @@ Retrieve BIG-IP CPU Statistics
     # Retrieve desired information via iControl REST
     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to API Output    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api.json()}
+    Set to Dictionary    ${api_info_block}    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}   ======>  CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
 
 Retrieve BIG-IP Hostname
     [Documentation]    Retrieves the configured hostname on the BIG-IP
     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_hostname_tmsh}   Retrieve BIG-IP Hostname via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to API Output    hostname    ${retrieved_hostname_api}
+    Set to dictionary    dictionary
+    Set to Dictionary    ${api_info_block}    hostname    ${retrieved_hostname_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Hostname:\n${retrieved_hostname_tmsh}\n
 
 Retrieve BIG-IP License Information
@@ -148,17 +149,17 @@ Retrieve BIG-IP License Information
     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Service check date: ${service_check_date}\n
-    Append to API Output    service_check_date    ${service_check_date}
+    Set to Dictionary    ${api_info_block}    service_check_date    ${service_check_date}
     ${current_date}    Get current date    result_format=%Y/%m/%d
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Current date: ${current_date}\n
-    Append to API Output    current_date    ${current_date}
+    Set to Dictionary    ${api_info_block}    current_date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
     IF    ${days_until_service_check_date} < 1
         Log to console    \nWARNING! License service check date occurs in the past! Re-activate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
         Log    WARNING! License service check date occurs in the past! Reactivate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING! License service check date occurs in the past! Re-actviate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)\n
     END
-    Append to API Output    license    ${retrieved_license_api}
+    Set to Dictionary    ${api_info_block}    license    ${retrieved_license_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> License: ${retrieved_license_tmsh}\n
 
 Retrieve BIG-IP TMOS Version
@@ -166,7 +167,7 @@ Retrieve BIG-IP TMOS Version
     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_version_tmsh}   Retrieve BIG-IP TMOS Version via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${bigip_version}    Set variable    ${retrieved_version_api.json()}[entries][https://localhost/mgmt/tm/sys/version/0][nestedStats][entries][Version][description]
-    Append to API Output    version    ${retrieved_version_api}
+    Set to Dictionary    ${api_info_block}    version    ${retrieved_version_api}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> BIG-IP Version: ${retrieved_version_tmsh}\n
     ${current_date}    Get current date    result_format=%Y/%m/%d
     IF    "17.1." in "${bigip_version}"
@@ -177,8 +178,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
-            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -198,8 +199,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
-            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -219,8 +220,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
-            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -240,8 +241,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Append to API Output    remaining_days_software_development    ${remaining_days_software_development}
-            Append to API Output    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -269,7 +270,7 @@ Retrieve and Verify BIG-IP NTP Status
     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     ${retrieved_ntp_status_tmsh}   Retrieve BIG-IP NTP Status via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_tmsh}
-    Append to API Output    ntp-status    ${retrieved_ntp_status_tmsh}
+    Set to Dictionary    ${api_info_block}    ntp-status    ${retrieved_ntp_status_tmsh}
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_tmsh}\n
 
 Verify BIG-IP Disk Space    [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
