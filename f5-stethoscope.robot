@@ -297,9 +297,10 @@ Verify BIG-IP Disk Space
             ELSE
                 ${percentage_used}    Get substring    ${used_pct}    -1
                 IF    ${percentage_used} > 90
-                    Log to Console    WARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
+                    Log to Console    \nWARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
                     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
                 END
+            END
         END
     END
 
