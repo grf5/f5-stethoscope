@@ -10,8 +10,8 @@ ${bigip_password}                  f5c0nfig123!
 # Device and object status will be written to this file. Information in this file should be static
 # and can be diff'd prior to and after a maintenance event to view configuration or operation state
 # changes:
-${status_output_file_name}           device_info.txt
+${status_output_file_name}         device_status.txt
 # Device statistics will be written to this file:
-${statistics_output_file_name}     device_stats.txt
+${statistics_output_file_name}     device_statistics.txt
 # Creating an empty dictionary that we will populate with data as the tests run
 &{api_info_block}  
