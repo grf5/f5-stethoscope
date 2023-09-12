@@ -36,6 +36,7 @@ Record Timestamp
     Log To Console    \nTest started at ${timestamp}
     Append to API Output    test_start_time    ${timestamp}
     Create File    ${OUTPUT_DIR}/${status_output_file_name}   Test started at ${timestamp}\n
+    Create File    ${OUTPUT_DIR}/${statistics_output_file_name}   Test started at ${timestamp}\n
 
 Check for Required Variables
     [Documentation]    Ensures that all required variables are present and contain data
