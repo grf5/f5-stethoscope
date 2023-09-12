@@ -321,8 +321,12 @@ Record Timestamp
 
 Retrieve BIG-IP High Availability Status
     [Documentation]    Retrieves the BIG-IP high availability status (https://my.f5.com/manage/s/article/K08452454)
-    ${bigip_ha_status}    Retrieve BIG-IP HA Status via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Log to console    ${bigip_ha_status.text}
+    ${bigip_cm_devices}    Retrieve BIG-IP Cluster Management Device Details via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+    @{bigip_cm_devices}    Set variable    ${bigip_cm_devices.json}[items]
+    FOR    ${current_cm_device}    IN    @{bigip_cm_devices}
+        Log to console    ${current_cm_device}
+        Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Cluster Management Device:\n${current_cm_device}\n
+    END
 
 # Retrieve BIG-IP SSL Certificate Metadata
 #     [Documentation]
