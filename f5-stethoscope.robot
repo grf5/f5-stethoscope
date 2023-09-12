@@ -298,7 +298,12 @@ Verify BIG-IP Disk Space
                 ${percentage_used}    Remove string    ${used_pct}    %  
                 IF    ${${percentage_used}} > 90
                     Log to Console    \nWARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
-                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using %{used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
+                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> WARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
+                END
+                ${inodes_used}    Remove string    ${inodes_used}    %
+                IF    ${${inodes_used}} > 90
+                    Log to Console    \nWARNING: Filesystem ${target} has using a high percentage (${inodes_used_pct}) of available inodes! (https://my.f5.com/manage/s/article/K14403)
+                    Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> \nWARNING: Filesystem ${target} has using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
                 END
             END
         END
