@@ -312,7 +312,7 @@ Verify BIG-IP Disk Space
 Retrieve Top 20 Directories by Size on Disk
     [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
     ${top_20_directories}    Run BASH Command on BIG-IP    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}    command='find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -nr | head -20'
-    Log to console    ${top_20_directories}
+    Log to console    ${top_20_directories.json()}
 
 Retrieve BIG-IP Provisioned Software Modules
     [Documentation]
