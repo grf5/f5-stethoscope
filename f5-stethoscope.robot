@@ -83,7 +83,7 @@ Test IPv4 iControlREST API Connectivity
         Fatal Error    No connectivity to device via iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
     ELSE
         Log    Successfully connected to iControl REST API
-        Set to Dictionary    ${api_info_block}    api_connectivity    ${True}
+        Set to Dictionary    ${api_info_block}    api-connectivity    ${True}
         Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> API Connecitivity: Succeeded\n
     END
 
@@ -94,7 +94,7 @@ Verify Remote Host is a BIG-IP via iControl REST
     [Tags]    critical
     ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
-    Set to Dictionary    ${api_info_block}    sys_hardware_api    ${retrieved_sys_hardware_api}
+    Set to Dictionary    ${api_info_block}    sys-hardware    ${retrieved_sys_hardware_api}
 
 Check BIG-IP for Excessive CPU/Memory Utilization
     [Documentation]    Verifies that resource utilization on the BIG-IP isn't critical and stops all testing if robot tests could cause impact
@@ -108,7 +108,7 @@ Check BIG-IP for Excessive CPU/Memory Utilization
     ${other_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
-    Set to Dictionary    ${api_info_block}    system_performance_all_stats    ${system_performance_api.json()}
+    Set to Dictionary    ${api_info_block}    system-performance-all-stats    ${system_performance_api.json()}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}    ======> System Performance All Statistics:${system_performance_tmsh}\n
     IF    ${utilization_avg} >= 90
         Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
@@ -130,7 +130,7 @@ Retrieve BIG-IP CPU Statistics
     # Retrieve desired information via iControl REST
     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     ${retrieved_cpu_stats_tmsh}   Retrieve BIG-IP CPU Statistics via SSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    retrieved_cpu_stats_api    ${retrieved_cpu_stats_api}
+    Set to Dictionary    ${api_info_block}    retrieved-cpu-stats    ${retrieved_cpu_stats_api}
     Append to file    ${OUTPUT_DIR}/${statistics_output_file_name}   ======>  CPU Statistics:\n${retrieved_cpu_stats_tmsh}\n
 
 Retrieve BIG-IP Hostname
@@ -149,10 +149,10 @@ Retrieve BIG-IP License Information
     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Service check date: ${service_check_date}\n
-    Set to Dictionary    ${api_info_block}    service_check_date    ${service_check_date}
+    Set to Dictionary    ${api_info_block}    license-service-check-date    ${service_check_date}
     ${current_date}    Get current date    result_format=%Y/%m/%d
     Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Current date: ${current_date}\n
-    Set to Dictionary    ${api_info_block}    current_date    ${current_date}
+    Set to Dictionary    ${api_info_block}    current-date    ${current_date}
     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
     IF    ${days_until_service_check_date} < 1
         Log to console    \nWARNING! License service check date occurs in the past! Re-activate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
@@ -178,8 +178,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
-            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -199,8 +199,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
-            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -220,8 +220,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
-            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
@@ -241,8 +241,8 @@ Retrieve BIG-IP TMOS Version
         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-            Set to Dictionary    ${api_info_block}    remaining_days_software_development    ${remaining_days_software_development}
-            Set to Dictionary    ${api_info_block}    remaining_days_technical_support    ${remaining_days_technical_support}
+            Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
+            Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
             Append to file    ${OUTPUT_DIR}/${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
         ELSE IF    ${remaining_days_software_development} <= 0
