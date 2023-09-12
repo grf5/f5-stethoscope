@@ -148,13 +148,6 @@ Retrieve BIG-IP CPU Statistics via SSH
     ${cpu_stats}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu all field-fmt'
     [Return]    ${cpu_stats}
 
-Curl iControl REST via SSH
-    [Documentation]    Retrieves an iControl REST API endpoint via curl task from BASH
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${uri}
-    ${command}    Set Variable    curl -sku ${bigip_username}:${bigip_password} https://127.0.0.1/${uri}
-    ${retrieved_api_response}    Run BASH Command on BIG-IP    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${command}
-    [Return]    ${retrieved_api_response}
-
 Retrieve BIG-IP Hardware Information
     [Documentation]    Retrieves the BIG-IP hardware information, applicable to virtual editions as well (https://my.f5.com/manage/s/article/K13144)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
