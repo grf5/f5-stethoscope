@@ -7,6 +7,9 @@
 ${bigip_host}                      192.168.1.245
 ${bigip_username}                  admin
 ${bigip_password}                  f5c0nfig123!
+${bigip_ssh_identity_file}         ${EMPTY}
+${bigip_ssh_port}                  22
+${bigip_https_port}                443
 # Device and object status will be written to this file. Information in this file should be static
 # and can be diff'd prior to and after a maintenance event to view configuration or operation state
 # changes:

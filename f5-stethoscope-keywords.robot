@@ -12,7 +12,7 @@ BIG-IP iControl BasicAuth GET
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}
     [Teardown]    RequestsLibrary.Delete All Sessions
     ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
-    RequestsLibrary.Create Session    bigip-icontrol-get-basicauth    https://${bigip_host}    auth=${api_auth}
+    RequestsLibrary.Create Session    bigip-icontrol-get-basicauth    https://${bigip_host}:${bigip_https_port}    auth=${api_auth}
     &{api_headers}    Create Dictionary    Content-type=application/json
     ${api_response}    GET On Session    bigip-icontrol-get-basicauth   ${api_uri}    headers=${api_headers}
     [Return]    ${api_response}
@@ -29,8 +29,12 @@ Retrieve BIG-IP TMOS Version via TMSH
     [Documentation]    Retrieves the current version of TMOS running on the BIG-IP (https://support.f5.com/csp/article/K8759)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys version'
     [Return]    ${command_output}
 
@@ -46,8 +50,12 @@ Retrieve BIG-IP License Information via TMSH
     [Documentation]    Retrieves the license information on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys license'
     [Return]    ${command_output}
 
@@ -64,8 +72,12 @@ Retrieve BIG-IP Hostname via TMSH
     [Documentation]    Retrieves the hostname on the BIG-IP (https://support.f5.com/csp/article/K13369)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh list sys global-settings hostname'
     [Return]    ${command_output}
 
@@ -81,27 +93,25 @@ Retrieve BIG-IP NTP Configuration via TMSH
     [Documentation]    Retrieves the NTP configuration on the BIG-IP (https://my.f5.com/manage/s/article/K13380)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close Connection
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh list sys ntp all-properties'
     [Return]    ${command_output}
-
-BIG-IP iControl BasicAuth POST    
-    [Documentation]    Performs an iControl REST API POST call using basic auth (See pages 39-44 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
-    [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}    ${api_payload}
-    [Teardown]    RequestsLibrary.Delete All Sessions
-    ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
-    RequestsLibrary.Create Session    bigip-icontrol-post-basicauth    https://${bigip_host}		auth=${api_auth}
-    &{api_headers}    Create Dictionary    Content-type=application/json
-    ${api_response}    RequestsLibrary.POST On Session    bigip-icontrol-post-basicauth   ${api_uri}    headers=${api_headers}    json=${api_payload}
-    [Return]    ${api_response}
 
 Retrieve BIG-IP NTP Status via TMSH
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'ntpq -pn'
     [Return]    ${command_output}
 
@@ -143,8 +153,12 @@ Retrieve BIG-IP CPU Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys cpu all field-fmt'
     [Return]    ${command_output}
 
@@ -168,8 +182,12 @@ Retrieve BIG-IP System Performance via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Documentation]    Retrieves the output of the ntpq command on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show sys performance all-stats detail raw'
     [Return]    ${command_output}
 
@@ -177,8 +195,12 @@ Retrieve BIG-IP Disk Space Utilization via TMSH
     [Documentation]    Retrieves the disk space utilization on the BIG-IP
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'df --human-readable --output'
     [Return]    ${command_output}
 
@@ -186,8 +208,12 @@ Retrieve BIG-IP Cluster Management Status via TMSH
     [Documentation]    Retrieves the HA status of a BIG-IP via TMSH (https://my.f5.com/manage/s/article/K08452454)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
     [Return]    ${command_output}
 
@@ -258,8 +284,12 @@ Retrieve BIG-IP Interface Statistics via iControl REST
 Retrieve BIG-IP Interface Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net interface all-properties'
     [Return]    ${command_output}
 
@@ -273,8 +303,12 @@ Retrieve BIG-IP Route Domain Statistics via iControl REST
 Retrieve BIG-IP Route Domain Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net route-domain all'
     [Return]    ${command_output}
 
@@ -288,8 +322,12 @@ Retrieve BIG-IP VLAN Statistics via iControl REST
 Retrieve BIG-IP VLAN Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
     [Teardown]    SSHLibrary.Close All Connections
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show cm'
     [Return]    ${command_output}
 
@@ -302,8 +340,12 @@ Retrieve BIG-IP Trunk Statistics via iControl REST
 
 Retrieve BIG-IP Trunk Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show net trunk all-properties'
     [Return]    ${command_output}
 
@@ -316,8 +358,12 @@ Retrieve BIG-IP Self IP Statistics via iControl REST
 
 Retrieve BIG-IP Self IP Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'show / net self recursive all'
     [Return]    ${command_output}
 
@@ -330,8 +376,12 @@ Retrieve BIG-IP Virtual Server Statistics via iControl REST
 
 Retrieve BIG-IP Virtual Server Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show / ltm virtual recursive all-properties'
     [Return]    ${command_output}
 
@@ -344,8 +394,12 @@ Retrieve BIG-IP Virtual Address Statistics via iControl REST
 
 Retrieve BIG-IP Virtual Address Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show ltm virtual-address all-properties'
     [Return]    ${command_output}
 
@@ -358,9 +412,13 @@ Retrieve BIG-IP Pool Statistics via iControl REST
 
 Retrieve BIG-IP Pool Statistics via TMSH
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}
-    SSHLibrary.Open Connection    ${bigip_host}
-    SSHLibrary.Login    ${bigip_username}    ${bigip_password}
+    SSHLibrary.Open Connection    host=${bigip_host}    port=${bigip_ssh_port}
+    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}    look_for_keys=True    read_config=True
+    ELSE
+        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}        
+    END
     ${command_output}    SSHLibrary.Execute Command    bash -c 'tmsh show / ltm pool recursive'
     [Return]    ${command_output}
-    
+    SSHLibrary.Close connection
 
