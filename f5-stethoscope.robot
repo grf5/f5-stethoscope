@@ -14,6 +14,7 @@ Library            RequestsLibrary
 Library            Collections
 Library            OperatingSystem
 Library            DateTime
+Library            Dialogs
 # Load other robot files that hold settings, variables and keywords
 Resource           f5-stethoscope-keywords.robot
 Resource           f5-stethoscope-variables.robot
@@ -36,14 +37,20 @@ Create Output File Headers for Status and Statistics
     # Log the host and timestamp to the console
     Log To Console    \nBIG-IP: ${bigip_host} (${timestamp})
     # Log the timestamp and host to the dictionary containing all results
-    Set to Dictionary    ${api_info_block}    test-start-time    ${timestamp}
-    Set to Dictionary    ${api_info_block}    bigip_host    ${bigip_host}
-    # Prepend the OUTPUT_DIR to the output files if not present
-    ${status_output_file_name}    Set variable if    "${status_output_file_name}" != "${OUTPUT_DIR}/${status_output_file_name}"    ${OUTPUT_DIR}/${status_output_file_name}
-    ${statistics_output_file_name}    Set variable if    "${statistics_output_file_name}" != "${OUTPUT_DIR}/${statistics_output_file_name}"    ${OUTPUT_DIR}/${statistics_output_file_name}
+    Set to Dictionary    ${api_responses}    test-start-time    ${timestamp}
+    Set to Dictionary    ${api_responses}    bigip_host    ${bigip_host}
     # Create the output files
-    Create File    ${status_output_file_name}   BIG-IP: ${bigip_host} (${timestamp})\n
-    Create File    ${statistics_output_file_name}   BIG-IP: ${bigip_host} (${timestamp})\n
+    Create File    ${status_output_full_path}   BIG-IP: ${bigip_host} (${timestamp})\n
+    Create File    ${statistics_output_full_path}   BIG-IP: ${bigip_host} (${timestamp})\n
+
+Check Inputs and Prompt if Necessary
+    Run Keyword If    "${bigip_host}" == "${EMPTY}"
+    ...    ${bigip_host}    Get Value from User    message=BIG-IP Host or IP:
+    Run Keyword If    "${bigip_username}" == "${EMPTY}"
+    ...    ${bigip_username}    Get Value from User    message=BIG-IP Username:
+    Run Keyword If    "${bigip_password}" == "${EMPTY}"
+    ...    ${bigip_password}    Get Value from User    message=BIG-IP Password:    hidden=True
+    Log to console    Username: ${bigip_username}
 
 # Verify SSH Connectivity
 #     [Documentation]    Logs into the BIG-IP via TMSH, executes a BASH command and validates the expected response
@@ -67,17 +74,17 @@ Create Output File Headers for Status and Statistics
 #                 Should Contain Any    ${login_output}   (tmos)#    ] ~ #
 #             EXCEPT
 #                 Log    Could not connect to SSH
-#                 Append to file    ${status_output_file_name}    SSH Connecitivity: FAILED\n
-#                 Append to file    ${statistics_output_file_name}    SSH Connecitivity: FAILED\n
+#                 Append to file    ${status_output_full_path}    SSH Connecitivity: FAILED\n
+#                 Append to file    ${statistics_output_full_path}    SSH Connecitivity: FAILED\n
 #                 # Since all other tests will fail, stop further testing
 #                 Fatal Error
 #             ELSE
 #                 Log    Successfully connected to SSH
-#                 Append to file    ${status_output_file_name}    SSH Connecitivity: Succeeded\nLogin Output:\n${login_output}\n
+#                 Append to file    ${status_output_full_path}    SSH Connecitivity: Succeeded\nLogin Output:\n${login_output}\n
 #             END
 #         ELSE
 #             Log    Successfully connected to SSH
-#             Append to file    ${status_output_file_name}    SSH Connecitivity: Succeeded\nLogin Output:\n${login_output}\n
+#             Append to file    ${status_output_full_path}    SSH Connecitivity: Succeeded\nLogin Output:\n${login_output}\n
 #         END
 #     # If the SSH identity is not specified, skip to password authentication
 #     ELSE
@@ -90,13 +97,13 @@ Create Output File Headers for Status and Statistics
 #             Should Contain Any    ${login_output}   (tmos)#    ] ~ #
 #         EXCEPT
 #             Log    Could not connect to SSH
-#             Append to file    ${status_output_file_name}    SSH Connecitivity: FAILED\n
-#             Append to file    ${statistics_output_file_name}    SSH Connecitivity: FAILED\n
+#             Append to file    ${status_output_full_path}    SSH Connecitivity: FAILED\n
+#             Append to file    ${statistics_output_full_path}    SSH Connecitivity: FAILED\n
 #             # Since all other tests will fail, stop further testing
 #             Fatal Error
 #         ELSE
 #             Log    Successfully connected to SSH
-#             Append to file    ${status_output_file_name}    SSH Connecitivity: Succeeded\nLogin Output:\n${login_output}\n
+#             Append to file    ${status_output_full_path}    SSH Connecitivity: Succeeded\nLogin Output:\n${login_output}\n
 #         END
 #     END
 
@@ -113,7 +120,7 @@ Create Output File Headers for Status and Statistics
 #     END
 #     ${retrieved_show_sys_hardware_cli}   SSHLibrary.Execute Command    bash -c 'tmsh show sys hardware'
 #     Should Contain    ${retrieved_show_sys_hardware_cli}   BIG-IP
-#     Append to file    ${status_output_file_name}    ======> System Hardware:${retrieved_show_sys_hardware_cli}\n
+#     Append to file    ${status_output_full_path}    ======> System Hardware:${retrieved_show_sys_hardware_cli}\n
 
 # Test IPv4 iControlREST API Connectivity
 #     [Documentation]    Tests BIG-IP iControl REST API connectivity using basic authentication
@@ -121,15 +128,15 @@ Create Output File Headers for Status and Statistics
 #     TRY
 #         Wait until Keyword Succeeds    6x    5 seconds    Retrieve BIG-IP TMOS Version via iControl REST    ${bigip_host}   ${bigip_username}   ${bigip_password}
 #     EXCEPT
-#         Append to file    ${status_output_file_name}    ======> Fatal error: API connectivity failed\n
-#         Set to Dictionary    ${api_info_block}    error    API connectivity failed
+#         Append to file    ${status_output_full_path}    ======> Fatal error: API connectivity failed\n
+#         Set to Dictionary    ${api_responses}    error    API connectivity failed
 #         Log    Fatal error: API connectivity failed
 #         Log To Console    \nFatal error: API connectivity failed
 #         Fatal Error    No connectivity to device via iControl REST API: Host: ${bigip_host} with user '${bigip_username}'
 #     ELSE
 #         Log    Successfully connected to iControl REST API
-#         Set to Dictionary    ${api_info_block}    api-connectivity    ${True}
-#         Append to file    ${status_output_file_name}    ======> API Connecitivity: Succeeded\n
+#         Set to Dictionary    ${api_responses}    api-connectivity    ${True}
+#         Append to file    ${status_output_full_path}    ======> API Connecitivity: Succeeded\n
 #     END
 
 # Verify Remote Host is a BIG-IP via iControl REST
@@ -139,7 +146,7 @@ Create Output File Headers for Status and Statistics
 #     [Tags]    critical
 #     ${retrieved_sys_hardware_api}   Retrieve BIG-IP Hardware Information    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Should contain    ${retrieved_sys_hardware_api.text}   BIG-IP
-#     Set to Dictionary    ${api_info_block}    sys-hardware    ${retrieved_sys_hardware_api}
+#     Set to Dictionary    ${api_responses}    sys-hardware    ${retrieved_sys_hardware_api}
 
 # Check BIG-IP for Excessive CPU/Memory Utilization
 #     [Documentation]    Verifies that resource utilization on the BIG-IP isn't critical and stops all testing if robot tests could cause impact
@@ -153,8 +160,8 @@ Create Output File Headers for Status and Statistics
 #     ${other_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Other%20Memory%20Used][nestedStats][entries][Average][description]
 #     ${tmm_mem_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/TMM%20Memory%20Used][nestedStats][entries][Average][description]
 #     ${swap_used_avg}    Set variable    ${system_performance_stats}[https://localhost/mgmt/tm/sys/performance/all-stats/Swap%20Used][nestedStats][entries][Average][description]
-#     Set to Dictionary    ${api_info_block}    system-performance-all-stats    ${system_performance_api.json()}
-#     Append to file    ${statistics_output_file_name}    ======> System Performance All Statistics:${system_performance_cli}\n
+#     Set to Dictionary    ${api_responses}    system-performance-all-stats    ${system_performance_api.json()}
+#     Append to file    ${statistics_output_full_path}    ======> System Performance All Statistics:${system_performance_cli}\n
 #     IF    ${utilization_avg} >= 90
 #         Fatal error    FATAL ERROR: Excessive system utilization: ${utilization_avg}%
 #     END
@@ -167,7 +174,7 @@ Create Output File Headers for Status and Statistics
 #     IF    ${swap_used_avg} > 0
 #         Log to Console    \nWARNING! Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
 #         Log    WARNING! Swap space in use on device! This is a red flag! See https://my.f5.com/manage/s/article/K55227819
-#         Append to file    ${status_output_file_name}    ======> WARNING! Swap space in use on device!\n
+#         Append to file    ${status_output_full_path}    ======> WARNING! Swap space in use on device!\n
 #     END
 
 # Retrieve BIG-IP CPU Statistics
@@ -175,15 +182,15 @@ Create Output File Headers for Status and Statistics
 #     # Retrieve desired information via iControl REST
 #     ${retrieved_cpu_stats_api}   Retrieve BIG-IP CPU Statistics via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     ${retrieved_cpu_stats_cli}   Retrieve BIG-IP CPU Statistics via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     Set to Dictionary    ${api_info_block}    retrieved-cpu-stats    ${retrieved_cpu_stats_api}
-#     Append to file    ${statistics_output_file_name}    ======> CPU Statistics:\n${retrieved_cpu_stats_cli}\n
+#     Set to Dictionary    ${api_responses}    retrieved-cpu-stats    ${retrieved_cpu_stats_api}
+#     Append to file    ${statistics_output_full_path}    ======> CPU Statistics:\n${retrieved_cpu_stats_cli}\n
 
 # Retrieve BIG-IP Hostname
 #     [Documentation]    Retrieves the configured hostname on the BIG-IP
 #     ${retrieved_hostname_api}   Retrieve BIG-IP Hostname via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     ${retrieved_hostname_cli}   Retrieve BIG-IP Hostname via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     Set to Dictionary    ${api_info_block}    hostname=${retrieved_hostname_api}
-#     Append to file    ${status_output_file_name}    ======> Hostname:\n${retrieved_hostname_cli}\n
+#     Set to Dictionary    ${api_responses}    hostname=${retrieved_hostname_api}
+#     Append to file    ${status_output_full_path}    ======> Hostname:\n${retrieved_hostname_cli}\n
 
 # Retrieve BIG-IP License Information
 #     [Documentation]    Retrieves the license information from the BIG-IP
@@ -192,27 +199,27 @@ Create Output File Headers for Status and Statistics
 #     Should not contain    ${retrieved_license_cli}    Can't load license, may not be operational
 #     Dictionary should not contain key    ${retrieved_license_api.json()}    apiRawValues
 #     ${service_check_date}    Set variable    ${retrieved_license_api.json()}[entries][https://localhost/mgmt/tm/sys/license/0][nestedStats][entries][serviceCheckDate][description]
-#     Append to file    ${status_output_file_name}    ======> Service check date: ${service_check_date}\n
-#     Set to Dictionary    ${api_info_block}    license-service-check-date    ${service_check_date}
+#     Append to file    ${status_output_full_path}    ======> Service check date: ${service_check_date}\n
+#     Set to Dictionary    ${api_responses}    license-service-check-date    ${service_check_date}
 #     ${current_date}    Get current date    result_format=%Y/%m/%d
-#     Append to file    ${status_output_file_name}    ======> Current date: ${current_date}\n
-#     Set to Dictionary    ${api_info_block}    current-date    ${current_date}
+#     Append to file    ${status_output_full_path}    ======> Current date: ${current_date}\n
+#     Set to Dictionary    ${api_responses}    current-date    ${current_date}
 #     ${days_until_service_check_date}    Subtract date from date    ${service_check_date}    ${current_date}
 #     IF    ${days_until_service_check_date} < 1
 #         Log to console    \nWARNING! License service check date occurs in the past! Re-activate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
 #         Log    WARNING! License service check date occurs in the past! Reactivate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)
-#         Append to file    ${status_output_file_name}    ======> WARNING! License service check date occurs in the past! Re-actviate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)\n
+#         Append to file    ${status_output_full_path}    ======> WARNING! License service check date occurs in the past! Re-actviate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)\n
 #     END
-#     Set to Dictionary    ${api_info_block}    license    ${retrieved_license_api}
-#     Append to file    ${status_output_file_name}    ======> License: ${retrieved_license_cli}\n
+#     Set to Dictionary    ${api_responses}    license    ${retrieved_license_api}
+#     Append to file    ${status_output_full_path}    ======> License: ${retrieved_license_cli}\n
 
 # Retrieve BIG-IP TMOS Version
 #     [Documentation]    Retrieves the current TMOS version of the device and verifies lifecycle status. (https://my.f5.com/manage/s/article/K5903)
 #     ${retrieved_version_api}   Retrieve BIG-IP TMOS Version via iControl REST    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     ${retrieved_version_cli}   Retrieve BIG-IP TMOS Version via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     ${bigip_version}    Set variable    ${retrieved_version_api.json()}[entries][https://localhost/mgmt/tm/sys/version/0][nestedStats][entries][Version][description]
-#     Set to Dictionary    ${api_info_block}    version    ${retrieved_version_api}
-#     Append to file    ${status_output_file_name}    ======> BIG-IP Version: ${retrieved_version_cli}\n
+#     Set to Dictionary    ${api_responses}    version    ${retrieved_version_api}
+#     Append to file    ${status_output_full_path}    ======> BIG-IP Version: ${retrieved_version_cli}\n
 #     ${current_date}    Get current date    result_format=%Y/%m/%d
 #     IF    "17.1." in "${bigip_version}"
 #         ${end_of_software_development}    Set variable    2027/03/31
@@ -222,18 +229,18 @@ Create Output File Headers for Status and Statistics
 #         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
 #         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
 #         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-#             Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
-#             Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
+#             Set to Dictionary    ${api_responses}    remaining-days-software-development    ${remaining_days_software_development}
+#             Set to Dictionary    ${api_responses}    remaining-days-technical-support    ${remaining_days_technical_support}
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
 #         ELSE IF    ${remaining_days_software_development} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         ELSE IF    ${remaining_days_technical_support} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         END
 #     ELSE IF    "16.1." in "${bigip_version}"
 #         ${end_of_software_development}    Set variable    2025/07/31
@@ -243,18 +250,18 @@ Create Output File Headers for Status and Statistics
 #         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
 #         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
 #         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-#             Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
-#             Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
+#             Set to Dictionary    ${api_responses}    remaining-days-software-development    ${remaining_days_software_development}
+#             Set to Dictionary    ${api_responses}    remaining-days-technical-support    ${remaining_days_technical_support}
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
 #         ELSE IF    ${remaining_days_software_development} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         ELSE IF    ${remaining_days_technical_support} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         END
 #     ELSE IF    "15.1." in "${bigip_version}"
 #         ${end_of_software_development}    Set variable    2024/12/31
@@ -264,18 +271,18 @@ Create Output File Headers for Status and Statistics
 #         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
 #         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
 #         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-#             Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
-#             Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
+#             Set to Dictionary    ${api_responses}    remaining-days-software-development    ${remaining_days_software_development}
+#             Set to Dictionary    ${api_responses}    remaining-days-technical-support    ${remaining_days_technical_support}
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
 #         ELSE IF    ${remaining_days_software_development} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         ELSE IF    ${remaining_days_technical_support} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         END
 #     ELSE IF    "13.1." in "${bigip_version}" or "14.1." in "${bigip_version}"
 #         ${end_of_software_development}    Set variable    2023/12/31
@@ -285,22 +292,22 @@ Create Output File Headers for Status and Statistics
 #         ${remaining_days_software_development_human_readable}    Subtract date from date    ${end_of_software_development}    ${current_date}    verbose
 #         ${remaining_days_technical_support_human_readable}    Subtract date from date    ${end_of_technical_support}    ${current_date}    verbose
 #         IF    ${remaining_days_software_development} > 0 and ${remaining_days_technical_support} > 0
-#             Set to Dictionary    ${api_info_block}    remaining-days-software-development    ${remaining_days_software_development}
-#             Set to Dictionary    ${api_info_block}    remaining-days-technical-support    ${remaining_days_technical_support}
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
-#             Append to file    ${status_output_file_name}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
+#             Set to Dictionary    ${api_responses}    remaining-days-software-development    ${remaining_days_software_development}
+#             Set to Dictionary    ${api_responses}    remaining-days-technical-support    ${remaining_days_technical_support}
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Software Development Support: ${remaining_days_software_development_human_readable}\n
+#             Append to file    ${status_output_full_path}    ======> Remaining Days of Technical Support: ${remaining_days_technical_support_human_readable}\n
 #         ELSE IF    ${remaining_days_software_development} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         ELSE IF    ${remaining_days_technical_support} <= 0
 #             Log to console    \nWARNING: TMOS release has reached end of technical support status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
 #             Log    WARNING: TMOS release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)
-#             Append to file    ${status_output_file_name}    ======> WARNING: TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
+#             Append to file    ${status_output_full_path}    ======> WARNING: TMOS Release has reached end of software development status in lifecycle. (https://my.f5.com/manage/s/article/K5903)\n
 #         END
 #     ELSE
 #         Log to console    \nTMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.
-#         Append to file    ${status_output_file_name}    ======> TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.\n
+#         Append to file    ${status_output_full_path}    ======> TMOS release ${bigip_version} has reached end of life. See https://my.f5.com/manage/s/article/K5903 for more information.\n
 #     END
 
 # Retrieve BIG-IP NTP Configuration and Verify NTP Servers are Configured
@@ -314,13 +321,13 @@ Create Output File Headers for Status and Statistics
 #     [Documentation]    Retrieves the NTP status on the BIG-IP (https://my.f5.com/manage/s/article/K10240)
 #     ${retrieved_ntp_status_cli}   Retrieve BIG-IP NTP Status via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
 #     Verify BIG-IP NTP Server Associations    ${retrieved_ntp_status_cli}
-#     Set to Dictionary    ${api_info_block}    ntp-status    ${retrieved_ntp_status_cli}
-#     Append to file    ${status_output_file_name}    ======> NTP Status:\n${retrieved_ntp_status_cli}\n
+#     Set to Dictionary    ${api_responses}    ntp-status    ${retrieved_ntp_status_cli}
+#     Append to file    ${status_output_full_path}    ======> NTP Status:\n${retrieved_ntp_status_cli}\n
 
 # Verify BIG-IP Disk Space
 #     [Documentation]    Verifies that the BIG-IP disk utilization is healthy. (https://my.f5.com/manage/s/article/K14403)
 #     ${df_output}    Retrieve BIG-IP Disk Space Utilization via TMSH    bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-#     Append to file    ${status_output_file_name}    ======> Disk Space Utilization:\n${df_output}\n
+#     Append to file    ${status_output_full_path}    ======> Disk Space Utilization:\n${df_output}\n
 #     @{df_output_items}    Split to lines    ${df_output}
 #     FOR    ${current_mount_point}    IN    @{df_output_items}
 #         IF    "Filesystem" in "${current_mount_point}" and "Use%" in "${current_mount_point}"
@@ -344,110 +351,121 @@ Create Output File Headers for Status and Statistics
 #                 ${percentage_used}    Remove string    ${used_pct}    %
 #                 IF    ${${percentage_used}} > 90
 #                     Log to Console    \nWARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)
-#                     Append to file    ${status_output_file_name}    ======> WARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
+#                     Append to file    ${status_output_full_path}    ======> WARNING: Filesystem ${target} is using ${used_pct} of available space! (https://my.f5.com/manage/s/article/K14403)\n
 #                 END
 #                 ${inodes_used_pct}    Remove string    ${inodes_used_pct}    %
 #                 IF    ${${inodes_used_pct}} > 90
 #                     Log to Console    \nWARNING: Filesystem ${target} is using a high percentage (${inodes_used_pct}) of available inodes! (https://my.f5.com/manage/s/article/K14403)
-#                     Append to file    ${status_output_file_name}    ======> WARNING: Filesystem ${target} is using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
+#                     Append to file    ${status_output_full_path}    ======> WARNING: Filesystem ${target} is using a high percentage of available inodes! (https://my.f5.com/manage/s/article/K14403)
 #                 END
 #             END
 #         END
 #     END
 
-Retrieve Top 20 Directories and Files by Size on Disk
-    [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
-    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
-    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
-        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
-    ELSE
-        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    END
-    ${top_directories}    SSHLibrary.Execute command    bash -c "du --exclude=/proc/* -Sh / | sort -rh | head -n 20"
-    ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
-    Append to file    ${status_output_file_name}    ======> Top directories on disk by size:\n${top_directories}\n
-    Append to file    ${status_output_file_name}    ======> Top files on disk by size:\n${top_files}\n
+# Retrieve Top 20 Directories by Size on Disk
+#     [Documentation]    Retrieves the top 20 directories on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
+#     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+#     IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+#         SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
+#     ELSE
+#         SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+#     END
+#     ${top_directories}    SSHLibrary.Execute command    bash -c "du --exclude=/proc/* -Sh / | sort -rh | head -n 20"
+#     Append to file    ${status_output_full_path}    ======> Top directories on disk by size:\n${top_directories}\n
 
-Verify BIG-IP High Availability Status
-    [Documentation]    Retrieves the BIG-IP high availability status (https://my.f5.com/manage/s/article/K08452454)
-    ${bigip_cm_devices_api}    Retrieve BIG-IP Cluster Management Device Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-devices    ${bigip_cm_devices_api}
-    ${bigip_cm_devices_status_api}    Retrieve BIG-IP Cluster Management Device Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-devices-status    ${bigip_cm_devices_api}
-    @{bigip_cm_device_groups_api}    Retrieve BIG-IP Cluster Management Device Group Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-device-groups    ${bigip_cm_device_groups_api}
-    ${bigip_cm_device_groups_status_api}    Retrieve BIG-IP Cluster Management Device Group Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-device-groups-status    ${bigip_cm_device_groups_status_api}
-    @{bigip_cm_traffic_groups_api}    Retrieve BIG-IP Cluster Management Traffic Group Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-traffic-groups    ${bigip_cm_traffic_groups_api}
-    ${bigip_cm_traffic_groups_status_api}    Retrieve BIG-IP Cluster Management Traffic Group Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-traffic-groups-status    ${bigip_cm_traffic_groups_status_api}
-    @{bigip_cm_trust_domains_api}    Retrieve BIG-IP Cluster Management Trust Domain Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-trust-domains    ${bigip_cm_trust_domains_api}
-    ${bigip_cm_failover_status_api}    Retrieve BIG-IP Cluster Management Failover Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Set to Dictionary    ${api_info_block}    cm-failover-status    ${bigip_cm_failover_status_api}
-    ${bigip_cm_devices_cli}    Retrieve BIG-IP Cluster Management Status via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${status_output_file_name}    ======> Cluster Management Status:\n${bigip_cm_devices_cli}\n
+# Retrieve Top 20 Files by Size on Disk
+#     [Documentation]    Retrieves the top 20 files on the BIG-IP by disk space size (https://my.f5.com/manage/s/article/K14403)
+#     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+#     IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+#         SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
+#     ELSE
+#         SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+#     END
+#     ${top_files}    SSHLibrary.Execute command    bash -c "find / -type f -exec du --exclude=/proc/* -Sh {} + | sort -rh | head -n 20"
+#     Append to file    ${status_output_full_path}    ======> Top files on disk by size:\n${top_files}\n
 
-Verify Certificate/Key Status and Expiration
-    [Documentation]
-    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
-    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
-        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
-    ELSE
-        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    END
-    ${check-cert_output}    SSHLibrary.Execute command    bash -c "tmsh run sys crypto check-cert verbose enabled"
-    Append to file    ${status_output_file_name}    ======> Certificate Check Output:\n${check-cert_output}\n
+# Verify BIG-IP High Availability Status
+#     [Documentation]    Retrieves the BIG-IP high availability status (https://my.f5.com/manage/s/article/K08452454)
+#     ${bigip_cm_devices_api}    Retrieve BIG-IP Cluster Management Device Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-devices    ${bigip_cm_devices_api}
+#     ${bigip_cm_devices_status_api}    Retrieve BIG-IP Cluster Management Device Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-devices-status    ${bigip_cm_devices_api}
+#     @{bigip_cm_device_groups_api}    Retrieve BIG-IP Cluster Management Device Group Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-device-groups    ${bigip_cm_device_groups_api}
+#     ${bigip_cm_device_groups_status_api}    Retrieve BIG-IP Cluster Management Device Group Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-device-groups-status    ${bigip_cm_device_groups_status_api}
+#     @{bigip_cm_traffic_groups_api}    Retrieve BIG-IP Cluster Management Traffic Group Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-traffic-groups    ${bigip_cm_traffic_groups_api}
+#     ${bigip_cm_traffic_groups_status_api}    Retrieve BIG-IP Cluster Management Traffic Group Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-traffic-groups-status    ${bigip_cm_traffic_groups_status_api}
+#     @{bigip_cm_trust_domains_api}    Retrieve BIG-IP Cluster Management Trust Domain Configuration via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-trust-domains    ${bigip_cm_trust_domains_api}
+#     ${bigip_cm_failover_status_api}    Retrieve BIG-IP Cluster Management Failover Status via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Set to Dictionary    ${api_responses}    cm-failover-status    ${bigip_cm_failover_status_api}
+#     ${bigip_cm_devices_cli}    Retrieve BIG-IP Cluster Management Status via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${status_output_full_path}    ======> Cluster Management Status:\n${bigip_cm_devices_cli}\n
 
-Retrieve BIG-IP Interface Statistics
-    [Documentation]
-    ${interface_stats_api}    Retrieve BIG-IP Interface Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${interface_stats_cli}    Retrieve BIG-IP Interface Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Interface Statistics:\n${interface_stats_cli}\n
+# Verify Certificate/Key Status and Expiration
+#     [Documentation]
+#     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+#     IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+#         SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
+#     ELSE
+#         SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+#     END
+#     ${check-cert_output}    SSHLibrary.Execute command    bash -c "tmsh run sys crypto check-cert verbose enabled"
+#     Append to file    ${status_output_full_path}    ======> Certificate Check Output:\n${check-cert_output}\n
 
-Retrieve BIG-IP VLAN Statistics
-    [Documentation]
-    ${vlan_stats_api}    Retrieve BIG-IP VLAN Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${vlan_stats_cli}    Retrieve BIG-IP VLAN Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> VLAN Statistics:\n${vlan_stats_cli}\n
+# Retrieve BIG-IP Interface Statistics
+#     [Documentation]
+#     ${interface_stats_api}    Retrieve BIG-IP Interface Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${interface_stats_cli}    Retrieve BIG-IP Interface Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> Interface Statistics:\n${interface_stats_cli}\n
 
-Retrieve Route Domain Information
-    [Documentation]
-    ${route_domain_stats_api}    Retrieve BIG-IP Route Domain Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${route_domain_stats_cli}    Retrieve BIG-IP Route Domain Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Route Domain Statistics:\n${route_domain_stats_cli}\n
-    ${route_domain_dynamic_routing_protocols}    Set variable    temporary
-    ${route_domain_dynamic_routing}    Set variable    temporary
+# Retrieve BIG-IP VLAN Statistics
+#     [Documentation]
+#     ${vlan_stats_api}    Retrieve BIG-IP VLAN Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${vlan_stats_cli}    Retrieve BIG-IP VLAN Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> VLAN Statistics:\n${vlan_stats_cli}\n
 
-Retrieve BIG-IP Trunk Statistics
-    [Documentation]
-    ${trunk_stats_api}    Retrieve BIG-IP Trunk Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${trunk_stats_cli}    Retrieve BIG-IP Trunk Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Trunk Statistics:\n${trunk_stats_cli}\n
+# Retrieve Route Domain Information
+#     [Documentation]
+#     ${route_domain_stats_api}    Retrieve BIG-IP Route Domain Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${route_domain_stats_cli}    Retrieve BIG-IP Route Domain Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> Route Domain Statistics:\n${route_domain_stats_cli}\n
+#     ${route_domain_dynamic_routing_protocols}    Set variable    temporary
+#     ${route_domain_dynamic_routing}    Set variable    temporary
 
-Retrieve BIG-IP Self-IP Statistics
-    [Documentation]
-    ${self-ip_stats_api}    Retrieve BIG-IP Self IP Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${self-ip_stats_cli}    Retrieve BIG-IP Self IP Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Self-IP Statistics:\n${self-ip_stats_cli}\n
+# Retrieve BIG-IP Trunk Statistics
+#     [Documentation]
+#     ${trunk_stats_api}    Retrieve BIG-IP Trunk Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${trunk_stats_cli}    Retrieve BIG-IP Trunk Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> Trunk Statistics:\n${trunk_stats_cli}\n
 
-Retrieve BIG-IP Virtual Server Statistics
-    [Documentation]
-    ${virtual_server_stats_api}    Retrieve BIG-IP Virtual Server Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${virtual_server_stats_cli}    Retrieve BIG-IP Virtual Server Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Virtual Server Statistics:\n${virtual_server_stats_cli}\n
+# Retrieve BIG-IP Self-IP Statistics
+#     [Documentation]
+#     ${self-ip_stats_api}    Retrieve BIG-IP Self IP Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${self-ip_stats_cli}    Retrieve BIG-IP Self IP Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> Self-IP Statistics:\n${self-ip_stats_cli}\n
 
-Retrieve BIG-IP Virtual Address Statistics
-    [Documentation]
-    ${virtual_server_stats_api}    Retrieve BIG-IP Virtual Address Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    ${virtual_server_stats_cli}    Retrieve BIG-IP Virtual Address Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Virtual Server Statistics:\n${virtual_server_stats_cli}\n
+# Retrieve BIG-IP Virtual Server Statistics
+#     [Documentation]
+#     ${virtual_server_stats_api}    Retrieve BIG-IP Virtual Server Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${virtual_server_stats_cli}    Retrieve BIG-IP Virtual Server Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> Virtual Server Statistics:\n${virtual_server_stats_cli}\n
+
+# Retrieve BIG-IP Virtual Address Statistics
+#     [Documentation]
+#     ${virtual_server_stats_api}    Retrieve BIG-IP Virtual Address Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     ${virtual_server_stats_cli}    Retrieve BIG-IP Virtual Address Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
+#     Append to file    ${statistics_output_full_path}    ======> Virtual Server Statistics:\n${virtual_server_stats_cli}\n
 
 Retrieve Pool Statistics
     [Documentation]
     ${pool_stats_api}    Retrieve BIG-IP Pool Statistics via iControl REST   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
     &{pool_stats}    Get from dictionary    ${pool_stats_api.json()}    entries
+    # Add retrieved statistics to the API responses dictionary
+    Set to dictionary    ${api_responses}    pool_statistics    ${pool_stats}
     @{pool_list}    Get dictionary keys    ${pool_stats}
     @{unavailable_pools}    Create list
     @{zero_connection_count_pools}    Create list
@@ -457,48 +475,48 @@ Retrieve Pool Statistics
         ${current_pool_availability_state}    Set variable    ${current_pool_stats}[nestedStats][entries][status.availabilityState][description]
         ${current_pool_status_reason}    Set variable    ${current_pool_stats}[nestedStats][entries][status.statusReason][description]
         IF    "${current_pool_availability_state}" != "available"
-            Append to list    ${unavailable_pools}    ${current_pool} is ${current_pool_availability_state} (${current_pool_status_reason})
+            Append to list    ${unavailable_pools}    ${current_pool}
+            Append to file    ${status_output_full_path}    Pool Unavailable: ${current_pool}\n
         END
         # Check for the total number of members and if the available member count is less, append to the list
         ${current_pool_available_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][availableMemberCnt][value]
         ${current_pool_total_member_count}    Set variable    ${current_pool_stats}[nestedStats][entries][memberCnt][value]
         IF    [${${current_pool_total_member_count}} - ${${current_pool_available_member_count}}] != 0
             Append to list    ${unavailable_member_pools}    ${current_pool}
+            Append to file    ${status_output_full_path}    Pool with Unavailable Members: ${current_pool} (${current_pool_available_member_count}/${current_pool_total_member_count})\n
         END
         # Check for pools that have no current connections and record the list
         ${current_pool_current_sessions}    Set variable    ${current_pool_stats}[nestedStats][entries][curSessions][value]
-        IF    ${current_pool_total_member_count} <= 0
+        IF    ${current_pool_current_sessions} <= 0
             Append to list    ${zero_connection_count_pools}    ${current_pool}
+            Append to file    ${status_output_full_path}    Pool with Zero Connections: ${current_pool}\n
         END
     END
-    Log to Console    \nUnavailalable Pools:\n${unavailable_pools}\n
-    Log to console    \nPools with Unavailable Members:\n${unavailable_member_pools}\n
-    Log to console    \nPools with Zero Current Connections:\n${zero_connection_count_pools}\n
     ${pool_stats_cli}    Retrieve BIG-IP Pool Statistics via TMSH   bigip_host=${bigip_host}   bigip_username=${bigip_username}   bigip_password=${bigip_password}
-    Append to file    ${statistics_output_file_name}    ======> Pool Statistics:\n${pool_stats_cli}\n
+    Append to file    ${statistics_output_full_path}    ======> Pool Statistics:\n${pool_stats_cli}\n
 
-Retrieve BIG-IP Full Text Configuration via TMSH
-    [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
-    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
-    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
-        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
-    ELSE
-        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    END
-    ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
-    Append to file    ${status_output_file_name}   ======> Full Text Configuration:\n${full_text_configuration}\n
+# Retrieve BIG-IP Full Text Configuration via TMSH
+#     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
+#     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+#     IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+#         SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
+#     ELSE
+#         SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+#     END
+#     ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list / all-properties one-line recursive'
+#     Append to file    ${status_output_full_path}   ======> Full Text Configuration:\n${full_text_configuration}\n
 
-Retrieve BIG-IP Database Variables via TMSH
-    [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
-    SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
-    IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
-        SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
-    ELSE
-        SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
-    END
-    ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list sys db all-properties one-line'
-    Append to file    ${status_output_file_name}   ======> Database Variables:\n${full_text_configuration}\n
+# Retrieve BIG-IP Database Variables via TMSH
+#     [Documentation]    Retrieve BIG-IPs the full BIG-IP configuration via list output
+#     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
+#     IF    "${bigip_ssh_identity_file}" != "${EMPTY}"
+#         SSHLibrary.Login with public key    username=${bigip_username}    keyfile=${bigip_ssh_identity_file}
+#     ELSE
+#         SSHLibrary.Login    username=${bigip_username}    password=${bigip_password}
+#     END
+#     ${full_text_configuration}    SSHLibrary.Execute command    bash -c 'tmsh -q list sys db all-properties one-line'
+#     Append to file    ${status_output_full_path}   ======> Database Variables:\n${full_text_configuration}\n
 
 Log API Responses in JSON
     [Documentation]    Creating a plain text block that can be diff'd between runs to view changes
-    Log Dictionary   ${api_info_block}
+    Log Dictionary   ${api_responses}

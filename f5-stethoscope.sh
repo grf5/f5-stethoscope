@@ -21,8 +21,6 @@ export PYTHONWARNINGS='ignore:Unverified HTTPS request'
 # Set your hostname, username, password or ssh key here
 robot \
   --variable "bigip_host:13e25db5-d113-447c-bf38-cd5114ed5417.access.udf.f5.com"      \
-  --variable "bigip_username:admin"                                                   \
-  --variable "bigip_password:f5c0nfig123!"                                            \
   --variable "bigip_ssh_identity_file:/Users/G.Robinson/.ssh/id_ed25519"              \
   --variable "bigip_ssh_port:47000"                                                   \
   --variable "status_output_file_name:device_status.txt"                              \
