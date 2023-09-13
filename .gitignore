@@ -185,14 +185,15 @@ doc/libraries/*.html
 doc/libraries/*.json
 doc/userguide/RobotFrameworkUserGuide.html
 src/robotframework.egg-info
-log.html
-output.xml
-report.html
+log*.html
+output*.xml
+report*.html
 __pycache__
 .classpath
 .settings
 .jython_cache
 .mypy_cache/
+device*.txt
 
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
