@@ -20,7 +20,7 @@ export ROBOT_TIMESTAMP=$(date +%Y-%m-%d-%H%M%S-%Z)
 # You can specify the hostname, username, password or ssh key here, or optionally be prompted
 # for them if they are omitted
 robot \
-  --variable "bigip_host:13e25db5-d113-447c-bf38-cd5114ed5417.access.udf.f5.com" \
+  --variable "bigip_host:221524ae-3711-4417-9bef-375c633a26c4.access.udf.f5.com" \
   --variable "bigip_username:admin" \
   --variable "bigip_password:f5c0nfig123!" \
   --variable "bigip_ssh_identity_file:/Users/G.Robinson/.ssh/id_ed25519" \

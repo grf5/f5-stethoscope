@@ -31,7 +31,6 @@ BIG-IP iControl BasicAuth GET
     [Documentation]    Performs an iControl REST API GET call using basic auth (See pages 25-38 of https://cdn.f5.com/websites/devcentral.f5.com/downloads/icontrol-rest-api-user-guide-13-1-0-a.pdf.zip)
     [Arguments]    ${bigip_host}    ${bigip_username}    ${bigip_password}    ${api_uri}
     [Teardown]    RequestsLibrary.Delete All Sessions
-    ${api_auth}    Create List    ${bigip_username}   ${bigip_password}
     RequestsLibrary.Create Session    bigip-icontrol-get-basicauth    https://${bigip_host}:${bigip_https_port}    auth=${api_auth}
     &{api_headers}    Create Dictionary    Content-type=application/json
     ${api_response}    GET On Session    bigip-icontrol-get-basicauth   ${api_uri}    headers=${api_headers}
@@ -256,7 +255,7 @@ Retrieve BIG-IP Hostname
     ...    api_uri=/mgmt/tm/sys/global-settings
     Set to Dictionary    ${api_responses}    hostname=${retrieved_hostname_api.json()}[hostname]
 
-Retrieve BIG-IP License Information
+Retrieve BIG-IP License Information and Check Service Check Date
     [Documentation]    Retrieves the current license information on the BIG-IP (https://my.f5.com/manage/s/article/K7752)
     # Retrieval via SSH to store in status file
     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
@@ -293,7 +292,7 @@ Retrieve BIG-IP License Information
         Append to file    ${status_output_full_path}    ==================\nWARNING: Current date is nearing License service check date (${service_check_date})! Reactivate license required prior to upgrade! (https://my.f5.com/manage/s/article/K7727)\n
     END
 
-Retrieve BIG-IP TMOS Version
+Retrieve BIG-IP TMOS Version and Warn on EoSD/EoTS
     [Documentation]    Retrieves the current TMOS version of the device and verifies lifecycle status. (https://my.f5.com/manage/s/article/K5903)
     # Retrieval via SSH to store in status file
     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
@@ -571,7 +570,7 @@ Verify Certificate Status and Expiration
         END
     END
 
-Interface Statistics
+Check BIG-IP Interface Status for Issues
     [Documentation]    Retrieves BIG-IP interface statistics and highlights those in possibly abnormal state
     # Retrieval via SSH to store in status file
     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
@@ -647,7 +646,7 @@ Route Domain Statistics
         END
     END
 
-Trunk Statistics
+Retrieve BIG-IP Trunk Statistics and Warn on Errors
     [Documentation]    Retrieves BIG-IP Trunk statistics and highlights those in possibly abnormal state
     # Retrieval via SSH to store in status file
     SSHLibrary.Open Connection    ${bigip_host}    port=${bigip_ssh_port}
